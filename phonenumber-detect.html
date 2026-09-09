@@ -1,0 +1,2286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SAFNEX NOVA | Phone Intelligence</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#f4f7fc;
+    --navy:#07152d;
+    --navy2:#0c2042;
+    --blue:#356dff;
+    --cyan:#27c7ff;
+    --text:#101a2f;
+    --muted:#71809a;
+    --border:#dfe6f1;
+    --white:#ffffff;
+    --green:#13a673;
+    --orange:#ed9b28;
+    --red:#e64d61;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+    background:
+        radial-gradient(
+            circle at 80% 10%,
+            rgba(53,109,255,.12),
+            transparent 28%
+        ),
+        linear-gradient(
+            135deg,
+            #f8faff,
+            #eef3fb
+        );
+    color:var(--text);
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    height:70px;
+    background:rgba(7,21,45,.97);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 34px;
+    color:white;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:.8px;
+}
+
+.brand span{
+    color:#55cfff;
+}
+
+.logo{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    overflow:hidden;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2px solid rgba(255,255,255,.3);
+}
+
+.logo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.header-label{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    color:#9eb2d5;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    height:calc(100vh - 70px);
+    padding:28px 38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.container{
+    width:min(1180px,100%);
+    height:min(700px,calc(100vh - 120px));
+    display:grid;
+    grid-template-columns:42% 58%;
+    gap:22px;
+}
+
+/* ================= LEFT ================= */
+
+.left{
+    background:
+        radial-gradient(
+            circle at 20% 10%,
+            rgba(39,199,255,.18),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            var(--navy),
+            #102d58
+        );
+
+    border-radius:24px;
+    padding:42px;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 25px 60px rgba(7,21,45,.18);
+}
+
+.left:after{
+    content:"";
+    position:absolute;
+    width:280px;
+    height:280px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:50%;
+    right:-130px;
+    bottom:-120px;
+}
+
+.badge{
+    display:inline-flex;
+    width:max-content;
+    padding:7px 12px;
+    border-radius:30px;
+    background:rgba(255,255,255,.09);
+    border:1px solid rgba(255,255,255,.12);
+    color:#8fdfff;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1.4px;
+    margin-bottom:20px;
+}
+
+.left h1{
+    font-size:clamp(30px,3.3vw,49px);
+    line-height:1.06;
+    letter-spacing:-1.7px;
+    margin-bottom:18px;
+}
+
+.left h1 span{
+    color:#53d2ff;
+}
+
+.left p{
+    color:#b9c9e3;
+    line-height:1.65;
+    font-size:14px;
+    max-width:470px;
+}
+
+.features{
+    margin-top:30px;
+    display:grid;
+    gap:12px;
+}
+
+.feature{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    color:#dce7f7;
+    font-size:13px;
+}
+
+.feature-icon{
+    width:28px;
+    height:28px;
+    border-radius:9px;
+    background:rgba(255,255,255,.08);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#55d4ff;
+}
+
+/* ================= RIGHT ================= */
+
+.right{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:24px;
+    box-shadow:0 25px 60px rgba(20,40,80,.09);
+    padding:30px;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+}
+
+.scan-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+}
+
+.scan-title h2{
+    font-size:22px;
+    letter-spacing:-.5px;
+}
+
+.status{
+    font-size:10px;
+    font-weight:800;
+    color:#58708e;
+    background:#f1f5fa;
+    padding:7px 10px;
+    border-radius:20px;
+}
+
+.subtitle{
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:20px;
+}
+
+/* ================= INPUT ================= */
+
+.input-wrap{
+    display:flex;
+    gap:9px;
+    margin-bottom:18px;
+}
+
+.phone-input{
+    flex:1;
+    min-width:0;
+    height:48px;
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:0 15px;
+    font-size:14px;
+    outline:none;
+    background:#f9fbfe;
+    color:var(--text);
+    transition:.2s;
+}
+
+.phone-input:focus{
+    border-color:var(--blue);
+    background:white;
+    box-shadow:0 0 0 4px rgba(53,109,255,.08);
+}
+
+.analyze-btn{
+    height:48px;
+    border:none;
+    border-radius:13px;
+    padding:0 19px;
+    background:linear-gradient(
+        135deg,
+        var(--blue),
+        #4c8aff
+    );
+    color:white;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.7px;
+    cursor:pointer;
+    box-shadow:0 10px 22px rgba(53,109,255,.22);
+    transition:.2s;
+}
+
+.analyze-btn:hover{
+    transform:translateY(-1px);
+}
+
+.analyze-btn:disabled{
+    opacity:.65;
+    cursor:not-allowed;
+    transform:none;
+}
+
+/* ================= EXAMPLES ================= */
+
+.examples{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+}
+
+.example{
+    border:1px solid var(--border);
+    background:#f8faff;
+    color:#63738d;
+    padding:6px 9px;
+    border-radius:8px;
+    font-size:10px;
+    cursor:pointer;
+}
+
+.example:hover{
+    border-color:#b9c9e8;
+    color:#3153a5;
+}
+
+/* ================= EMPTY ================= */
+
+.empty{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    color:var(--muted);
+}
+
+.empty-inner{
+    max-width:420px;
+}
+
+.empty-icon{
+    width:58px;
+    height:58px;
+    border-radius:18px;
+    background:#eef4ff;
+    color:var(--blue);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    margin:0 auto 13px;
+}
+
+.empty h3{
+    color:var(--text);
+    font-size:16px;
+    margin-bottom:6px;
+}
+
+.empty p{
+    font-size:12px;
+    line-height:1.6;
+}
+
+/* ================= LOADING ================= */
+
+.loading{
+    display:none;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    color:var(--muted);
+    font-size:12px;
+    padding:25px;
+}
+
+.loading.show{
+    display:flex;
+}
+
+.spinner{
+    width:18px;
+    height:18px;
+    border:2px solid #dce5f3;
+    border-top-color:var(--blue);
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* ================= RESULTS ================= */
+
+.results{
+    display:none;
+    flex:1;
+    min-height:0;
+}
+
+.results.show{
+    display:flex;
+    flex-direction:column;
+}
+
+/* ================= TOP RESULT ================= */
+
+.top-result{
+    display:grid;
+    grid-template-columns:145px 1fr;
+    gap:18px;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.score-box{
+    width:145px;
+    height:145px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+
+    background:
+        conic-gradient(
+            var(--green) 0deg,
+            var(--green) 0deg,
+            #e9eef5 0deg
+        );
+}
+
+.score-box:before{
+    content:"";
+    position:absolute;
+    width:116px;
+    height:116px;
+    border-radius:50%;
+    background:white;
+}
+
+.score-content{
+    position:relative;
+    z-index:2;
+    text-align:center;
+}
+
+.score{
+    font-size:34px;
+    font-weight:900;
+    line-height:1;
+}
+
+.score-label{
+    font-size:9px;
+    font-weight:800;
+    color:var(--muted);
+    margin-top:4px;
+    letter-spacing:.7px;
+}
+
+.verdict{
+    display:inline-block;
+    margin-top:8px;
+    padding:6px 10px;
+    border-radius:20px;
+    background:#eaf9f2;
+    color:var(--green);
+    font-size:9px;
+    font-weight:900;
+}
+
+.result-info h3{
+    font-size:19px;
+    margin-bottom:6px;
+}
+
+.result-phone{
+    color:var(--muted);
+    font-size:12px;
+    word-break:break-all;
+    line-height:1.5;
+}
+
+.confidence{
+    margin-top:10px;
+    display:inline-block;
+    font-size:9px;
+    font-weight:800;
+    padding:5px 8px;
+    border-radius:7px;
+    background:#fff5e8;
+    color:#bd7617;
+}
+
+/* ================= QUESTIONS ================= */
+
+.questions{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    overflow:auto;
+    padding-right:3px;
+}
+
+.question{
+    border:1px solid var(--border);
+    background:#fafcff;
+    border-radius:12px;
+    padding:11px 13px;
+}
+
+.question-title{
+    font-size:10px;
+    color:#73829a;
+    font-weight:800;
+    margin-bottom:4px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+}
+
+.question-answer{
+    font-size:12px;
+    color:var(--text);
+    font-weight:650;
+    line-height:1.45;
+}
+
+.why{
+    border-color:#dce7ff;
+    background:#f5f8ff;
+}
+
+.why .question-answer{
+    color:#3153a5;
+}
+
+/* ================= PHONE META ================= */
+
+.meta-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+    margin-top:10px;
+}
+
+.meta-item{
+    background:#f7f9fc;
+    border:1px solid #e8edf5;
+    border-radius:9px;
+    padding:8px 10px;
+}
+
+.meta-label{
+    font-size:8px;
+    color:#7a899f;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    font-weight:800;
+    margin-bottom:3px;
+}
+
+.meta-value{
+    font-size:10px;
+    color:#26354c;
+    font-weight:700;
+    word-break:break-word;
+}
+
+/* ================= TECHNICAL ================= */
+
+.tech{
+    margin-top:10px;
+}
+
+.tech summary{
+    cursor:pointer;
+    font-size:10px;
+    font-weight:800;
+    color:#65748c;
+    padding:8px 0;
+}
+
+.tech-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    max-height:100px;
+    overflow:auto;
+}
+
+.tech-item{
+    background:#f5f7fa;
+    border-radius:7px;
+    padding:6px 8px;
+    font-size:9px;
+    color:#67758a;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.tech-item strong{
+    color:#25334a;
+}
+
+/* ================= ERROR ================= */
+
+.error-box{
+    display:none;
+    margin-top:10px;
+    padding:11px 13px;
+    border-radius:11px;
+    background:#fff1f3;
+    border:1px solid #ffd7dd;
+    color:#c43e51;
+    font-size:11px;
+    line-height:1.5;
+}
+
+.error-box.show{
+    display:block;
+}
+
+/* ================= UNVERIFIED ================= */
+
+.unverified{
+    margin-top:10px;
+    padding:8px 10px;
+    border-radius:9px;
+    background:#fff5e8;
+    border:1px solid #f8dfb9;
+    color:#a96c17;
+    font-size:10px;
+    font-weight:800;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:850px){
+
+    html,
+    body{
+        overflow:auto;
+    }
+
+    .header{
+        height:62px;
+        padding:0 17px;
+    }
+
+    .brand{
+        font-size:16px;
+    }
+
+    .logo{
+        width:36px;
+        height:36px;
+    }
+
+    .header-label{
+        display:none;
+    }
+
+    .main{
+        height:auto;
+        min-height:calc(100vh - 62px);
+        padding:14px;
+    }
+
+    .container{
+        height:auto;
+        min-height:calc(100vh - 90px);
+        grid-template-columns:1fr;
+    }
+
+    .left{
+        min-height:260px;
+        padding:28px;
+        border-radius:20px;
+    }
+
+    .left h1{
+        font-size:34px;
+    }
+
+    .features{
+        display:none;
+    }
+
+    .right{
+        min-height:600px;
+        border-radius:20px;
+        padding:20px;
+    }
+
+    .input-wrap{
+        flex-direction:column;
+    }
+
+    .analyze-btn{
+        width:100%;
+    }
+
+    .top-result{
+        grid-template-columns:115px 1fr;
+        gap:13px;
+    }
+
+    .score-box{
+        width:115px;
+        height:115px;
+    }
+
+    .score-box:before{
+        width:92px;
+        height:92px;
+    }
+
+    .score{
+        font-size:28px;
+    }
+
+    .result-info h3{
+        font-size:16px;
+    }
+
+    .questions{
+        max-height:none;
+    }
+
+    .meta-grid{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:480px){
+
+    .left{
+        min-height:230px;
+        padding:24px;
+    }
+
+    .left h1{
+        font-size:29px;
+    }
+
+    .left p{
+        font-size:12px;
+    }
+
+    .right{
+        padding:17px;
+    }
+
+    .scan-title h2{
+        font-size:19px;
+    }
+
+    .top-result{
+        grid-template-columns:100px 1fr;
+        gap:10px;
+    }
+
+    .score-box{
+        width:100px;
+        height:100px;
+    }
+
+    .score-box:before{
+        width:80px;
+        height:80px;
+    }
+
+    .score{
+        font-size:25px;
+    }
+
+    .score-label{
+        font-size:8px;
+    }
+
+    .verdict{
+        font-size:8px;
+        padding:5px 8px;
+    }
+
+    .result-info h3{
+        font-size:14px;
+    }
+
+    .result-phone{
+        font-size:10px;
+    }
+
+    .confidence{
+        font-size:8px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="logo">
+            <img
+                src="logo.jpeg"
+                alt="SAFNEX NOVA"
+            >
+        </div>
+
+        SAFNEX <span>NOVA</span>
+
+    </div>
+
+    <div class="header-label">
+        AI PHONE INTELLIGENCE
+    </div>
+
+</header>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+<div class="container">
+
+    <!-- ================= LEFT ================= -->
+
+    <section class="left">
+
+        <div class="badge">
+            SAFNEX NOVA PHONE DETECTOR
+        </div>
+
+        <h1>
+            Know what a
+            <span>phone number</span>
+            really means.
+        </h1>
+
+        <p>
+            Enter a phone number and SAFNEX NOVA
+            analyzes its available information, country,
+            number type and safety indicators.
+        </p>
+
+        <div class="features">
+
+            <div class="feature">
+                <div class="feature-icon">✓</div>
+                Phone number validation
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">◎</div>
+                Country and calling code detection
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">◆</div>
+                Number type detection
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                Safety signal detection
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= RIGHT ================= -->
+
+    <section class="right">
+
+        <div class="scan-title">
+
+            <h2>
+                Analyze a phone number
+            </h2>
+
+            <div class="status">
+                PHONE ANALYSIS
+            </div>
+
+        </div>
+
+        <p class="subtitle">
+            Enter a phone number with country code when possible.
+        </p>
+
+
+        <!-- ================= INPUT ================= -->
+
+        <div class="input-wrap">
+
+            <input
+                id="phoneInput"
+                class="phone-input"
+                type="tel"
+                placeholder="+91 9876543210"
+                autocomplete="off"
+            >
+
+            <button
+                id="analyzeBtn"
+                class="analyze-btn"
+            >
+                ANALYZE NUMBER
+            </button>
+
+        </div>
+
+
+        <!-- ================= EXAMPLES ================= -->
+
+        <div class="examples">
+
+            <button
+                class="example"
+                data-phone="+12025550147"
+            >
+                USA Example
+            </button>
+
+            <button
+                class="example"
+                data-phone="+919876543210"
+            >
+                India
+            </button>
+
+            <button
+                class="example"
+                data-phone="+447911123456"
+            >
+                UK
+            </button>
+
+            <button
+                class="example"
+                data-phone="+61412345678"
+            >
+                Australia
+            </button>
+
+        </div>
+
+
+        <!-- ================= ERROR ================= -->
+
+        <div
+            id="errorBox"
+            class="error-box"
+        ></div>
+
+
+        <!-- ================= LOADING ================= -->
+
+        <div
+            id="loading"
+            class="loading"
+        >
+
+            <div class="spinner"></div>
+
+            Analyzing phone number...
+
+        </div>
+
+
+        <!-- ================= EMPTY ================= -->
+
+        <div
+            id="empty"
+            class="empty"
+        >
+
+            <div class="empty-inner">
+
+                <div class="empty-icon">
+                    ☎
+                </div>
+
+                <h3>
+                    Ready to analyze
+                </h3>
+
+                <p>
+                    Enter a phone number above.
+                    SAFNEX NOVA will analyze the available
+                    number information and safety signals.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= RESULTS ================= -->
+
+        <div
+            id="results"
+            class="results"
+        >
+
+            <!-- TOP RESULT -->
+
+            <div class="top-result">
+
+                <div
+                    id="scoreBox"
+                    class="score-box"
+                >
+
+                    <div class="score-content">
+
+                        <div
+                            id="score"
+                            class="score"
+                        >
+                            —
+                        </div>
+
+                        <div class="score-label">
+                            SAFETY SCORE
+                        </div>
+
+                        <div
+                            id="verdict"
+                            class="verdict"
+                        >
+                            UNVERIFIED
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="result-info">
+
+                    <h3 id="resultName">
+                        Phone Number
+                    </h3>
+
+                    <div
+                        id="resultPhone"
+                        class="result-phone"
+                    >
+                        -
+                    </div>
+
+                    <div
+                        id="confidence"
+                        class="confidence"
+                    >
+                        Analysis confidence: Low
+                    </div>
+
+                    <div
+                        id="unverified"
+                        class="unverified"
+                        style="display:none;"
+                    >
+                        Analysis could not be fully verified.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- THREE QUESTIONS -->
+
+            <div class="questions">
+
+                <div class="question">
+
+                    <div class="question-title">
+                        01 · What type of number is this?
+                    </div>
+
+                    <div
+                        id="answerType"
+                        class="question-answer"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="question">
+
+                    <div class="question-title">
+                        02 · What information was found?
+                    </div>
+
+                    <div
+                        id="answerInfo"
+                        class="question-answer"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="question why">
+
+                    <div class="question-title">
+                        03 · Why did SAFNEX NOVA give this score?
+                    </div>
+
+                    <div
+                        id="answerWhy"
+                        class="question-answer"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PHONE INFORMATION -->
+
+            <div
+                id="metaGrid"
+                class="meta-grid"
+            >
+
+                <div class="meta-item">
+
+                    <div class="meta-label">
+                        Country
+                    </div>
+
+                    <div
+                        id="metaCountry"
+                        class="meta-value"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="meta-item">
+
+                    <div class="meta-label">
+                        Calling Code
+                    </div>
+
+                    <div
+                        id="metaRegion"
+                        class="meta-value"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="meta-item">
+
+                    <div class="meta-label">
+                        Number Type
+                    </div>
+
+                    <div
+                        id="metaCarrier"
+                        class="meta-value"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="meta-item">
+
+                    <div class="meta-label">
+                        Validity
+                    </div>
+
+                    <div
+                        id="metaType"
+                        class="meta-value"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TECHNICAL DETAILS -->
+
+            <details class="tech">
+
+                <summary>
+                    TECHNICAL DETAILS
+                </summary>
+
+                <div class="tech-grid">
+
+                    <div class="tech-item">
+                        <strong>Input:</strong>
+                        <span id="techInput">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>E.164:</strong>
+                        <span id="techInternational">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>Country Code:</strong>
+                        <span id="techCountryCode">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>National:</strong>
+                        <span id="techNational">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>Valid:</strong>
+                        <span id="techValid">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>Possible:</strong>
+                        <span id="techPossible">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>Source:</strong>
+                        <span id="techSource">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>Status:</strong>
+                        <span id="techStatus">-</span>
+                    </div>
+
+                </div>
+
+            </details>
+
+        </div>
+
+    </section>
+
+</div>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   SAFNEX NOVA PHONE SERVER
+   YOUR phone-server.js USES PORT 4000
+========================================================= */
+
+const API_URL =
+    window.SAFNEX_PHONE_API_URL ||
+    "http://localhost:4000/api/phone-check";
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const phoneInput =
+    document.getElementById("phoneInput");
+
+const analyzeBtn =
+    document.getElementById("analyzeBtn");
+
+const empty =
+    document.getElementById("empty");
+
+const results =
+    document.getElementById("results");
+
+const loading =
+    document.getElementById("loading");
+
+const errorBox =
+    document.getElementById("errorBox");
+
+const unverified =
+    document.getElementById("unverified");
+
+
+/* =========================================================
+   SAFE TEXT
+========================================================= */
+
+function safeText(
+    value,
+    fallback = "-"
+){
+
+    if(
+        value === undefined ||
+        value === null ||
+        String(value).trim() === ""
+    ){
+        return fallback;
+    }
+
+    return String(value);
+}
+
+
+/* =========================================================
+   NORMALIZE PHONE
+========================================================= */
+
+function normalizePhone(value){
+
+    value =
+        String(value || "")
+        .trim();
+
+    if(!value){
+
+        throw new Error(
+            "Please enter a phone number."
+        );
+
+    }
+
+    const cleaned =
+        value.replace(
+            /[^\d+]/g,
+            ""
+        );
+
+    if(!cleaned){
+
+        throw new Error(
+            "Please enter a valid phone number."
+        );
+
+    }
+
+    const digits =
+        cleaned.replace(
+            /\D/g,
+            ""
+        );
+
+    if(
+        digits.length < 7 ||
+        digits.length > 15
+    ){
+
+        throw new Error(
+            "Please enter a valid phone number."
+        );
+
+    }
+
+    return cleaned;
+}
+
+
+/* =========================================================
+   SCORE COLOR
+========================================================= */
+
+function getScoreColor(score){
+
+    if(score >= 80){
+        return "#13a673";
+    }
+
+    if(score >= 60){
+        return "#ed9b28";
+    }
+
+    return "#e64d61";
+}
+
+
+/* =========================================================
+   VERDICT STYLE
+========================================================= */
+
+function setVerdictStyle(
+    element,
+    verdict
+){
+
+    const v =
+        String(verdict || "")
+        .toUpperCase();
+
+
+    if(
+        v.includes("HIGH") ||
+        v.includes("RISK") ||
+        v.includes("INVALID") ||
+        v.includes("DANGER")
+    ){
+
+        element.style.background =
+            "#fff0f2";
+
+        element.style.color =
+            "#e04f5f";
+
+    }
+
+    else if(
+        v.includes("MEDIUM") ||
+        v.includes("REVIEW") ||
+        v.includes("SUSPICIOUS") ||
+        v.includes("ELEVATED")
+    ){
+
+        element.style.background =
+            "#fff5e8";
+
+        element.style.color =
+            "#bd7617";
+
+    }
+
+    else{
+
+        element.style.background =
+            "#eaf9f2";
+
+        element.style.color =
+            "#13a673";
+
+    }
+
+}
+
+
+/* =========================================================
+   FIRST VALUE
+========================================================= */
+
+function firstValue(
+    object,
+    paths,
+    fallback = "-"
+){
+
+    for(
+        const path of paths
+    ){
+
+        const parts =
+            path.split(".");
+
+        let value =
+            object;
+
+        for(
+            const part of parts
+        ){
+
+            if(
+                value === undefined ||
+                value === null
+            ){
+
+                value =
+                    undefined;
+
+                break;
+
+            }
+
+            value =
+                value[part];
+
+        }
+
+        if(
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ""
+        ){
+
+            return value;
+
+        }
+
+    }
+
+    return fallback;
+}
+
+
+/* =========================================================
+   BACKEND REQUEST
+========================================================= */
+
+async function analyzeWithBackend(
+    phone
+){
+
+    const response =
+        await fetch(
+            API_URL,
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify({
+                        phone:phone,
+                        country:"IN"
+                    })
+            }
+        );
+
+
+    let data;
+
+
+    try{
+
+        data =
+            await response.json();
+
+    }
+
+    catch(error){
+
+        throw new Error(
+            "Phone server returned an invalid response."
+        );
+
+    }
+
+
+    if(!response.ok){
+
+        throw new Error(
+            data?.error ||
+            "Phone analysis failed. HTTP " +
+            response.status
+        );
+
+    }
+
+
+    return data;
+
+}
+
+
+/* =========================================================
+   CREATE ANSWERS
+========================================================= */
+
+function createAnswers(
+    result
+){
+
+    const phone =
+        result.phone || {};
+
+
+    const type =
+        firstValue(
+            result,
+            [
+                "phone.type",
+                "type",
+                "numberType"
+            ],
+            "Unknown"
+        );
+
+
+    const country =
+        firstValue(
+            result,
+            [
+                "phone.country",
+                "country"
+            ],
+            "Unknown"
+        );
+
+
+    const callingCode =
+        firstValue(
+            result,
+            [
+                "phone.callingCode",
+                "callingCode",
+                "countryCode"
+            ],
+            ""
+        );
+
+
+    const valid =
+        result.phone?.valid;
+
+
+    const possible =
+        result.phone?.possible;
+
+
+    let info =
+        "Country: " +
+        country;
+
+
+    if(callingCode){
+
+        info +=
+            ". Calling code: " +
+            callingCode;
+
+    }
+
+
+    if(valid === true){
+
+        info +=
+            ". The number matches the detected country's numbering rules.";
+
+    }
+
+    else if(possible === true){
+
+        info +=
+            ". The number has a possible numbering structure but is not confirmed as valid.";
+
+    }
+
+    else{
+
+        info +=
+            ". The supplied number does not match the expected valid structure.";
+
+    }
+
+
+    const indicators =
+        Array.isArray(
+            result.indicators
+        )
+            ? result.indicators
+            : [];
+
+
+    const warnings =
+        indicators
+            .filter(
+                item =>
+                    item.level === "warning" ||
+                    item.level === "danger"
+            )
+            .map(
+                item =>
+                    item.title
+            )
+            .filter(Boolean);
+
+
+    let why =
+        "SAFNEX NOVA evaluated the number's numbering structure, validity and possible risk signals.";
+
+
+    if(warnings.length){
+
+        why =
+            "SAFNEX NOVA detected: " +
+            warnings.join(", ") +
+            ".";
+
+    }
+
+
+    return {
+
+        type:
+            type,
+
+        info:
+            info,
+
+        why:
+            why
+
+    };
+
+}
+
+
+/* =========================================================
+   DISPLAY RESULT
+========================================================= */
+
+function displayResults(
+    result,
+    phone
+){
+
+    const rawScore =
+        result.securityScore;
+
+
+    const hasScore =
+        rawScore !== undefined &&
+        rawScore !== null &&
+        Number.isFinite(
+            Number(rawScore)
+        );
+
+
+    const score =
+        hasScore
+            ? Math.max(
+                0,
+                Math.min(
+                    100,
+                    Math.round(
+                        Number(rawScore)
+                    )
+                )
+            )
+            : null;
+
+
+    const verdict =
+        result.verdict ||
+        result.riskLevel ||
+        "UNVERIFIED";
+
+
+    const confidence =
+        result.confidence ||
+        "Low";
+
+
+    const answers =
+        createAnswers(
+            result
+        );
+
+
+    /* ================= STATE ================= */
+
+    empty.style.display =
+        "none";
+
+    loading.classList.remove(
+        "show"
+    );
+
+    errorBox.classList.remove(
+        "show"
+    );
+
+    results.classList.add(
+        "show"
+    );
+
+
+    /* ================= SCORE ================= */
+
+    document.getElementById(
+        "score"
+    ).textContent =
+        score === null
+            ? "—"
+            : score;
+
+
+    /* ================= VERDICT ================= */
+
+    const verdictElement =
+        document.getElementById(
+            "verdict"
+        );
+
+
+    verdictElement.textContent =
+        verdict;
+
+
+    setVerdictStyle(
+        verdictElement,
+        verdict
+    );
+
+
+    /* ================= SCORE CIRCLE ================= */
+
+    const scoreBox =
+        document.getElementById(
+            "scoreBox"
+        );
+
+
+    if(score === null){
+
+        scoreBox.style.background =
+            "conic-gradient(#b8c3d4 0deg,#e9eef5 0deg)";
+
+    }
+
+    else{
+
+        const color =
+            getScoreColor(
+                score
+            );
+
+        const degrees =
+            score * 3.6;
+
+        scoreBox.style.background =
+            "conic-gradient(" +
+            color +
+            " " +
+            degrees +
+            "deg,#e9eef5 " +
+            degrees +
+            "deg)";
+
+    }
+
+
+    /* ================= RESULT NAME ================= */
+
+    const type =
+        result.phone?.type ||
+        "Phone Number";
+
+
+    document.getElementById(
+        "resultName"
+    ).textContent =
+        type;
+
+
+    /* ================= PHONE ================= */
+
+    document.getElementById(
+        "resultPhone"
+    ).textContent =
+        phone;
+
+
+    /* ================= CONFIDENCE ================= */
+
+    document.getElementById(
+        "confidence"
+    ).textContent =
+        "Analysis confidence: " +
+        confidence;
+
+
+    /* ================= UNVERIFIED ================= */
+
+    if(score === null){
+
+        unverified.style.display =
+            "block";
+
+    }
+
+    else{
+
+        unverified.style.display =
+            "none";
+
+    }
+
+
+    /* ================= QUESTIONS ================= */
+
+    document.getElementById(
+        "answerType"
+    ).textContent =
+        answers.type;
+
+
+    document.getElementById(
+        "answerInfo"
+    ).textContent =
+        answers.info;
+
+
+    document.getElementById(
+        "answerWhy"
+    ).textContent =
+        answers.why;
+
+
+    /* ================= META ================= */
+
+    document.getElementById(
+        "metaCountry"
+    ).textContent =
+        safeText(
+            result.phone?.country
+        );
+
+
+    document.getElementById(
+        "metaRegion"
+    ).textContent =
+        safeText(
+            result.phone?.callingCode
+        );
+
+
+    document.getElementById(
+        "metaCarrier"
+    ).textContent =
+        safeText(
+            result.phone?.type
+        );
+
+
+    document.getElementById(
+        "metaType"
+    ).textContent =
+        result.phone?.valid === true
+            ? "VALID"
+            : result.phone?.possible === true
+                ? "POSSIBLE"
+                : "INVALID";
+
+
+    /* ================= TECHNICAL ================= */
+
+    document.getElementById(
+        "techInput"
+    ).textContent =
+        safeText(
+            result.input,
+            phone
+        );
+
+
+    document.getElementById(
+        "techInternational"
+    ).textContent =
+        safeText(
+            result.phone?.e164
+        );
+
+
+    document.getElementById(
+        "techCountryCode"
+    ).textContent =
+        safeText(
+            result.phone?.callingCode
+        );
+
+
+    document.getElementById(
+        "techNational"
+    ).textContent =
+        safeText(
+            result.phone?.nationalFormat
+        );
+
+
+    document.getElementById(
+        "techValid"
+    ).textContent =
+        safeText(
+            result.phone?.valid
+        );
+
+
+    document.getElementById(
+        "techPossible"
+    ).textContent =
+        safeText(
+            result.phone?.possible
+        );
+
+
+    document.getElementById(
+        "techSource"
+    ).textContent =
+        "libphonenumber-js";
+
+
+    document.getElementById(
+        "techStatus"
+    ).textContent =
+        result.detected === false
+            ? "Not detected"
+            : "Analyzed";
+
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+function showError(
+    message
+){
+
+    loading.classList.remove(
+        "show"
+    );
+
+    results.classList.remove(
+        "show"
+    );
+
+    empty.style.display =
+        "flex";
+
+
+    errorBox.textContent =
+        message ||
+        "Phone analysis failed.";
+
+
+    errorBox.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   ANALYZE
+========================================================= */
+
+async function analyze(){
+
+    const raw =
+        phoneInput.value.trim();
+
+
+    if(!raw){
+
+        showError(
+            "Please enter a phone number."
+        );
+
+        phoneInput.focus();
+
+        return;
+
+    }
+
+
+    let phone;
+
+
+    try{
+
+        phone =
+            normalizePhone(
+                raw
+            );
+
+    }
+
+    catch(error){
+
+        showError(
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    /* ================= LOADING ================= */
+
+    empty.style.display =
+        "none";
+
+    results.classList.remove(
+        "show"
+    );
+
+    errorBox.classList.remove(
+        "show"
+    );
+
+    loading.classList.add(
+        "show"
+    );
+
+
+    analyzeBtn.disabled =
+        true;
+
+    analyzeBtn.textContent =
+        "ANALYZING...";
+
+
+    try{
+
+        const result =
+            await analyzeWithBackend(
+                phone
+            );
+
+
+        displayResults(
+            result,
+            phone
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Phone analysis error:",
+            error
+        );
+
+
+        showError(
+            error.message ||
+            "Unable to connect to the phone server."
+        );
+
+    }
+
+    finally{
+
+        loading.classList.remove(
+            "show"
+        );
+
+        analyzeBtn.disabled =
+            false;
+
+        analyzeBtn.textContent =
+            "ANALYZE NUMBER";
+
+    }
+
+}
+
+
+/* =========================================================
+   ANALYZE BUTTON
+========================================================= */
+
+analyzeBtn.addEventListener(
+    "click",
+    analyze
+);
+
+
+/* =========================================================
+   ENTER KEY
+========================================================= */
+
+phoneInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key === "Enter"
+        ){
+
+            analyze();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   EXAMPLE BUTTONS
+========================================================= */
+
+document.querySelectorAll(
+    ".example"
+).forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            function(){
+
+                phoneInput.value =
+                    this.dataset.phone;
+
+                analyze();
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   URL SUPPORT
+
+   phonenumber-detect.html?phone=+12025550147
+========================================================= */
+
+(function(){
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const queryPhone =
+        params.get(
+            "phone"
+        );
+
+
+    if(queryPhone){
+
+        phoneInput.value =
+            queryPhone;
+
+        setTimeout(
+            analyze,
+            150
+        );
+
+    }
+
+})();
+
+</script>
+
+</body>
+</html>

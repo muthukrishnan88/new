@@ -1,0 +1,25 @@
+{
+  "name": "safnex-nova-link-analyzer",
+  "version": "1.0.0",
+  "description": "SAFNEX NOVA AI Link and Website Analyzer",
+  "type": "module",
+  "main": "link_server.js",
+  "scripts": {
+    "start": "node link_server.js",
+    "dev": "node --watch link_server.js",
+    "start:phone": "node phone-server.js",
+    "dev:phone": "node --watch phone-server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^5.2.1",
+    "libphonenumber-js": "^1.13.12",
+    "mongodb": "^7.6.0",
+    "openai": "^6.0.0",
+    "twilio": "^6.1.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

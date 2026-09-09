@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAFNEX NOVA | QR Intelligence</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#f4f7fc;--navy:#07152d;--blue:#356dff;--cyan:#27c7ff;
+--text:#101a2f;--muted:#71809a;--border:#dfe6f1;
+--white:#fff;--green:#13a673;--red:#e64d61
+}
+html,body{width:100%;min-height:100%}
+body{
+font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);
+background:radial-gradient(circle at 80% 10%,rgba(53,109,255,.12),transparent 28%),
+linear-gradient(135deg,#f8faff,#eef3fb)
+}
+.header{
+height:70px;background:rgba(7,21,45,.97);display:flex;align-items:center;
+justify-content:space-between;padding:0 34px;color:#fff
+}
+.brand{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:800;letter-spacing:.8px}
+.brand span{color:#55cfff}
+.logo{width:42px;height:42px;border-radius:50%;overflow:hidden;background:#fff;
+display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,.3)}
+.logo img{width:100%;height:100%;object-fit:cover}
+.header-label{font-size:11px;font-weight:700;letter-spacing:1.5px;color:#9eb2d5}
+.main{min-height:calc(100vh - 70px);padding:28px 38px;display:flex;align-items:center;justify-content:center}
+.container{width:min(1180px,100%);min-height:650px;display:grid;grid-template-columns:42% 58%;gap:22px}
+.left{
+background:radial-gradient(circle at 20% 10%,rgba(39,199,255,.18),transparent 30%),
+linear-gradient(145deg,var(--navy),#102d58);border-radius:24px;padding:42px;color:#fff;
+display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;
+box-shadow:0 25px 60px rgba(7,21,45,.18)
+}
+.left:after{content:"";position:absolute;width:280px;height:280px;border:1px solid rgba(255,255,255,.08);
+border-radius:50%;right:-130px;bottom:-120px}
+.badge{display:inline-flex;width:max-content;padding:7px 12px;border-radius:30px;
+background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);color:#8fdfff;
+font-size:10px;font-weight:800;letter-spacing:1.4px;margin-bottom:20px}
+.left h1{font-size:clamp(30px,3.3vw,49px);line-height:1.06;letter-spacing:-1.7px;margin-bottom:18px}
+.left h1 span{color:#53d2ff}
+.left p{color:#b9c9e3;line-height:1.65;font-size:14px;max-width:470px}
+.features{margin-top:30px;display:grid;gap:12px}
+.feature{display:flex;align-items:center;gap:11px;color:#dce7f7;font-size:13px}
+.feature-icon{width:28px;height:28px;border-radius:9px;background:rgba(255,255,255,.08);
+display:flex;align-items:center;justify-content:center;color:#55d4ff}
+.right{
+background:#fff;border:1px solid var(--border);border-radius:24px;
+box-shadow:0 25px 60px rgba(20,40,80,.09);padding:30px;display:flex;flex-direction:column;min-width:0
+}
+.scan-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.scan-title h2{font-size:22px;letter-spacing:-.5px}
+.status{font-size:10px;font-weight:800;color:#58708e;background:#f1f5fa;padding:7px 10px;border-radius:20px}
+.subtitle{color:var(--muted);font-size:13px;margin-bottom:20px}
+.upload-area{
+position:relative;width:100%;min-height:145px;border:1.5px dashed #cbd7e8;border-radius:16px;
+background:#f9fbfe;display:flex;align-items:center;justify-content:center;text-align:center;
+cursor:pointer;transition:.2s ease;margin-bottom:18px
+}
+.upload-area:hover{border-color:var(--blue);background:#f5f8ff;transform:translateY(-1px)}
+.upload-area.dragover{border-color:var(--blue);background:#eef4ff;box-shadow:0 0 0 4px rgba(53,109,255,.08)}
+.upload-content{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px}
+.upload-icon,.empty-icon{width:52px;height:52px;border-radius:16px;background:#eaf1ff;color:var(--blue);
+display:flex;align-items:center;justify-content:center;font-size:24px}
+.upload-title{font-size:13px;font-weight:800}
+.upload-subtitle{font-size:10px;color:var(--muted)}
+#qrInput{display:none}
+.upload-btn,.action-btn{
+border:none;height:42px;padding:0 17px;border-radius:11px;background:linear-gradient(135deg,var(--blue),#4c8aff);
+color:#fff;font-size:10px;font-weight:900;letter-spacing:.7px;cursor:pointer;
+box-shadow:0 8px 18px rgba(53,109,255,.2);margin-top:5px
+}
+.preview{display:none;margin-bottom:18px}
+.preview.show{display:flex;align-items:center;gap:12px}
+.preview-image{width:58px;height:58px;border-radius:11px;object-fit:cover;border:1px solid var(--border)}
+.preview-info{min-width:0}
+.preview-name{font-size:11px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preview-size{font-size:9px;color:var(--muted);margin-top:4px}
+.empty{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted)}
+.empty-inner{max-width:420px}
+.empty-icon{margin:0 auto 13px}
+.empty h3{font-size:16px;margin-bottom:6px}
+.empty p,.not-qr p{font-size:12px;line-height:1.6}
+.results{display:none;flex:1;min-height:0}
+.results.show{display:flex;flex-direction:column}
+.qr-result{border:1px solid var(--border);border-radius:15px;background:#fafcff;padding:16px;margin-bottom:12px}
+.qr-result-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}
+.detected{display:flex;align-items:center;gap:8px;color:var(--green);font-size:10px;font-weight:900;letter-spacing:.6px}
+.detected-icon{width:25px;height:25px;border-radius:8px;background:#eaf9f2;display:flex;align-items:center;justify-content:center}
+.type-badge{font-size:9px;font-weight:900;color:var(--blue);background:#eaf1ff;padding:6px 9px;border-radius:8px}
+.content-label{font-size:9px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.content-value{color:var(--text);font-size:13px;line-height:1.5;word-break:break-word;background:#fff;
+border:1px solid var(--border);border-radius:10px;padding:10px 11px;max-height:105px;overflow:auto}
+.action-btn{width:100%;height:44px;margin:0 0 10px}
+.secondary-btn{width:100%;height:40px;border:1px solid var(--border);border-radius:10px;background:#fff;
+color:#52637c;font-size:10px;font-weight:800;cursor:pointer}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.info-card{border:1px solid var(--border);border-radius:11px;padding:10px;background:#fafcff}
+.info-title{font-size:8px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.info-value{font-size:11px;font-weight:750}
+.not-qr{display:none;flex:1;align-items:center;justify-content:center;text-align:center}
+.not-qr.show{display:flex}
+.not-qr-inner{max-width:400px}
+.not-qr-icon{width:65px;height:65px;border-radius:20px;background:#fff0f2;color:var(--red);
+display:flex;align-items:center;justify-content:center;font-size:27px;margin:0 auto 14px}
+.not-qr h3{font-size:17px;margin-bottom:7px}
+.scan-loading{display:none;flex:1;align-items:center;justify-content:center;text-align:center}
+.scan-loading.show{display:flex}
+.scanner{width:100px;height:100px;margin:0 auto 18px;border:2px solid #dce7f8;border-radius:22px;position:relative;overflow:hidden;background:#f8faff}
+.scanner:before,.scanner:after{content:"";position:absolute;width:17px;height:17px;border-color:var(--blue);border-style:solid}
+.scanner:before{top:12px;left:12px;border-width:3px 0 0 3px}
+.scanner:after{right:12px;bottom:12px;border-width:0 3px 3px 0}
+.scan-line{position:absolute;left:8px;right:8px;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+box-shadow:0 0 12px rgba(39,199,255,.7);animation:scanMove 1.5s ease-in-out infinite}
+@keyframes scanMove{0%{top:10px}50%{top:88px}100%{top:10px}}
+.loading-title{font-size:16px;font-weight:850;margin-bottom:6px}.loading-text{font-size:11px;color:var(--muted)}
+.tech{margin-top:10px}.tech summary{cursor:pointer;font-size:10px;font-weight:800;color:#65748c;padding:8px 0}
+.tech-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:100px;overflow:auto}
+.tech-item{background:#f5f7fa;border-radius:7px;padding:6px 8px;font-size:9px;color:#67758a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tech-item strong{color:#25334a}
+@media(max-width:850px){
+.header{height:62px;padding:0 17px}.brand{font-size:16px}.logo{width:36px;height:36px}.header-label{display:none}
+.main{min-height:calc(100vh - 62px);padding:14px}.container{min-height:0;grid-template-columns:1fr}
+.left{min-height:260px;padding:28px;border-radius:20px}.left h1{font-size:34px}.features{display:none}
+.right{min-height:560px;border-radius:20px;padding:20px}.upload-area{min-height:150px}.info-grid{grid-template-columns:1fr}
+}
+@media(max-width:390px){.left{min-height:230px;padding:22px}.left h1{font-size:30px}.right{padding:17px}}
+</style>
+</head>
+
+<body>
+<header class="header">
+<div class="brand">
+<div class="logo"><img src="logo.jpeg" alt="SAFNEX NOVA"></div>
+SAFNEX <span>NOVA</span>
+</div>
+<div class="header-label">QR INTELLIGENCE</div>
+</header>
+
+<main class="main">
+<div class="container">
+
+<section class="left">
+<div class="badge">SAFNEX NOVA QR DETECTOR</div>
+<h1>Know what is <span>inside a QR code.</span></h1>
+<p>Upload a QR code image and SAFNEX NOVA identifies what it contains before you decide what to do with it.</p>
+<div class="features">
+<div class="feature"><div class="feature-icon">✓</div>QR content detection</div>
+<div class="feature"><div class="feature-icon">◎</div>Content type identification</div>
+<div class="feature"><div class="feature-icon">◆</div>Safe content preview</div>
+<div class="feature"><div class="feature-icon">⚡</div>Smart next-action detection</div>
+</div>
+</section>
+
+<section class="right">
+<div class="scan-title">
+<h2>Analyze a QR code</h2>
+<div class="status">QR ANALYSIS</div>
+</div>
+<p class="subtitle">Upload an image containing a QR code.</p>
+
+<label class="upload-area" id="uploadArea" for="qrInput">
+<div class="upload-content">
+<div class="upload-icon">▣</div>
+<div class="upload-title">Upload QR Code</div>
+<div class="upload-subtitle">JPG • PNG • WEBP</div>
+<button type="button" class="upload-btn" id="uploadButton">CHOOSE IMAGE</button>
+</div>
+<input id="qrInput" type="file" accept="image/png,image/jpeg,image/webp">
+</label>
+
+<div id="preview" class="preview">
+<img id="previewImage" class="preview-image" alt="Uploaded QR image">
+<div class="preview-info">
+<div id="previewName" class="preview-name">-</div>
+<div id="previewSize" class="preview-size">-</div>
+</div>
+</div>
+
+<div id="scanLoading" class="scan-loading">
+<div class="loading-inner">
+<div class="scanner"><div class="scan-line"></div></div>
+<div class="loading-title">Reading QR code</div>
+<div class="loading-text">SAFNEX NOVA is checking the uploaded image.</div>
+</div>
+</div>
+
+<div id="empty" class="empty">
+<div class="empty-inner">
+<div class="empty-icon">▣</div>
+<h3>Ready to analyze</h3>
+<p>Upload a QR code image. SAFNEX NOVA will first determine whether a QR code is present and then identify what it contains.</p>
+</div>
+</div>
+
+<div id="notQr" class="not-qr">
+<div class="not-qr-inner">
+<div class="not-qr-icon">×</div>
+<h3>No QR code detected</h3>
+<p>This image does not appear to contain a readable QR code. Try uploading a clearer image with the complete QR code visible.</p>
+<br>
+<button class="secondary-btn" id="tryAgainBtn">TRY ANOTHER IMAGE</button>
+</div>
+</div>
+
+<div id="results" class="results">
+<div class="qr-result">
+<div class="qr-result-head">
+<div class="detected"><div class="detected-icon">✓</div>QR CODE DETECTED</div>
+<div id="typeBadge" class="type-badge">UNKNOWN</div>
+</div>
+<div class="content-label">DETECTED CONTENT</div>
+<div id="contentValue" class="content-value">-</div>
+</div>
+
+<div id="actionContainer">
+<button id="actionBtn" class="action-btn">VIEW FULL REPORT →</button>
+<button id="copyBtn" class="secondary-btn">COPY CONTENT</button>
+</div>
+
+<div class="info-grid">
+<div class="info-card">
+<div class="info-title">QR Type</div>
+<div id="infoType" class="info-value">-</div>
+</div>
+<div class="info-card">
+<div class="info-title">Status</div>
+<div id="infoStatus" class="info-value">Detected</div>
+</div>
+</div>
+
+<details class="tech">
+<summary>TECHNICAL DETAILS</summary>
+<div class="tech-grid">
+<div class="tech-item"><strong>Format:</strong> <span>QR Code</span></div>
+<div class="tech-item"><strong>Type:</strong> <span id="techType">-</span></div>
+<div class="tech-item"><strong>Image:</strong> <span id="techImage">-</span></div>
+<div class="tech-item"><strong>Decoded:</strong> <span>Yes</span></div>
+</div>
+</details>
+</div>
+
+</section>
+</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+"use strict";
+
+const qrInput=document.getElementById("qrInput");
+const uploadArea=document.getElementById("uploadArea");
+const uploadButton=document.getElementById("uploadButton");
+const preview=document.getElementById("preview");
+const previewImage=document.getElementById("previewImage");
+const previewName=document.getElementById("previewName");
+const previewSize=document.getElementById("previewSize");
+const empty=document.getElementById("empty");
+const results=document.getElementById("results");
+const notQr=document.getElementById("notQr");
+const scanLoading=document.getElementById("scanLoading");
+const tryAgainBtn=document.getElementById("tryAgainBtn");
+const typeBadge=document.getElementById("typeBadge");
+const contentValue=document.getElementById("contentValue");
+const actionBtn=document.getElementById("actionBtn");
+const copyBtn=document.getElementById("copyBtn");
+const infoType=document.getElementById("infoType");
+const infoStatus=document.getElementById("infoStatus");
+const techImage=document.getElementById("techImage");
+const techType=document.getElementById("techType");
+
+let decodedContent="";
+let detectedType="";
+let currentObjectUrl=null;
+
+uploadButton.addEventListener("click",e=>{
+e.preventDefault();e.stopPropagation();qrInput.click();
+});
+
+qrInput.addEventListener("change",()=>{
+const file=qrInput.files&&qrInput.files[0];
+if(file) processImage(file);
+});
+
+uploadArea.addEventListener("dragover",e=>{
+e.preventDefault();uploadArea.classList.add("dragover");
+});
+
+uploadArea.addEventListener("dragleave",()=>{
+uploadArea.classList.remove("dragover");
+});
+
+uploadArea.addEventListener("drop",e=>{
+e.preventDefault();
+uploadArea.classList.remove("dragover");
+const file=e.dataTransfer.files&&e.dataTransfer.files[0];
+if(file) processImage(file);
+});
+
+function processImage(file){
+resetState();
+
+if(!file.type||!file.type.startsWith("image/")){
+showNotQR();
+return;
+}
+
+if(file.size>10*1024*1024){
+alert("Image is too large. Please upload an image below 10 MB.");
+return;
+}
+
+preview.classList.add("show");
+previewName.textContent=file.name;
+previewSize.textContent=formatFileSize(file.size);
+
+if(currentObjectUrl&&currentObjectUrl.startsWith("blob:")){
+URL.revokeObjectURL(currentObjectUrl);
+}
+
+currentObjectUrl=URL.createObjectURL(file);
+previewImage.src=currentObjectUrl;
+empty.style.display="none";
+scanLoading.classList.add("show");
+
+setTimeout(()=>decodeQR(currentObjectUrl,file.name),300);
+}
+
+function decodeQR(imageSource,fileName){
+if(!window.jsQR){
+scanLoading.classList.remove("show");
+showDecoderError();
+return;
+}
+
+const image=new Image();
+
+image.onload=()=>{
+try{
+const canvas=document.createElement("canvas");
+const context=canvas.getContext("2d",{willReadFrequently:true});
+if(!context){scanLoading.classList.remove("show");showNotQR();return;}
+
+const maxSize=1800;
+let width=image.naturalWidth;
+let height=image.naturalHeight;
+
+if(width>maxSize||height>maxSize){
+const scale=Math.min(maxSize/width,maxSize/height);
+width=Math.round(width*scale);
+height=Math.round(height*scale);
+}
+
+canvas.width=width;
+canvas.height=height;
+context.drawImage(image,0,0,width,height);
+
+const imageData=context.getImageData(0,0,width,height);
+const code=window.jsQR(
+imageData.data,imageData.width,imageData.height,
+{inversionAttempts:"attemptBoth"}
+);
+
+scanLoading.classList.remove("show");
+
+if(!code||!String(code.data||"").trim()){
+showNotQR();
+return;
+}
+
+decodedContent=String(code.data).trim();
+detectedType=detectQRType(decodedContent);
+showResult(decodedContent,detectedType,fileName);
+
+}catch(error){
+console.error("QR decode error:",error);
+scanLoading.classList.remove("show");
+showNotQR();
+}
+};
+
+image.onerror=()=>{
+scanLoading.classList.remove("show");
+showNotQR();
+};
+
+image.src=imageSource;
+}
+
+function detectQRType(data){
+const value=String(data||"").trim();
+
+if(/^https?:\/\/\S+/i.test(value))return"URL";
+if(/^tel:/i.test(value)||/^\+?[0-9][0-9\s().-]{6,}$/.test(value))return"PHONE";
+if(/^mailto:/i.test(value)||/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))return"EMAIL";
+if(/^geo:/i.test(value))return"LOCATION";
+if(/^BEGIN:VCARD/i.test(value))return"CONTACT";
+if(/^WIFI:/i.test(value))return"WIFI";
+if(/^upi:/i.test(value)||/^upi:\/\/pay/i.test(value)||/(?:^|[?&])(pa|pn|am|mc)=/i.test(value))return"UPI / PAYMENT";
+if(/^sms:/i.test(value)||/^SMSTO:/i.test(value))return"SMS";
+if(value.length>0)return"TEXT";
+return"UNKNOWN";
+}
+
+function showResult(data,type,fileName){
+empty.style.display="none";
+notQr.classList.remove("show");
+results.classList.add("show");
+
+typeBadge.textContent=type;
+contentValue.textContent=data;
+infoType.textContent=type;
+infoStatus.textContent="QR CODE DETECTED";
+techType.textContent=type;
+techImage.textContent=fileName||"QR image";
+
+actionBtn.textContent="VIEW FULL REPORT →";
+actionBtn.onclick=()=>openFullReport();
+}
+
+function openFullReport(){
+if(!decodedContent)return;
+
+const payload={
+data:decodedContent,
+type:detectedType,
+createdAt:Date.now()
+};
+
+try{
+sessionStorage.setItem("safnexQrResult",JSON.stringify(payload));
+}catch(error){
+console.warn("Unable to save QR result:",error);
+}
+
+window.location.href=
+"qr-content.html?type="+encodeURIComponent(detectedType)+
+"&data="+encodeURIComponent(decodedContent);
+}
+
+copyBtn.addEventListener("click",async()=>{
+if(!decodedContent)return;
+try{
+await navigator.clipboard.writeText(decodedContent);
+const old=copyBtn.textContent;
+copyBtn.textContent="COPIED ✓";
+setTimeout(()=>copyBtn.textContent=old,1400);
+}catch(error){
+alert("Unable to copy content.");
+}
+});
+
+function showNotQR(){
+empty.style.display="none";
+results.classList.remove("show");
+scanLoading.classList.remove("show");
+notQr.classList.add("show");
+}
+
+function showDecoderError(){
+empty.style.display="none";
+results.classList.remove("show");
+notQr.classList.add("show");
+notQr.querySelector("h3").textContent="QR decoder unavailable";
+notQr.querySelector("p").textContent=
+"The QR decoding library could not be loaded. Check your internet connection and try again.";
+}
+
+tryAgainBtn.addEventListener("click",()=>{
+resetState();
+qrInput.value="";
+empty.style.display="flex";
+});
+
+function resetState(){
+results.classList.remove("show");
+notQr.classList.remove("show");
+scanLoading.classList.remove("show");
+preview.classList.remove("show");
+decodedContent="";
+detectedType="";
+notQr.querySelector("h3").textContent="No QR code detected";
+notQr.querySelector("p").textContent=
+"This image does not appear to contain a readable QR code. Try uploading a clearer image with the complete QR code visible.";
+}
+
+function formatFileSize(bytes){
+if(!Number.isFinite(bytes)||bytes<=0)return"Unknown size";
+const units=["B","KB","MB","GB"];
+let index=0,size=bytes;
+while(size>=1024&&index<units.length-1){
+size/=1024;index++;
+}
+return size.toFixed(size>=10||index===0?0:1)+" "+units[index];
+}
+
+/* =========================================================
+   HOME -> QR DETECTOR AUTOMATIC RESTORE
+   The image is NOT displayed here.
+   The QR content is restored automatically.
+========================================================= */
+
+function loadFromHome(){
+let stored=null;
+
+try{
+const raw=sessionStorage.getItem("safnexQrResult");
+if(!raw)return;
+stored=JSON.parse(raw);
+}catch(error){
+console.warn("Unable to read QR session:",error);
+return;
+}
+
+if(!stored||!stored.data)return;
+
+decodedContent=String(stored.data).trim();
+detectedType=stored.type||detectQRType(decodedContent);
+
+empty.style.display="none";
+preview.classList.remove("show");
+scanLoading.classList.remove("show");
+notQr.classList.remove("show");
+
+showResult(
+decodedContent,
+detectedType,
+"Automatically loaded from Home"
+);
+
+/*
+ * Remove the session after loading so refreshing
+ * the detector page does not repeatedly restore
+ * an old QR result.
+ */
+try{
+sessionStorage.removeItem("safnexQrResult");
+}catch(error){}
+}
+
+window.addEventListener("DOMContentLoaded",loadFromHome);
+</script>
+</body>
+</html>

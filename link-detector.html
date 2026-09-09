@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SAFNEX NOVA | Link Intelligence</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#f4f7fc;
+    --navy:#07152d;
+    --navy2:#0c2042;
+    --blue:#356dff;
+    --cyan:#27c7ff;
+    --text:#101a2f;
+    --muted:#71809a;
+    --border:#dfe6f1;
+    --white:#ffffff;
+    --green:#13a673;
+    --orange:#ed9b28;
+    --red:#e64d61;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+    background:
+        radial-gradient(circle at 80% 10%,rgba(53,109,255,.12),transparent 28%),
+        linear-gradient(135deg,#f8faff,#eef3fb);
+    color:var(--text);
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    height:70px;
+    background:rgba(7,21,45,.97);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 34px;
+    color:white;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:.8px;
+}
+
+.brand span{
+    color:#55cfff;
+}
+
+.logo{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    overflow:hidden;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:2px solid rgba(255,255,255,.3);
+}
+
+.logo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.header-label{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    color:#9eb2d5;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    height:calc(100vh - 70px);
+    padding:28px 38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.container{
+    width:min(1180px,100%);
+    height:min(700px,calc(100vh - 120px));
+    display:grid;
+    grid-template-columns:42% 58%;
+    gap:22px;
+}
+
+/* ================= LEFT ================= */
+
+.left{
+    background:
+        radial-gradient(circle at 20% 10%,rgba(39,199,255,.18),transparent 30%),
+        linear-gradient(145deg,var(--navy),#102d58);
+    border-radius:24px;
+    padding:42px;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 25px 60px rgba(7,21,45,.18);
+}
+
+.left:after{
+    content:"";
+    position:absolute;
+    width:280px;
+    height:280px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:50%;
+    right:-130px;
+    bottom:-120px;
+}
+
+.badge{
+    display:inline-flex;
+    width:max-content;
+    padding:7px 12px;
+    border-radius:30px;
+    background:rgba(255,255,255,.09);
+    border:1px solid rgba(255,255,255,.12);
+    color:#8fdfff;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1.4px;
+    margin-bottom:20px;
+}
+
+.left h1{
+    font-size:clamp(30px,3.3vw,49px);
+    line-height:1.06;
+    letter-spacing:-1.7px;
+    margin-bottom:18px;
+}
+
+.left h1 span{
+    color:#53d2ff;
+}
+
+.left p{
+    color:#b9c9e3;
+    line-height:1.65;
+    font-size:14px;
+    max-width:470px;
+}
+
+.features{
+    margin-top:30px;
+    display:grid;
+    gap:12px;
+}
+
+.feature{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    color:#dce7f7;
+    font-size:13px;
+}
+
+.feature-icon{
+    width:28px;
+    height:28px;
+    border-radius:9px;
+    background:rgba(255,255,255,.08);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#55d4ff;
+}
+
+/* ================= RIGHT ================= */
+
+.right{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:24px;
+    box-shadow:0 25px 60px rgba(20,40,80,.09);
+    padding:30px;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+}
+
+.scan-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+}
+
+.scan-title h2{
+    font-size:22px;
+    letter-spacing:-.5px;
+}
+
+.status{
+    font-size:10px;
+    font-weight:800;
+    color:#58708e;
+    background:#f1f5fa;
+    padding:7px 10px;
+    border-radius:20px;
+}
+
+.subtitle{
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:20px;
+}
+
+/* ================= INPUT ================= */
+
+.input-wrap{
+    display:flex;
+    gap:9px;
+    margin-bottom:18px;
+}
+
+.url-input{
+    flex:1;
+    min-width:0;
+    height:48px;
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:0 15px;
+    font-size:13px;
+    outline:none;
+    background:#f9fbfe;
+    color:var(--text);
+    transition:.2s;
+}
+
+.url-input:focus{
+    border-color:var(--blue);
+    background:white;
+    box-shadow:0 0 0 4px rgba(53,109,255,.08);
+}
+
+.analyze-btn{
+    height:48px;
+    border:none;
+    border-radius:13px;
+    padding:0 19px;
+    background:linear-gradient(135deg,var(--blue),#4c8aff);
+    color:white;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.7px;
+    cursor:pointer;
+    box-shadow:0 10px 22px rgba(53,109,255,.22);
+}
+
+.analyze-btn:hover{
+    transform:translateY(-1px);
+}
+
+/* ================= EXAMPLES ================= */
+
+.examples{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+}
+
+.example{
+    border:1px solid var(--border);
+    background:#f8faff;
+    color:#63738d;
+    padding:6px 9px;
+    border-radius:8px;
+    font-size:10px;
+    cursor:pointer;
+}
+
+/* ================= EMPTY ================= */
+
+.empty{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    color:var(--muted);
+}
+
+.empty-inner{
+    max-width:420px;
+}
+
+.empty-icon{
+    width:58px;
+    height:58px;
+    border-radius:18px;
+    background:#eef4ff;
+    color:var(--blue);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    margin:0 auto 13px;
+}
+
+.empty h3{
+    color:var(--text);
+    font-size:16px;
+    margin-bottom:6px;
+}
+
+.empty p{
+    font-size:12px;
+    line-height:1.6;
+}
+
+/* ================= RESULTS ================= */
+
+.results{
+    display:none;
+    flex:1;
+    min-height:0;
+}
+
+.results.show{
+    display:flex;
+    flex-direction:column;
+}
+
+.top-result{
+    display:grid;
+    grid-template-columns:145px 1fr;
+    gap:18px;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.score-box{
+    width:145px;
+    height:145px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    background:conic-gradient(var(--green) 0deg,var(--green) 0deg,#e9eef5 0deg);
+}
+
+.score-box:before{
+    content:"";
+    position:absolute;
+    width:116px;
+    height:116px;
+    border-radius:50%;
+    background:white;
+}
+
+.score-content{
+    position:relative;
+    z-index:2;
+    text-align:center;
+}
+
+.score{
+    font-size:34px;
+    font-weight:900;
+    line-height:1;
+}
+
+.score-label{
+    font-size:9px;
+    font-weight:800;
+    color:var(--muted);
+    margin-top:4px;
+    letter-spacing:.7px;
+}
+
+.verdict{
+    display:inline-block;
+    margin-top:8px;
+    padding:6px 10px;
+    border-radius:20px;
+    background:#eaf9f2;
+    color:var(--green);
+    font-size:9px;
+    font-weight:900;
+}
+
+.result-info h3{
+    font-size:19px;
+    margin-bottom:6px;
+}
+
+.result-url{
+    color:var(--muted);
+    font-size:11px;
+    word-break:break-all;
+    line-height:1.5;
+}
+
+.confidence{
+    margin-top:10px;
+    display:inline-block;
+    font-size:9px;
+    font-weight:800;
+    padding:5px 8px;
+    border-radius:7px;
+    background:#fff5e8;
+    color:#bd7617;
+}
+
+/* ================= QUESTIONS ================= */
+
+.questions{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    overflow:auto;
+    padding-right:3px;
+}
+
+.question{
+    border:1px solid var(--border);
+    background:#fafcff;
+    border-radius:12px;
+    padding:11px 13px;
+}
+
+.question-title{
+    font-size:10px;
+    color:#73829a;
+    font-weight:800;
+    margin-bottom:4px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+}
+
+.question-answer{
+    font-size:12px;
+    color:var(--text);
+    font-weight:650;
+    line-height:1.45;
+}
+
+.why{
+    border-color:#dce7ff;
+    background:#f5f8ff;
+}
+
+.why .question-answer{
+    color:#3153a5;
+}
+
+/* ================= TECHNICAL ================= */
+
+.tech{
+    margin-top:10px;
+}
+
+.tech summary{
+    cursor:pointer;
+    font-size:10px;
+    font-weight:800;
+    color:#65748c;
+    padding:8px 0;
+}
+
+.tech-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    max-height:100px;
+    overflow:auto;
+}
+
+.tech-item{
+    background:#f5f7fa;
+    border-radius:7px;
+    padding:6px 8px;
+    font-size:9px;
+    color:#67758a;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.tech-item strong{
+    color:#25334a;
+}
+
+/* ================= LOADING ================= */
+
+.loading{
+    display:none;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    color:var(--muted);
+    font-size:12px;
+    padding:25px;
+}
+
+.loading.show{
+    display:flex;
+}
+
+.spinner{
+    width:18px;
+    height:18px;
+    border:2px solid #dce5f3;
+    border-top-color:var(--blue);
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:850px){
+
+    html,
+    body{
+        overflow:auto;
+    }
+
+    .header{
+        height:62px;
+        padding:0 17px;
+    }
+
+    .brand{
+        font-size:16px;
+    }
+
+    .logo{
+        width:36px;
+        height:36px;
+    }
+
+    .header-label{
+        display:none;
+    }
+
+    .main{
+        height:auto;
+        min-height:calc(100vh - 62px);
+        padding:14px;
+    }
+
+    .container{
+        height:auto;
+        min-height:calc(100vh - 90px);
+        grid-template-columns:1fr;
+    }
+
+    .left{
+        min-height:260px;
+        padding:28px;
+        border-radius:20px;
+    }
+
+    .left h1{
+        font-size:34px;
+    }
+
+    .features{
+        display:none;
+    }
+
+    .right{
+        min-height:560px;
+        border-radius:20px;
+        padding:20px;
+    }
+
+    .input-wrap{
+        flex-direction:column;
+    }
+
+    .analyze-btn{
+        width:100%;
+    }
+
+    .top-result{
+        grid-template-columns:115px 1fr;
+        gap:13px;
+    }
+
+    .score-box{
+        width:115px;
+        height:115px;
+    }
+
+    .score-box:before{
+        width:92px;
+        height:92px;
+    }
+
+    .score{
+        font-size:28px;
+    }
+
+    .result-info h3{
+        font-size:16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+        <div class="logo">
+            <img src="logo.jpeg" alt="SAFNEX NOVA">
+        </div>
+
+        SAFNEX <span>NOVA</span>
+    </div>
+
+    <div class="header-label">
+        AI LINK INTELLIGENCE
+    </div>
+
+</header>
+
+
+<main class="main">
+
+<div class="container">
+
+    <!-- LEFT -->
+    <section class="left">
+
+        <div class="badge">
+            SAFNEX NOVA LINK DETECTOR
+        </div>
+
+        <h1>
+            Know what a
+            <span>website link</span>
+            really means.
+        </h1>
+
+        <p>
+            Paste any website link and SAFNEX NOVA explains
+            what type of website it is, what it appears to contain,
+            and why the security score was given.
+        </p>
+
+        <div class="features">
+
+            <div class="feature">
+                <div class="feature-icon">✓</div>
+                URL structure analysis
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">◎</div>
+                Website type detection
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">◆</div>
+                Content understanding
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                Risk signal detection
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- RIGHT -->
+    <section class="right">
+
+        <div class="scan-title">
+
+            <h2>Analyze a link</h2>
+
+            <div class="status">
+                LINK ANALYSIS
+            </div>
+
+        </div>
+
+        <p class="subtitle">
+            Enter a complete website URL below.
+        </p>
+
+
+        <div class="input-wrap">
+
+            <input
+                id="urlInput"
+                class="url-input"
+                type="text"
+                placeholder="https://example.com"
+                autocomplete="off"
+            >
+
+            <button
+                id="analyzeBtn"
+                class="analyze-btn"
+            >
+                ANALYZE LINK
+            </button>
+
+        </div>
+
+
+        <div class="examples">
+
+            <button
+                class="example"
+                data-url="https://docs.google.com/spreadsheets/"
+            >
+                Google Sheets
+            </button>
+
+            <button
+                class="example"
+                data-url="https://google.com"
+            >
+                Google
+            </button>
+
+            <button
+                class="example"
+                data-url="https://github.com"
+            >
+                GitHub
+            </button>
+
+            <button
+                class="example"
+                data-url="https://test.safnexnova.com"
+            >
+                Test Domain
+            </button>
+
+        </div>
+
+
+        <div id="loading" class="loading">
+
+            <div class="spinner"></div>
+
+            Analyzing link...
+
+        </div>
+
+
+        <!-- EMPTY -->
+        <div id="empty" class="empty">
+
+            <div class="empty-inner">
+
+                <div class="empty-icon">
+                    🔗
+                </div>
+
+                <h3>
+                    Ready to analyze
+                </h3>
+
+                <p>
+                    Enter a link above. SAFNEX NOVA will identify
+                    the website type, possible content and security
+                    signals.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESULTS -->
+        <div id="results" class="results">
+
+            <div class="top-result">
+
+                <div id="scoreBox" class="score-box">
+
+                    <div class="score-content">
+
+                        <div id="score" class="score">
+                            0
+                        </div>
+
+                        <div class="score-label">
+                            SECURITY SCORE
+                        </div>
+
+                        <div id="verdict" class="verdict">
+                            REVIEW
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="result-info">
+
+                    <h3 id="resultName">
+                        Website
+                    </h3>
+
+                    <div id="resultUrl" class="result-url">
+                        -
+                    </div>
+
+                    <div id="confidence" class="confidence">
+                        Analysis confidence: Low
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="questions">
+
+                <div class="question">
+
+                    <div class="question-title">
+                        01 · What type of website is this?
+                    </div>
+
+                    <div
+                        id="answerType"
+                        class="question-answer"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="question">
+
+                    <div class="question-title">
+                        02 · What does this website contain?
+                    </div>
+
+                    <div
+                        id="answerContent"
+                        class="question-answer"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="question why">
+
+                    <div class="question-title">
+                        03 · Why did SAFNEX NOVA give this score?
+                    </div>
+
+                    <div
+                        id="answerWhy"
+                        class="question-answer"
+                    >
+                        -
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <details class="tech">
+
+                <summary>
+                    TECHNICAL DETAILS
+                </summary>
+
+                <div class="tech-grid">
+
+                    <div class="tech-item">
+                        <strong>Protocol:</strong>
+                        <span id="techProtocol">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>Hostname:</strong>
+                        <span id="techHost">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>Domain:</strong>
+                        <span id="techDomain">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>HTTPS:</strong>
+                        <span id="techHttps">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>Status:</strong>
+                        <span id="techStatus">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>Fetched:</strong>
+                        <span id="techFetched">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>Content:</strong>
+                        <span id="techContent">-</span>
+                    </div>
+
+                    <div class="tech-item">
+                        <strong>Path:</strong>
+                        <span id="techPath">-</span>
+                    </div>
+
+                </div>
+
+            </details>
+
+        </div>
+
+    </section>
+
+</div>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   BACKEND
+========================================================= */
+
+const API_URL = window.SAFNEX_API_URL || "http://localhost:3000/api/analyze";
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const urlInput = document.getElementById("urlInput");
+const analyzeBtn = document.getElementById("analyzeBtn");
+const empty = document.getElementById("empty");
+const results = document.getElementById("results");
+const loading = document.getElementById("loading");
+
+
+/* =========================================================
+   NORMALIZE URL
+========================================================= */
+
+function normalizeUrl(value){
+
+    value = String(value || "").trim();
+
+    if(!value){
+        throw new Error("Please enter a website link.");
+    }
+
+    if(!/^https?:\/\//i.test(value)){
+        value = "https://" + value;
+    }
+
+    return value;
+}
+
+
+/* =========================================================
+   KNOWN SERVICES
+========================================================= */
+
+function detectKnownService(url){
+
+    const host = url.hostname.toLowerCase();
+    const path = url.pathname.toLowerCase();
+
+    /* Google Sheets */
+
+    if(
+        host === "docs.google.com" &&
+        path.includes("/spreadsheets")
+    ){
+        return {
+            name:"Google Sheets",
+            type:"Google Workspace / Spreadsheet",
+            content:
+                "A Google Sheets document link. It can contain tables, rows, columns, formulas and shared data. The actual sheet contents depend on its sharing permissions.",
+            purpose:"Spreadsheet and shared data"
+        };
+    }
+
+
+    /* Google Docs */
+
+    if(
+        host === "docs.google.com" &&
+        path.includes("/document")
+    ){
+        return {
+            name:"Google Docs",
+            type:"Google Workspace / Document",
+            content:
+                "A Google Docs document link. It can contain written documents, text, images, tables and other document content.",
+            purpose:"Online document"
+        };
+    }
+
+
+    /* Google Forms */
+
+    if(
+        (host === "docs.google.com" && path.startsWith("/forms/")) ||
+        host === "forms.gle"
+    ){
+        return {
+            name:"Google Forms",
+            type:"Google Workspace / Online Form",
+            content:
+                "This is a Google Form. It may contain questions, fields, choices, surveys, registrations, or response collection. SAFNEX NOVA does not display the inside of the form.",
+            purpose:"Online form or survey"
+        };
+    }
+
+
+    /* Google Drive */
+
+    if(
+        host === "drive.google.com"
+    ){
+        return {
+            name:"Google Drive",
+            type:"Google Workspace / File Storage",
+            content:
+                "A Google Drive link. It may point to a shared file, folder or document. The exact content depends on the sharing permissions.",
+            purpose:"Cloud file or folder sharing"
+        };
+    }
+
+
+    /* Google Slides */
+
+    if(
+        host === "docs.google.com" &&
+        path.includes("/presentation")
+    ){
+        return {
+            name:"Google Slides",
+            type:"Google Workspace / Presentation",
+            content:
+                "A Google Slides presentation link. It can contain presentation slides, text, images, charts and other visual content.",
+            purpose:"Online presentation"
+        };
+    }
+
+
+    /* Google */
+
+    if(
+        host === "google.com" ||
+        host.endsWith(".google.com")
+    ){
+        return {
+            name:"Google",
+            type:"Search / Google Service",
+            content:
+                "A Google service hosted on a Google-owned domain.",
+            purpose:"Search or online Google service"
+        };
+    }
+
+
+    /* YouTube */
+
+    if(
+        host === "youtube.com" ||
+        host === "www.youtube.com" ||
+        host === "youtu.be"
+    ){
+        return {
+            name:"YouTube",
+            type:"Video Platform",
+            content:
+                "A YouTube page can contain videos, channels, comments and other media content.",
+            purpose:"Video and media"
+        };
+    }
+
+
+    /* GitHub */
+
+    if(
+        host === "github.com" ||
+        host.endsWith(".github.com")
+    ){
+        return {
+            name:"GitHub",
+            type:"Developer / Code Platform",
+            content:
+                "A GitHub page can contain repositories, source code, documentation, issues and software projects.",
+            purpose:"Software development and code hosting"
+        };
+    }
+
+
+    /* Microsoft */
+
+    if(
+        host === "microsoft.com" ||
+        host.endsWith(".microsoft.com") ||
+        host === "office.com" ||
+        host.endsWith(".office.com")
+    ){
+        return {
+            name:"Microsoft Service",
+            type:"Microsoft Online Service",
+            content:
+                "A Microsoft-hosted online service.",
+            purpose:"Microsoft productivity or account service"
+        };
+    }
+
+
+    return null;
+}
+
+
+/* =========================================================
+   ROOT DOMAIN
+========================================================= */
+
+function rootDomain(host){
+
+    const parts = host.split(".").filter(Boolean);
+
+    if(parts.length <= 2){
+        return host;
+    }
+
+    const lastTwo = parts.slice(-2).join(".");
+
+    const special = [
+        "co.uk",
+        "org.uk",
+        "com.au",
+        "co.in",
+        "com.br",
+        "co.jp"
+    ];
+
+    if(special.includes(lastTwo) && parts.length >= 3){
+        return parts.slice(-3).join(".");
+    }
+
+    return lastTwo;
+}
+
+
+/* =========================================================
+   LOCAL ANALYSIS
+========================================================= */
+
+function localAnalyze(url, backendError = ""){
+
+    /*
+       IMPORTANT:
+       SAFNEX NOVA uses the SERVER as the single source of truth
+       for the security score.
+
+       The browser must NEVER calculate a different score. If the
+       server is unavailable, we show UNVERIFIED instead of inventing
+       a score that can disagree with the backend.
+    */
+
+    const u = new URL(url);
+    const host = u.hostname.toLowerCase();
+    const known = detectKnownService(u);
+
+    const warnings = [];
+    const positives = [];
+
+    if(u.protocol === "https:"){
+        positives.push("The link uses HTTPS.");
+    }else{
+        warnings.push("The link does not use HTTPS.");
+    }
+
+    if(/^(\d{1,3}\.){3}\d{1,3}$/.test(host)){
+        warnings.push("The hostname is a raw IP address.");
+    }
+
+    if(host.includes("xn--")){
+        warnings.push("The domain contains punycode.");
+    }
+
+    if(url.includes("@")){
+        warnings.push("The URL contains an @ character.");
+    }
+
+    const shorteners = [
+        "bit.ly","tinyurl.com","t.co","is.gd","cutt.ly","shorturl.at"
+    ];
+
+    if(shorteners.includes(host)){
+        warnings.push("The URL uses a link-shortening service.");
+    }
+
+    const lowerUrl = url.toLowerCase();
+
+    const suspiciousWords = [
+        "verify","verification","secure-login","account-update",
+        "password","wallet","claim-prize","free-money","urgent",
+        "payment","checkout","billing","invoice","credit-card",
+        "debit-card","transaction","payment-verification","verify-account"
+    ];
+
+    if(suspiciousWords.some(word => lowerUrl.includes(word))){
+        warnings.push("The URL contains security-sensitive or urgency-related wording.");
+    }
+
+    if(/[?&](redirect|url|next|return|returnurl)=/i.test(url)){
+        warnings.push("The URL contains a redirect-style parameter.");
+    }
+
+    if(url.length > 180){
+        warnings.push("The URL is unusually long.");
+    }
+
+    if(host.split(".").length >= 5){
+        warnings.push("The hostname contains many subdomain levels.");
+    }
+
+    if(u.port && !["80","443"].includes(u.port)){
+        warnings.push("The link uses a non-standard port.");
+    }
+
+    if(known){
+        positives.push("The hostname matches a recognized online service.");
+    }
+
+    return {
+        securityScore: null,
+        security:{
+            score: null,
+            verdict:"UNVERIFIED",
+            indicators:{
+                warnings,
+                positives
+            }
+        },
+        website: known ? {
+            name:known.name,
+            type:known.type,
+            purpose:known.purpose
+        } : {
+            name:host,
+            type:"Custom Website / Domain",
+            purpose:"Website identity could not be verified"
+        },
+        content: known ? {
+            title:known.name,
+            description:known.content,
+            textLength:0
+        } : {
+            title:"Content not verified",
+            description:"The website could not be verified because the SAFNEX NOVA analysis server is unavailable.",
+            textLength:0
+        },
+        technical:{
+            url,
+            protocol:u.protocol,
+            hostname:host,
+            rootDomain:rootDomain(host),
+            https:u.protocol === "https:",
+            status:"Analyzer unavailable",
+            fetched:false,
+            contentType:"Unknown",
+            path:u.pathname,
+            fetchError:backendError || "Backend analysis was unavailable."
+        },
+        analysisSource:"No server verification",
+        confidence:"Low",
+        unverified:true
+    };
+}
+
+/* =========================================================
+   BACKEND ANALYSIS
+========================================================= */
+
+async function analyzeWithBackend(url){
+
+    try{
+
+        const response = await fetch(
+            API_URL,
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+                    url:url
+                })
+            }
+        );
+
+
+        if(!response.ok){
+            throw new Error(
+                "Backend returned HTTP " +
+                response.status
+            );
+        }
+
+
+        const data = await response.json();
+
+
+        if(
+            data &&
+            (
+                data.securityScore !== undefined ||
+                data.security ||
+                data.website ||
+                data.content
+            )
+        ){
+
+            return data;
+        }
+
+
+        throw new Error(
+            "Backend returned an incomplete analysis."
+        );
+
+    }catch(error){
+
+        return {
+            error:error.message
+        };
+
+    }
+}
+
+
+/* =========================================================
+   MERGE BACKEND + KNOWN SERVICE
+========================================================= */
+
+function improveResult(data, url){
+
+    const u = new URL(url);
+    const known = detectKnownService(u);
+
+    /*
+       SINGLE SOURCE OF TRUTH:
+       If the backend returns a security score, display that exact
+       score. Do not recalculate, add points, subtract points, or
+       overwrite it in the browser.
+    */
+
+    const backendScore =
+        data?.securityScore ??
+        data?.security?.score;
+
+    const hasValidScore =
+        backendScore !== undefined &&
+        backendScore !== null &&
+        Number.isFinite(Number(backendScore));
+
+    if(!hasValidScore){
+        return localAnalyze(url, data?.error || "No valid security score was returned by the analyzer.");
+    }
+
+    const result = {
+        ...data,
+        securityScore:Number(backendScore),
+        security:{
+            ...(data.security || {}),
+            score:Number(backendScore)
+        },
+        website:{
+            ...(data.website || {})
+        },
+        content:{
+            ...(data.content || {})
+        }
+    };
+
+    /*
+       Keep known-service identification only for website description.
+       It MUST NOT change the backend security score.
+    */
+
+    if(known){
+
+        const websiteName = String(result.website.name || "");
+
+        if(
+            !websiteName ||
+            /unavailable|unknown/i.test(websiteName)
+        ){
+            result.website = {
+                name:known.name,
+                type:known.type,
+                purpose:known.purpose
+            };
+        }
+
+        const contentDescription =
+            String(result.content.description || "");
+
+        if(
+            !contentDescription ||
+            /unavailable|unknown|not available/i.test(contentDescription)
+        ){
+            result.content = {
+                ...result.content,
+                title:known.name,
+                description:known.content
+            };
+        }
+    }
+
+    /*
+       Backend verdict is authoritative.
+       If backend did not provide one, derive only from its score,
+       using the same thresholds as the backend contract.
+    */
+
+    if(!result.security.verdict){
+
+        const score = Number(result.securityScore);
+
+        if(score >= 85){
+            result.security.verdict = "LIKELY SAFE";
+        }else if(score >= 70){
+            result.security.verdict = "REVIEW";
+        }else if(score >= 40){
+            result.security.verdict = "SUSPICIOUS";
+        }else{
+            result.security.verdict = "HIGH RISK";
+        }
+    }
+
+    result.confidence =
+        data.confidence ||
+        data.security?.confidence ||
+        "Medium";
+
+    result.unverified = false;
+
+    return result;
+}
+
+/* =========================================================
+   SCORE COLOR
+========================================================= */
+
+function getScoreColor(score){
+
+    if(score >= 80){
+        return "#13a673";
+    }
+
+    if(score >= 60){
+        return "#ed9b28";
+    }
+
+    return "#e64d61";
+}
+
+
+/* =========================================================
+   VERDICT COLOR
+========================================================= */
+
+function setVerdictStyle(element, verdict){
+
+    const v = String(verdict || "").toUpperCase();
+
+    if(
+        v.includes("HIGH") ||
+        v.includes("RISK")
+    ){
+
+        element.style.background = "#fff0f2";
+        element.style.color = "#e04f5f";
+
+    }
+    else if(
+        v.includes("REVIEW") ||
+        v.includes("SUSPICIOUS")
+    ){
+
+        element.style.background = "#fff5e8";
+        element.style.color = "#bd7617";
+
+    }
+    else{
+
+        element.style.background = "#eaf9f2";
+        element.style.color = "#13a673";
+
+    }
+
+}
+
+
+/* =========================================================
+   TEXT HELPERS
+========================================================= */
+
+function safeText(value, fallback = "-"){
+
+    if(
+        value === undefined ||
+        value === null ||
+        String(value).trim() === ""
+    ){
+
+        return fallback;
+
+    }
+
+    return String(value);
+}
+
+
+/* =========================================================
+   THREE QUESTIONS
+========================================================= */
+
+function createThreeAnswers(result, url){
+
+    const u = new URL(url);
+
+    const known = detectKnownService(u);
+
+    let type = "";
+    let content = "";
+    let why = "";
+
+
+    /* TYPE */
+
+    if(known){
+
+        type =
+            known.type +
+            ".";
+
+    }else if(result.website?.type){
+
+        type =
+            safeText(
+                result.website.type,
+                "Custom Website / Domain"
+            ) +
+            ".";
+
+    }else{
+
+        type =
+            "Custom Website / Domain.";
+
+    }
+
+
+    /* CONTENT */
+
+    if(known){
+
+        content = known.content;
+
+    }else if(result.content?.description){
+
+        content =
+            safeText(
+                result.content.description,
+                "The page content could not be verified."
+            );
+
+    }else{
+
+        content =
+            "The domain was detected, but the actual page content could not be verified.";
+
+    }
+
+
+    /* WHY */
+
+    const rawScore =
+        result.securityScore ??
+        result.security?.score;
+
+    const score =
+        rawScore === undefined ||
+        rawScore === null ||
+        !Number.isFinite(Number(rawScore))
+            ? null
+            : Math.round(Number(rawScore));
+
+
+    const warnings =
+        result.security?.indicators?.warnings ||
+        result.security?.warnings ||
+        [];
+
+
+    const positives =
+        result.security?.indicators?.positives ||
+        [];
+
+
+    const reasons = [];
+
+    if(result.unverified || score === null){
+        return {
+            type: type || "Custom Website / Domain.",
+            content: content || "The website content could not be verified.",
+            why:
+                "SAFNEX NOVA could not obtain a verified security score from the analysis server. " +
+                "No browser-side score is invented, so this link is shown as UNVERIFIED rather than incorrectly marked safe."
+        };
+    }
+
+
+    if(u.protocol === "https:"){
+
+        reasons.push(
+            "HTTPS is enabled"
+        );
+
+    }else{
+
+        reasons.push(
+            "HTTPS is not enabled"
+        );
+
+    }
+
+
+    if(known){
+
+        reasons.push(
+            "the domain matches a recognized service"
+        );
+
+    }
+
+
+    if(warnings.length){
+
+        reasons.push(
+            warnings.slice(0,3).join("; ")
+        );
+
+    }
+
+
+    if(!warnings.length && positives.length){
+
+        reasons.push(
+            positives.slice(0,2).join("; ")
+        );
+
+    }
+
+
+    if(!warnings.length && !known){
+
+        why =
+            "The link does not show obvious URL-structure warnings, " +
+            "but the actual website content or reputation could not be " +
+            "fully verified. Therefore this score should not be treated " +
+            "as a guarantee that the website is safe.";
+
+    }else{
+
+        why =
+            "SAFNEX NOVA gave " +
+            score +
+            "/100 based on " +
+            reasons.join(", ") +
+            ". The score is a risk indicator, not a guarantee of safety.";
+
+    }
+
+
+    return {
+        type,
+        content,
+        why
+    };
+}
+
+
+/* =========================================================
+   DISPLAY
+========================================================= */
+
+function displayResults(result, url){
+
+    const u = new URL(url);
+
+
+    const rawScore =
+        result.securityScore ??
+        result.security?.score;
+
+    const hasScore =
+        rawScore !== undefined &&
+        rawScore !== null &&
+        Number.isFinite(Number(rawScore));
+
+    const score = hasScore
+        ? Math.max(0, Math.min(100, Math.round(Number(rawScore))))
+        : null;
+
+
+    const verdict =
+        result.security?.verdict ||
+        result.verdict ||
+        "UNVERIFIED";
+
+
+    const answers =
+        createThreeAnswers(
+            result,
+            url
+        );
+
+
+    /* Empty state */
+
+    empty.style.display = "none";
+    loading.classList.remove("show");
+    results.classList.add("show");
+
+
+    /* Score */
+
+    document.getElementById("score").textContent =
+        score === null ? "—" : score;
+
+
+    document.getElementById("verdict").textContent =
+        verdict;
+
+
+    setVerdictStyle(
+        document.getElementById("verdict"),
+        verdict
+    );
+
+
+    /* Circle */
+
+    const scoreBox =
+        document.getElementById("scoreBox");
+
+    if(score === null){
+        scoreBox.style.background =
+            "conic-gradient(#b8c3d4 0deg,#e9eef5 0deg)";
+    }else{
+        const color = getScoreColor(score);
+
+        scoreBox.style.background =
+            `conic-gradient(
+                ${color} ${score * 3.6}deg,
+                #e9eef5 ${score * 3.6}deg
+            )`;
+    }
+
+
+    /* Name */
+
+    document.getElementById("resultName").textContent =
+        safeText(
+            result.website?.name,
+            u.hostname
+        );
+
+
+    /* URL */
+
+    document.getElementById("resultUrl").textContent =
+        url;
+
+
+    /* Confidence */
+
+    document.getElementById("confidence").textContent =
+        "Analysis confidence: " +
+        safeText(
+            result.confidence,
+            "Low"
+        );
+
+
+    /* THREE QUESTIONS */
+
+    document.getElementById("answerType").textContent =
+        answers.type;
+
+
+    document.getElementById("answerContent").textContent =
+        answers.content;
+
+
+    document.getElementById("answerWhy").textContent =
+        answers.why;
+
+
+    /* TECHNICAL */
+
+    const tech =
+        result.technical ||
+        result.technicalDetails ||
+        {};
+
+
+    document.getElementById("techProtocol").textContent =
+        safeText(
+            tech.protocol,
+            u.protocol
+        );
+
+
+    document.getElementById("techHost").textContent =
+        safeText(
+            tech.hostname,
+            u.hostname
+        );
+
+
+    document.getElementById("techDomain").textContent =
+        safeText(
+            tech.rootDomain,
+            rootDomain(u.hostname)
+        );
+
+
+    document.getElementById("techHttps").textContent =
+        u.protocol === "https:"
+            ? "Yes"
+            : "No";
+
+
+    document.getElementById("techStatus").textContent =
+        safeText(
+            tech.status,
+            "Not fetched"
+        );
+
+
+    document.getElementById("techFetched").textContent =
+        tech.fetched === true
+            ? "Yes"
+            : "No";
+
+
+    document.getElementById("techContent").textContent =
+        safeText(
+            tech.contentType,
+            "Unknown"
+        );
+
+
+    document.getElementById("techPath").textContent =
+        u.pathname || "/";
+
+}
+
+
+/* =========================================================
+   ANALYZE
+========================================================= */
+
+async function analyze(){
+
+    const raw =
+        urlInput.value.trim();
+
+
+    if(!raw){
+
+        alert(
+            "Please enter a website link."
+        );
+
+        urlInput.focus();
+
+        return;
+    }
+
+
+    let url;
+
+    try{
+
+        url =
+            normalizeUrl(raw);
+
+        new URL(url);
+
+    }catch(error){
+
+        alert(
+            "Please enter a valid website URL."
+        );
+
+        return;
+
+    }
+
+
+    /* Loading */
+
+    empty.style.display = "none";
+    results.classList.remove("show");
+    loading.classList.add("show");
+
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = "ANALYZING...";
+
+
+    try{
+
+        const backendResult =
+            await analyzeWithBackend(url);
+
+
+        const finalResult =
+            improveResult(
+                backendResult,
+                url
+            );
+
+
+        displayResults(
+            finalResult,
+            url
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        const fallback =
+            localAnalyze(
+                url,
+                error.message
+            );
+
+
+        displayResults(
+            fallback,
+            url
+        );
+
+    }finally{
+
+        loading.classList.remove("show");
+
+        analyzeBtn.disabled = false;
+
+        analyzeBtn.textContent =
+            "ANALYZE LINK";
+
+    }
+
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+analyzeBtn.addEventListener(
+    "click",
+    analyze
+);
+
+
+/* =========================================================
+   ENTER KEY
+========================================================= */
+
+urlInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+            analyze();
+        }
+
+    }
+);
+
+
+/* =========================================================
+   EXAMPLES
+========================================================= */
+
+document.querySelectorAll(
+    ".example"
+).forEach(button => {
+
+    button.addEventListener(
+        "click",
+        function(){
+
+            urlInput.value =
+                this.dataset.url;
+
+            analyze();
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   URL QUERY SUPPORT
+
+   link-detector.html?url=https://example.com
+========================================================= */
+
+(function loadQueryUrl(){
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const queryUrl =
+        params.get("url");
+
+
+    if(queryUrl){
+
+        urlInput.value =
+            queryUrl;
+
+        setTimeout(
+            analyze,
+            150
+        );
+
+    }
+
+})();
+
+</script>
+
+</body>
+</html>

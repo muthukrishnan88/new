@@ -1,0 +1,6487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+>
+
+<meta
+    name="theme-color"
+    content="#08092d"
+>
+
+<title>SAFNEX NOVA | Digital Safety</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+
+<link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+<style>
+
+/* =========================================================
+   ROOT
+========================================================= */
+
+:root{
+    --navy:#08092d;
+    --navy2:#11134b;
+
+    --blue:#5367ff;
+    --blue2:#6677ff;
+
+    --cyan:#25c9ff;
+
+    --green:#17b879;
+    --green-bg:#eafbf4;
+
+    --orange:#f59a45;
+    --orange-bg:#fff3e7;
+
+    --red:#ed5964;
+    --red-bg:#fff0f1;
+
+    --text:#171927;
+    --muted:#858896;
+
+    --bg:#f4f5f9;
+    --white:#ffffff;
+
+    --border:#e6e7ed;
+
+    --shadow:
+        0 25px 70px
+        rgba(8,12,50,.15);
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#e8eaf1;
+    color:var(--text);
+    font-family:"DM Sans",Arial,sans-serif;
+    overflow-x:hidden;
+}
+
+button,
+input,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+
+/* =========================================================
+   APP
+========================================================= */
+
+.app{
+    width:100%;
+    max-width:1180px;
+    min-height:100vh;
+    margin:auto;
+    background:var(--bg);
+    position:relative;
+    overflow:hidden;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header{
+    height:68px;
+    background:var(--navy);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 30px;
+    color:white;
+    position:relative;
+    z-index:20;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:Manrope;
+    font-size:18px;
+    font-weight:800;
+}
+
+.logo{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #5d70ff,
+            #20cbff
+        );
+
+    color:white;
+    font-weight:900;
+
+    box-shadow:
+        0 8px 25px
+        rgba(35,201,255,.2);
+
+    overflow:hidden;
+    flex-shrink:0;
+}
+
+.logo img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+    border-radius:50%;
+}
+
+.brand span{
+    color:#73dcff;
+}
+
+.header-actions{
+    display:flex;
+    gap:8px;
+}
+
+.header-button{
+    width:39px;
+    height:39px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.13);
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.07);
+
+    color:white;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.header-button svg{
+    width:19px;
+    height:19px;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+    min-height:430px;
+
+    padding:
+        38px
+        30px
+        150px;
+
+    position:relative;
+    color:white;
+    overflow:hidden;
+
+    background:
+
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(37,201,255,.24),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 5% 90%,
+            rgba(83,103,255,.26),
+            transparent 35%
+        ),
+
+        linear-gradient(
+            135deg,
+            #050626,
+            #10134a 58%,
+            #172b72
+        );
+}
+
+.hero::before{
+    content:"";
+
+    position:absolute;
+
+    width:480px;
+    height:480px;
+
+    right:-250px;
+    top:-290px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    border-radius:50%;
+
+    box-shadow:
+
+        0 0 0 60px
+        rgba(255,255,255,.025),
+
+        0 0 0 120px
+        rgba(255,255,255,.018);
+}
+
+.hero-content{
+    max-width:1050px;
+    margin:auto;
+    position:relative;
+    z-index:2;
+}
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    padding:
+        7px
+        12px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.14);
+
+    border-radius:100px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    color:#c2c8e9;
+
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.5px;
+}
+
+.status-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+
+    background:#41dfaa;
+
+    box-shadow:
+        0 0 0 5px
+        rgba(65,223,170,.1);
+}
+
+.hero h1{
+    max-width:750px;
+    margin-top:18px;
+
+    font-family:Manrope;
+
+    font-size:
+        clamp(
+            34px,
+            5vw,
+            60px
+        );
+
+    line-height:1.04;
+    letter-spacing:-2.3px;
+    font-weight:800;
+}
+
+.hero h1 span{
+    background:
+        linear-gradient(
+            90deg,
+            #fff,
+            #6bdcff
+        );
+
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+}
+
+.hero p{
+    max-width:610px;
+    margin-top:15px;
+
+    color:#b9bdd7;
+
+    font-size:13px;
+    line-height:1.7;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+    width:calc(100% - 56px);
+    max-width:1050px;
+
+    margin:
+        -108px
+        auto
+        90px;
+
+    position:relative;
+    z-index:5;
+}
+
+
+/* =========================================================
+   SCANNER CARD
+========================================================= */
+
+.scanner-card{
+    background:white;
+    border-radius:29px;
+    padding:24px;
+
+    border:
+        1px solid
+        rgba(0,0,0,.04);
+
+    box-shadow:
+        0 30px 75px
+        rgba(7,10,48,.18);
+
+    transition:.25s ease;
+}
+
+.scanner-header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+
+    gap:15px;
+    margin-bottom:18px;
+}
+
+.scanner-title{
+    font-family:Manrope;
+    font-size:20px;
+    font-weight:800;
+}
+
+.scanner-subtitle{
+    margin-top:4px;
+    color:var(--muted);
+    font-size:10px;
+}
+
+.ready{
+    display:flex;
+    align-items:center;
+    gap:6px;
+
+    padding:
+        8px
+        10px;
+
+    border-radius:10px;
+
+    background:var(--green-bg);
+    color:#079764;
+
+    font-size:8px;
+    font-weight:800;
+
+    white-space:nowrap;
+}
+
+.ready i{
+    width:7px;
+    height:7px;
+
+    background:#17b879;
+    border-radius:50%;
+}
+
+
+/* =========================================================
+   TABS
+========================================================= */
+
+.tabs{
+    display:grid;
+
+    grid-template-columns:
+        repeat(7,1fr);
+
+    gap:8px;
+
+    padding:5px;
+
+    border-radius:17px;
+
+    background:#f1f2f7;
+
+    margin-bottom:20px;
+}
+
+.tab{
+    min-height:68px;
+
+    border:0;
+    border-radius:13px;
+
+    background:transparent;
+    color:#858896;
+
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    gap:5px;
+
+    transition:.2s ease;
+}
+
+.tab svg{
+    width:20px;
+    height:20px;
+}
+
+.tab span{
+    font-size:9px;
+    font-weight:800;
+}
+
+.tab.active{
+    background:white;
+    color:var(--blue);
+
+    box-shadow:
+        0 5px 18px
+        rgba(20,25,70,.08);
+}
+
+
+/* =========================================================
+   LIVE PANEL
+========================================================= */
+
+.live-panel{
+    min-height:310px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:21px;
+
+    padding:20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #f8f9ff
+        );
+
+    position:relative;
+}
+
+.scanner-view{
+    width:100%;
+}
+
+.panel-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:10px;
+    margin-bottom:16px;
+}
+
+.panel-heading{
+    font-family:Manrope;
+    font-size:17px;
+    font-weight:800;
+}
+
+.panel-description{
+    margin-top:4px;
+    color:var(--muted);
+
+    font-size:10px;
+    line-height:1.5;
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.input-label{
+    display:block;
+    margin-bottom:7px;
+
+    font-size:9px;
+    font-weight:800;
+    color:#535665;
+}
+
+.input{
+    width:100%;
+    height:48px;
+
+    border:
+        1px solid
+        #dfe1e8;
+
+    border-radius:13px;
+
+    padding:
+        0
+        13px;
+
+    background:white;
+    color:#171927;
+
+    outline:none;
+
+    font-size:12px;
+
+    transition:.2s ease;
+}
+
+.input:focus{
+    border-color:var(--blue);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(83,103,255,.08);
+}
+
+textarea.input{
+    height:135px;
+    padding:13px;
+    resize:none;
+    line-height:1.55;
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.check-button{
+    width:100%;
+    height:48px;
+
+    margin-top:11px;
+
+    border:0;
+    border-radius:13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #5367ff,
+            #6476ff
+        );
+
+    color:white;
+
+    font-size:10px;
+    font-weight:800;
+
+    letter-spacing:.3px;
+
+    box-shadow:
+        0 10px 25px
+        rgba(83,103,255,.22);
+
+    transition:.2s ease;
+}
+
+.check-button:hover{
+    transform:translateY(-1px);
+}
+
+.check-button:active{
+    transform:scale(.98);
+}
+
+
+
+/* =========================================================
+   PROFESSIONAL LINK ANALYSIS LOADING
+========================================================= */
+
+.link-loading{
+    position:relative;
+    overflow:hidden;
+    padding:6px 4px 2px;
+    text-align:left;
+    animation:loadingIn .35s ease both;
+}
+
+@keyframes loadingIn{
+    from{opacity:0;transform:translateY(8px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
+.link-loading::before{
+    content:"";
+    position:absolute;
+    inset:-80px -120px;
+    background:
+        radial-gradient(circle at 20% 40%,rgba(83,103,255,.12),transparent 32%),
+        radial-gradient(circle at 80% 60%,rgba(37,201,255,.10),transparent 30%);
+    pointer-events:none;
+}
+
+.loading-main{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.loading-orbit{
+    width:76px;
+    height:76px;
+    min-width:76px;
+    border-radius:50%;
+    position:relative;
+    display:grid;
+    place-items:center;
+    background:conic-gradient(from 0deg,#5367ff,#25c9ff,#5367ff);
+    animation:orbitSpin 1.5s linear infinite;
+    box-shadow:0 12px 30px rgba(83,103,255,.20);
+}
+
+.loading-orbit::before{
+    content:"";
+    position:absolute;
+    inset:5px;
+    border-radius:50%;
+    background:#fff;
+}
+
+.loading-orbit::after{
+    content:"";
+    position:absolute;
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#25c9ff;
+    box-shadow:0 0 0 7px rgba(37,201,255,.10),0 0 20px rgba(37,201,255,.55);
+}
+
+@keyframes orbitSpin{
+    to{transform:rotate(360deg)}
+}
+
+.loading-copy{
+    min-width:0;
+    flex:1;
+}
+
+.loading-kicker{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    color:#5367ff;
+    font-size:8px;
+    font-weight:900;
+    letter-spacing:1.3px;
+    text-transform:uppercase;
+}
+
+.loading-kicker i{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#25c9ff;
+    box-shadow:0 0 0 5px rgba(37,201,255,.10);
+    animation:livePulse 1s ease-in-out infinite;
+}
+
+@keyframes livePulse{
+    50%{opacity:.35;transform:scale(.7)}
+}
+
+.loading-title{
+    margin-top:5px;
+    font-family:Manrope;
+    font-size:18px;
+    font-weight:800;
+    color:#171927;
+}
+
+.loading-url{
+    margin-top:5px;
+    color:#858896;
+    font-size:8px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:100%;
+}
+
+.loading-progress{
+    position:relative;
+    height:5px;
+    margin-top:18px;
+    border-radius:99px;
+    background:#e9ebf3;
+    overflow:hidden;
+}
+
+.loading-progress span{
+    display:block;
+    width:28%;
+    height:100%;
+    border-radius:inherit;
+    background:linear-gradient(90deg,#5367ff,#25c9ff);
+    animation:loadingProgress 2.8s cubic-bezier(.25,.8,.25,1) infinite;
+}
+
+@keyframes loadingProgress{
+    0%{width:8%;transform:translateX(-10%)}
+    45%{width:58%}
+    80%{width:82%}
+    100%{width:92%;transform:translateX(110%)}
+}
+
+.loading-steps{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    margin-top:15px;
+}
+
+.loading-step{
+    min-width:0;
+    padding:9px 7px;
+    border:1px solid #e7e9f0;
+    border-radius:11px;
+    background:rgba(255,255,255,.78);
+    transition:.3s ease;
+}
+
+.loading-step.active{
+    border-color:rgba(83,103,255,.25);
+    background:#f5f7ff;
+    box-shadow:0 6px 18px rgba(83,103,255,.07);
+}
+
+.loading-step.done{
+    border-color:rgba(23,184,121,.20);
+    background:#f4fcf8;
+}
+
+.loading-step-top{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.loading-step-dot{
+    width:7px;
+    height:7px;
+    min-width:7px;
+    border-radius:50%;
+    background:#c7cbd6;
+}
+
+.loading-step.active .loading-step-dot{
+    background:#5367ff;
+    box-shadow:0 0 0 5px rgba(83,103,255,.10);
+    animation:livePulse 1s ease-in-out infinite;
+}
+
+.loading-step.done .loading-step-dot{
+    background:#17b879;
+}
+
+.loading-step-label{
+    color:#74798a;
+    font-size:7px;
+    line-height:1.25;
+    font-weight:800;
+}
+
+.loading-note{
+    position:relative;
+    margin-top:13px;
+    color:#9a9eab;
+    font-size:8px;
+    line-height:1.5;
+}
+
+@media(max-width:600px){
+    .link-loading{
+        padding:3px 0 0;
+    }
+
+    .loading-main{
+        gap:12px;
+    }
+
+    .loading-orbit{
+        width:64px;
+        height:64px;
+        min-width:64px;
+    }
+
+    .loading-title{
+        font-size:15px;
+    }
+
+    .loading-kicker{
+        font-size:7px;
+    }
+
+    .loading-url{
+        font-size:7.5px;
+    }
+
+    .loading-progress{
+        margin-top:15px;
+    }
+
+    .loading-steps{
+        gap:5px;
+        margin-top:12px;
+    }
+
+    .loading-step{
+        padding:8px 5px;
+        border-radius:9px;
+    }
+
+    .loading-step-label{
+        font-size:6px;
+    }
+
+    .loading-note{
+        font-size:7.5px;
+    }
+}
+
+@media(max-width:390px){
+    .loading-orbit{
+        width:58px;
+        height:58px;
+        min-width:58px;
+    }
+
+    .loading-title{
+        font-size:14px;
+    }
+
+    .loading-steps{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .loading-step-label{
+        font-size:6.5px;
+    }
+}
+
+
+/* =========================================================
+   QR UPLOAD
+========================================================= */
+
+.qr-upload{
+    border:
+        1.5px dashed
+        #cfd2dc;
+
+    border-radius:17px;
+
+    min-height:170px;
+
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
+
+    padding:20px;
+
+    background:#fafaff;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+.qr-upload:hover{
+    border-color:var(--blue);
+    background:#f7f8ff;
+}
+
+.qr-icon{
+    width:50px;
+    height:50px;
+
+    border-radius:15px;
+
+    background:#eef0ff;
+    color:var(--blue);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin-bottom:10px;
+}
+
+.qr-icon svg{
+    width:25px;
+    height:25px;
+}
+
+.qr-upload strong{
+    font-size:12px;
+}
+
+.qr-upload p{
+    margin-top:5px;
+    color:#9295a1;
+    font-size:9px;
+}
+
+#qrFile{
+    display:none;
+}
+
+
+/* =========================================================
+   MEDIA UPLOAD
+========================================================= */
+
+.media-upload{
+    border:
+        1.5px dashed
+        #cfd2dc;
+
+    border-radius:17px;
+
+    min-height:190px;
+
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
+
+    padding:22px;
+
+    background:#fafaff;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+.media-upload:hover{
+    border-color:var(--blue);
+    background:#f7f8ff;
+}
+
+.media-upload-icon{
+    width:52px;
+    height:52px;
+
+    border-radius:15px;
+
+    background:#eef0ff;
+    color:var(--blue);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin-bottom:11px;
+}
+
+.media-upload-icon svg{
+    width:26px;
+    height:26px;
+}
+
+.media-upload strong{
+    font-size:12px;
+}
+
+.media-upload p{
+    margin-top:5px;
+    color:#9295a1;
+    font-size:9px;
+    line-height:1.45;
+}
+
+.media-file{
+    display:none;
+}
+
+.media-preview{
+    display:none;
+    margin-top:14px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:15px;
+
+    padding:10px;
+
+    background:white;
+}
+
+.media-preview.show{
+    display:block;
+}
+
+.media-preview img,
+.media-preview video{
+    width:100%;
+    max-height:220px;
+
+    object-fit:contain;
+
+    border-radius:10px;
+
+    background:#f4f5f9;
+}
+
+.audio-preview{
+    display:none;
+    margin-top:14px;
+    width:100%;
+}
+
+.audio-preview.show{
+    display:block;
+}
+
+.audio-preview audio{
+    width:100%;
+}
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+.result{
+    display:none;
+
+    margin-top:15px;
+
+    border-radius:17px;
+
+    padding:16px;
+
+    animation:
+        resultIn
+        .25s
+        ease;
+}
+
+.result.show{
+    display:block;
+}
+
+@keyframes resultIn{
+
+    from{
+        opacity:0;
+        transform:translateY(8px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.result.safe{
+    background:var(--green-bg);
+    border:1px solid #ccefe0;
+}
+
+.result.warning{
+    background:var(--orange-bg);
+    border:1px solid #f8dfc5;
+}
+
+.result.danger{
+    background:var(--red-bg);
+    border:1px solid #f4ced1;
+}
+
+.result-head{
+    display:flex;
+    align-items:center;
+    gap:11px;
+}
+
+.result-icon{
+    width:40px;
+    height:40px;
+
+    border-radius:12px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:19px;
+
+    background:white;
+}
+
+.result-title{
+    font-size:13px;
+    font-weight:800;
+}
+
+.result-level{
+    margin-top:3px;
+
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:.5px;
+}
+
+.result-body{
+    margin-top:12px;
+
+    color:#646774;
+
+    font-size:9px;
+    line-height:1.6;
+}
+
+.reason-list{
+    margin-top:8px;
+    padding-left:16px;
+}
+
+.reason-list li{
+    margin:3px 0;
+}
+
+
+/* =========================================================
+   SCORE RESULT
+========================================================= */
+
+.link-score-result{
+    text-align:center;
+}
+
+.link-score{
+    font-size:43px;
+    line-height:1;
+
+    font-weight:900;
+
+    letter-spacing:-1.5px;
+}
+
+.link-score-label{
+    margin-top:7px;
+
+    color:#858896;
+
+    font-size:8px;
+
+    font-weight:800;
+
+    letter-spacing:2px;
+}
+
+.link-risk{
+    margin-top:15px;
+
+    font-size:14px;
+
+    font-weight:900;
+
+    letter-spacing:1.5px;
+}
+
+.link-risk.safe{
+    color:#079764;
+}
+
+.link-risk.warning{
+    color:#d77c1d;
+}
+
+.link-risk.danger{
+    color:#d94350;
+}
+
+.full-report-button{
+    width:100%;
+    height:43px;
+
+    margin-top:17px;
+
+    border:0;
+
+    border-radius:12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #5367ff,
+            #6476ff
+        );
+
+    color:white;
+
+    font-size:9px;
+
+    font-weight:800;
+
+    letter-spacing:.5px;
+
+    box-shadow:
+        0 8px 20px
+        rgba(83,103,255,.18);
+
+    transition:.2s ease;
+}
+
+.full-report-button:hover{
+    transform:translateY(-1px);
+}
+
+.full-report-button:active{
+    transform:scale(.98);
+}
+
+.again-button{
+    width:100%;
+    height:43px;
+
+    margin-top:11px;
+
+    border:
+        1px solid
+        #dfe1e8;
+
+    border-radius:12px;
+
+    background:white;
+
+    color:#313342;
+
+    font-size:9px;
+    font-weight:800;
+}
+
+
+/* =========================================================
+   INFORMATION
+========================================================= */
+
+.info-section{
+    margin-top:30px;
+}
+
+.section-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-bottom:12px;
+}
+
+.section-title{
+    font-family:Manrope;
+    font-size:18px;
+    font-weight:800;
+}
+
+.section-subtitle{
+    color:var(--muted);
+    font-size:9px;
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.info-card{
+    padding:17px;
+
+    background:white;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:18px;
+}
+
+.info-icon{
+    width:38px;
+    height:38px;
+
+    border-radius:11px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#eef0ff;
+
+    color:var(--blue);
+
+    margin-bottom:11px;
+}
+
+.info-card:nth-child(2) .info-icon{
+    background:#eafbf4;
+    color:#17a976;
+}
+
+.info-card:nth-child(3) .info-icon{
+    background:#fff1e7;
+    color:#eb853c;
+}
+
+.info-icon svg{
+    width:19px;
+    height:19px;
+}
+
+.info-card strong{
+    font-size:12px;
+    font-weight:800;
+}
+
+.info-card p{
+    margin-top:5px;
+
+    color:#858896;
+
+    font-size:9px;
+
+    line-height:1.55;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer{
+    background:var(--navy);
+
+    color:#989cb7;
+
+    padding:
+        27px
+        30px
+        95px;
+}
+
+.footer-inner{
+    max-width:1050px;
+    margin:auto;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    gap:20px;
+}
+
+.footer strong{
+    color:white;
+    font-size:11px;
+}
+
+.footer p{
+    margin-top:5px;
+    font-size:9px;
+    line-height:1.5;
+}
+
+.footer a{
+    color:#6fdcff;
+    text-decoration:none;
+}
+
+
+/* =========================================================
+   MOBILE NAV
+========================================================= */
+
+.bottom-nav{
+    position:fixed;
+
+    bottom:0;
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    width:min(
+        100%,
+        1180px
+    );
+
+    height:76px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .97
+        );
+
+    backdrop-filter:
+        blur(18px);
+
+    border-top:
+        1px solid
+        #e3e4e9;
+
+    box-shadow:
+        0 -8px 25px
+        rgba(20,25,60,.08);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-around;
+
+    z-index:100;
+}
+
+.bottom-item{
+    width:25%;
+    height:100%;
+
+    border:0;
+
+    background:none;
+
+    color:#858896;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:5px;
+
+    font-size:8px;
+    font-weight:700;
+}
+
+.bottom-item svg{
+    width:20px;
+    height:20px;
+}
+
+.bottom-item.active{
+    color:var(--blue);
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast{
+    position:fixed;
+
+    left:50%;
+    bottom:92px;
+
+    transform:
+        translateX(-50%)
+        translateY(20px);
+
+    padding:
+        11px
+        16px;
+
+    border-radius:12px;
+
+    background:#11132e;
+    color:white;
+
+    font-size:9px;
+    font-weight:700;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.25s ease;
+
+    z-index:200;
+
+    white-space:nowrap;
+}
+
+.toast.show{
+    opacity:1;
+
+    transform:
+        translateX(-50%)
+        translateY(0);
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width:801px){
+
+    body{
+        background:#f4f5f9;
+    }
+
+    .app{
+        width:100%;
+        max-width:none;
+        margin:0;
+        border-radius:0;
+    }
+
+    .header{
+        width:100%;
+
+        padding:
+            0
+            clamp(
+                32px,
+                5vw,
+                84px
+            );
+    }
+
+    .hero{
+        width:100%;
+
+        min-height:500px;
+
+        padding:
+            60px
+            clamp(
+                32px,
+                7vw,
+                110px
+            )
+            180px;
+    }
+
+    .hero-content{
+        width:min(1450px,100%);
+        max-width:1450px;
+    }
+
+    .hero h1{
+        max-width:900px;
+
+        font-size:
+            clamp(
+                48px,
+                5vw,
+                72px
+            );
+    }
+
+    .hero p{
+        max-width:700px;
+        font-size:14px;
+    }
+
+    .main{
+        width:
+            calc(
+                100% -
+                clamp(
+                    56px,
+                    10vw,
+                    180px
+                )
+            );
+
+        max-width:1450px;
+
+        margin:
+            -140px
+            auto
+            100px;
+    }
+
+    .scanner-card{
+        width:100%;
+
+        border-radius:0;
+
+        padding:38px;
+
+        box-shadow:
+            0 18px 55px
+            rgba(7,10,48,.10);
+
+        border:
+            1px solid
+            #e3e5ec;
+    }
+
+    .scanner-title{
+        font-size:24px;
+    }
+
+    .scanner-subtitle,
+    .panel-description{
+        font-size:11px;
+    }
+
+    .tabs{
+        gap:10px;
+        padding:6px;
+        margin-bottom:24px;
+    }
+
+    .tab{
+        min-height:76px;
+    }
+
+    .tab span{
+        font-size:10px;
+    }
+
+    .live-panel{
+        min-height:340px;
+        padding:30px;
+        border-radius:18px;
+    }
+
+    .panel-heading{
+        font-size:19px;
+    }
+
+    .input{
+        height:52px;
+        font-size:13px;
+    }
+
+    textarea.input{
+        height:150px;
+    }
+
+    .check-button{
+        height:52px;
+        font-size:11px;
+    }
+
+    .qr-upload{
+        min-height:190px;
+    }
+
+    .media-upload{
+        min-height:190px;
+    }
+
+    .info-section{
+        margin-top:42px;
+    }
+
+    .section-title{
+        font-size:21px;
+    }
+
+    .info-grid{
+        gap:18px;
+    }
+
+    .bottom-nav{
+        display:none !important;
+    }
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (
+    min-width:601px
+)
+and (
+    max-width:800px
+){
+
+    .header{
+        height:64px;
+        padding:0 20px;
+    }
+
+    .brand{
+        font-size:16px;
+    }
+
+    .hero{
+        min-height:405px;
+
+        padding:
+            32px
+            22px
+            145px;
+    }
+
+    .hero h1{
+        max-width:700px;
+
+        font-size:
+            clamp(
+                34px,
+                6vw,
+                48px
+            );
+
+        letter-spacing:-1.8px;
+    }
+
+    .hero p{
+        max-width:570px;
+        font-size:11.5px;
+    }
+
+    .main{
+        width:
+            calc(
+                100% - 32px
+            );
+
+        max-width:760px;
+
+        margin:
+            -110px
+            auto
+            85px;
+    }
+
+    .scanner-card{
+        padding:20px;
+        border-radius:27px;
+    }
+
+    .tabs{
+        grid-template-columns:
+            repeat(4,1fr);
+    }
+
+    .info-grid{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width:600px){
+
+    html,
+    body{
+        width:100%;
+        max-width:100%;
+        overflow-x:hidden;
+    }
+
+    body{
+        background:var(--bg);
+    }
+
+    .app{
+        width:100%;
+        max-width:100%;
+        min-height:100vh;
+        overflow:hidden;
+    }
+
+    .header{
+        height:60px;
+        min-height:60px;
+        padding:0 14px;
+    }
+
+    .brand{
+        min-width:0;
+        gap:8px;
+        font-size:15px;
+        white-space:nowrap;
+    }
+
+    .logo{
+        width:34px;
+        height:34px;
+        border-radius:10px;
+    }
+
+    .header-actions{
+        gap:6px;
+    }
+
+    .header-button{
+        width:36px;
+        height:36px;
+        border-radius:10px;
+    }
+
+    .hero{
+        min-height:405px;
+
+        padding:
+            27px
+            16px
+            145px;
+    }
+
+    .hero-content{
+        width:100%;
+    }
+
+    .badge{
+        max-width:100%;
+
+        padding:
+            7px
+            10px;
+
+        font-size:8px;
+        letter-spacing:.35px;
+    }
+
+    .hero h1{
+        max-width:100%;
+
+        margin-top:16px;
+
+        font-size:
+            clamp(
+                30px,
+                9vw,
+                38px
+            );
+
+        line-height:1.06;
+        letter-spacing:-1.5px;
+    }
+
+    .hero p{
+        max-width:100%;
+        margin-top:13px;
+
+        font-size:10.5px;
+        line-height:1.65;
+    }
+
+    .main{
+        width:
+            calc(
+                100% - 24px
+            );
+
+        max-width:none;
+
+        margin:
+            -118px
+            auto
+            82px;
+    }
+
+    .scanner-card{
+        width:100%;
+        padding:14px;
+        border-radius:23px;
+    }
+
+    .scanner-header{
+        align-items:flex-start;
+        gap:9px;
+        margin-bottom:14px;
+    }
+
+    .scanner-title{
+        font-size:16px;
+        line-height:1.2;
+    }
+
+    .scanner-subtitle{
+        max-width:210px;
+        margin-top:4px;
+
+        font-size:9px;
+        line-height:1.4;
+    }
+
+    .ready{
+        flex-shrink:0;
+
+        padding:
+            7px
+            8px;
+
+        font-size:7px;
+        border-radius:9px;
+    }
+
+    /* Horizontal mobile tabs */
+
+    .tabs{
+        width:100%;
+
+        display:flex;
+
+        overflow-x:auto;
+        overflow-y:hidden;
+
+        justify-content:flex-start;
+
+        scrollbar-width:none;
+
+        -webkit-overflow-scrolling:touch;
+
+        gap:4px;
+
+        padding:4px;
+
+        margin-bottom:14px;
+
+        border-radius:15px;
+    }
+
+    .tabs::-webkit-scrollbar{
+        display:none;
+    }
+
+    .tab{
+        flex:
+            0 0 82px;
+
+        width:82px;
+
+        min-width:82px;
+
+        min-height:58px;
+
+        padding:
+            5px
+            2px;
+
+        gap:4px;
+
+        border-radius:11px;
+    }
+
+    .tab svg{
+        width:18px;
+        height:18px;
+        flex-shrink:0;
+    }
+
+    .tab span{
+        font-size:7.5px;
+        line-height:1;
+        white-space:nowrap;
+    }
+
+    .live-panel{
+        width:100%;
+        min-height:300px;
+
+        padding:14px;
+
+        border-radius:18px;
+    }
+
+    .panel-top{
+        align-items:flex-start;
+        margin-bottom:13px;
+    }
+
+    .panel-heading{
+        font-size:16px;
+        line-height:1.2;
+    }
+
+    .panel-description{
+        max-width:100%;
+        font-size:9px;
+        line-height:1.5;
+    }
+
+    .input-label{
+        margin-bottom:6px;
+        font-size:8px;
+    }
+
+    .input{
+        width:100%;
+        min-width:0;
+
+        height:47px;
+
+        padding:
+            0
+            12px;
+
+        border-radius:12px;
+
+        font-size:12px;
+    }
+
+    textarea.input{
+        min-height:125px;
+        height:125px;
+        padding:12px;
+    }
+
+    .check-button{
+        height:47px;
+        margin-top:10px;
+        border-radius:12px;
+        font-size:9px;
+    }
+
+    .qr-upload{
+        width:100%;
+        min-height:155px;
+
+        padding:
+            16px
+            12px;
+
+        border-radius:15px;
+    }
+
+    .qr-icon{
+        width:45px;
+        height:45px;
+        border-radius:13px;
+        margin-bottom:8px;
+    }
+
+    .qr-upload strong{
+        font-size:11px;
+    }
+
+    .qr-upload p{
+        max-width:220px;
+        font-size:8px;
+        line-height:1.4;
+    }
+
+    .media-upload{
+        min-height:165px;
+        padding:
+            18px
+            12px;
+    }
+
+    .result{
+        margin-top:12px;
+        padding:13px;
+        border-radius:15px;
+    }
+
+    .result-head{
+        gap:9px;
+    }
+
+    .result-icon{
+        width:36px;
+        height:36px;
+        border-radius:10px;
+        font-size:17px;
+    }
+
+    .result-title{
+        font-size:12px;
+    }
+
+    .result-level{
+        font-size:7px;
+    }
+
+    .result-body{
+        margin-top:10px;
+        font-size:8.5px;
+        line-height:1.55;
+    }
+
+    .link-score{
+        font-size:40px;
+    }
+
+    .link-risk{
+        font-size:13px;
+    }
+
+    .full-report-button{
+        height:42px;
+        font-size:8.5px;
+    }
+
+    .again-button{
+        height:40px;
+        font-size:8px;
+        border-radius:11px;
+    }
+
+    .info-section{
+        margin-top:24px;
+    }
+
+    .section-header{
+        margin-bottom:10px;
+    }
+
+    .section-title{
+        font-size:16px;
+    }
+
+    .section-subtitle{
+        font-size:8px;
+    }
+
+    .info-grid{
+        grid-template-columns:1fr;
+        gap:9px;
+    }
+
+    .info-card{
+        padding:14px;
+        border-radius:15px;
+    }
+
+    .footer{
+        padding:
+            22px
+            14px
+            95px;
+    }
+
+    .footer-inner{
+        flex-direction:column;
+        gap:10px;
+        text-align:center;
+    }
+}
+
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width:430px){
+
+    .header{
+        padding:0 12px;
+    }
+
+    .brand{
+        font-size:14px;
+    }
+
+    .logo{
+        width:32px;
+        height:32px;
+    }
+
+    .hero{
+        min-height:390px;
+
+        padding:
+            24px
+            14px
+            140px;
+    }
+
+    .hero h1{
+        font-size:29px;
+        letter-spacing:-1.25px;
+    }
+
+    .hero p{
+        font-size:10px;
+    }
+
+    .main{
+        width:
+            calc(
+                100% - 20px
+            );
+
+        margin:
+            -112px
+            auto
+            76px;
+    }
+
+    .scanner-card{
+        padding:12px;
+        border-radius:21px;
+    }
+
+    .scanner-title{
+        font-size:15px;
+    }
+
+    .scanner-subtitle{
+        font-size:8px;
+        max-width:190px;
+    }
+
+    .ready{
+        padding:
+            6px
+            7px;
+
+        font-size:6.5px;
+    }
+
+    .tab{
+        flex-basis:82px;
+        width:82px;
+    }
+
+    .live-panel{
+        padding:13px;
+        min-height:290px;
+    }
+
+    .panel-heading{
+        font-size:15px;
+    }
+
+    .panel-description{
+        font-size:8.5px;
+    }
+
+    .input{
+        height:46px;
+        font-size:11.5px;
+    }
+
+    textarea.input{
+        height:118px;
+        min-height:118px;
+    }
+
+    .check-button{
+        height:46px;
+        font-size:8.5px;
+    }
+
+    .qr-upload{
+        min-height:145px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL
+========================================================= */
+
+@media (max-width:360px){
+
+    .brand{
+        font-size:13px;
+    }
+
+    .logo{
+        width:30px;
+        height:30px;
+    }
+
+    .header-button{
+        width:34px;
+        height:34px;
+    }
+
+    .hero{
+        min-height:385px;
+
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .hero h1{
+        font-size:27px;
+    }
+
+    .main{
+        width:
+            calc(
+                100% - 16px
+            );
+
+        margin:
+            -108px
+            auto
+            72px;
+    }
+
+    .scanner-card{
+        padding:10px;
+    }
+
+    .scanner-header{
+        gap:6px;
+    }
+
+    .scanner-title{
+        font-size:14px;
+    }
+
+    .scanner-subtitle{
+        font-size:7.5px;
+    }
+
+    .ready{
+        padding:
+            5px
+            6px;
+
+        font-size:6px;
+    }
+
+    .tabs{
+        gap:2px;
+        padding:3px;
+    }
+
+    .tab{
+        min-height:53px;
+    }
+
+    .tab svg{
+        width:16px;
+        height:16px;
+    }
+
+    .tab span{
+        font-size:6.5px;
+    }
+
+    .live-panel{
+        padding:11px;
+    }
+}
+
+</style>
+
+
+<style id="safnex-qr-home-only">
+#qrResult .qr-home-status{
+    margin-top:18px;
+    padding:18px;
+    border-radius:16px;
+    border:1px solid #dfe6f1;
+    background:#fff;
+    animation:qrHomeIn .25s ease both;
+}
+#qrResult .qr-home-status.safe{
+    border-color:rgba(19,166,115,.32);
+    background:linear-gradient(135deg,#ffffff,#f4fcf8);
+}
+#qrResult .qr-home-status.unsafe{
+    border-color:rgba(230,77,97,.32);
+    background:linear-gradient(135deg,#ffffff,#fff6f7);
+}
+#qrResult .qr-home-verdict{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:20px;
+    font-weight:800;
+    line-height:1.2;
+}
+#qrResult .qr-home-dot{
+    width:10px;
+    height:10px;
+    min-width:10px;
+    border-radius:50%;
+}
+#qrResult .safe .qr-home-dot{
+    background:#13a673;
+    box-shadow:0 0 0 6px rgba(19,166,115,.10);
+}
+#qrResult .unsafe .qr-home-dot{
+    background:#e64d61;
+    box-shadow:0 0 0 6px rgba(230,77,97,.10);
+}
+#qrResult .qr-full-report{
+    width:100%;
+    margin-top:14px;
+}
+@keyframes qrHomeIn{
+    from{opacity:0;transform:translateY(7px)}
+    to{opacity:1;transform:translateY(0)}
+}
+@media(max-width:600px){
+    #qrResult .qr-home-status{
+        margin-top:12px;
+        padding:14px;
+        border-radius:14px;
+    }
+    #qrResult .qr-home-verdict{
+        font-size:17px;
+    }
+}
+</style>
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="logo">
+
+            <img
+                src="logo.jpeg"
+                alt="SAFNEX NOVA logo"
+            >
+
+        </div>
+
+        SAFNEX
+        <span>NOVA</span>
+
+    </div>
+
+
+    <div class="header-actions">
+
+        <button
+            class="header-button"
+            onclick="showToast('SAFNEX NOVA is ready')"
+            aria-label="Safety status"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+
+                <path d="
+                    M12 3
+                    20 6
+                    v5
+                    c0 5-3.4 8.8-8 10
+                    -4.6-1.2-8-5-8-10V6
+                    l8-3Z
+                "/>
+
+                <path d="m9 12 2 2 4-4"/>
+
+            </svg>
+
+        </button>
+
+
+        <button
+            class="header-button"
+            onclick="scrollToScanner()"
+            aria-label="Open scanner"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+
+                <path d="
+                    M20 15
+                    a3 3 0 0 1-3 3
+                    H9l-5 3v-6
+                    a3 3 0 0 1-2-3V6
+                    a3 3 0 0 1 3-3h12
+                    a3 3 0 0 1 3 3v9Z
+                "/>
+
+            </svg>
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="badge">
+
+            <i class="status-dot"></i>
+
+            SAFNEX NOVA DIGITAL SAFETY
+
+        </div>
+
+
+        <h1>
+
+            Check before you
+            <span>click, call or reply.</span>
+
+        </h1>
+
+
+        <p>
+
+            Analyze suspicious phone numbers,
+            messages, links and QR codes with one
+            simple digital safety checker.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main
+    class="main"
+    id="scanner"
+>
+
+
+<section class="scanner-card">
+
+
+    <div class="scanner-header">
+
+        <div>
+
+            <div class="scanner-title">
+                Digital Safety Check
+            </div>
+
+            <div class="scanner-subtitle">
+                Select what you want SAFNEX NOVA to check
+            </div>
+
+        </div>
+
+
+        <div class="ready">
+
+            <i></i>
+
+            READY
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TABS
+    ====================================================== -->
+
+    <div class="tabs">
+
+
+        <!-- LINK -->
+
+        <button
+            class="tab active"
+            data-type="link"
+            onclick="switchScanner('link')"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+
+                <path d="
+                    M10 13
+                    a5 5 0 0 0 7.1.1
+                    l2-2
+                    A5 5 0 0 0 12 4
+                    l-1.1 1.1
+                "/>
+
+                <path d="
+                    M14 11
+                    a5 5 0 0 0-7.1-.1
+                    l-2 2
+                    A5 5 0 0 0 12 20
+                    l1.1-1.1
+                "/>
+
+            </svg>
+
+            <span>LINK</span>
+
+        </button>
+
+
+        <!-- PHONE -->
+
+        <button
+            class="tab"
+            data-type="phone"
+            onclick="switchScanner('phone')"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+
+                <path d="
+                    M22 16.9v3
+                    a2 2 0 0 1-2.2 2
+                    A19.8 19.8 0 0 1 3.1 5.2
+                    A2 2 0 0 1 5.1 3h3
+                    a2 2 0 0 1 2 1.7
+                    c.1.9.3 1.7.6 2.5
+                    a2 2 0 0 1-.5 2.1
+                    L9 10.6
+                    a16 16 0 0 0 4.4 4.4
+                    l1.3-1.3
+                    a2 2 0 0 1 2.1-.5
+                    c.8.3 1.6.5 2.5.6
+                    A2 2 0 0 1 22 16.9Z
+                "/>
+
+            </svg>
+
+            <span>PHONE</span>
+
+        </button>
+
+
+        <!-- QR -->
+
+        <button
+            class="tab"
+            data-type="qr"
+            onclick="switchScanner('qr')"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+
+                <path d="M4 4h6v6H4z"/>
+                <path d="M14 4h6v6h-6z"/>
+                <path d="M4 14h6v6H4z"/>
+                <path d="M14 14h2"/>
+                <path d="M18 14h2v2"/>
+                <path d="M14 18h2v2"/>
+                <path d="M18 18h2"/>
+
+            </svg>
+
+            <span>QR</span>
+
+        </button>
+
+
+        <!-- MESSAGE -->
+
+        <button
+            class="tab"
+            data-type="message"
+            onclick="switchScanner('message')"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+
+                <path d="
+                    M20 15
+                    a3 3 0 0 1-3 3
+                    H9l-5 3v-6
+                    a3 3 0 0 1-2-3V6
+                    a3 3 0 0 1 3-3h12
+                    a3 3 0 0 1 3 3v9Z
+                "/>
+
+            </svg>
+
+            <span>MESSAGE</span>
+
+        </button>
+
+
+        <!-- VIDEO -->
+
+        <button
+            class="tab"
+            data-type="video"
+            onclick="switchScanner('video')"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+
+                <rect
+                    x="3"
+                    y="5"
+                    width="13"
+                    height="14"
+                    rx="2"
+                />
+
+                <path d="m16 10 5-3v10l-5-3z"/>
+
+            </svg>
+
+            <span>VIDEO</span>
+
+        </button>
+
+
+        <!-- AUDIO -->
+
+        <button
+            class="tab"
+            data-type="audio"
+            onclick="switchScanner('audio')"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+
+                <path d="M12 3v18"/>
+                <path d="M8 7v10"/>
+                <path d="M4 10v4"/>
+                <path d="M16 6v12"/>
+                <path d="M20 10v4"/>
+
+            </svg>
+
+            <span>AUDIO</span>
+
+        </button>
+
+
+        <!-- IMAGE -->
+
+        <button
+            class="tab"
+            data-type="image"
+            onclick="switchScanner('image')"
+        >
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+
+                <rect
+                    x="3"
+                    y="4"
+                    width="18"
+                    height="16"
+                    rx="2"
+                />
+
+                <circle
+                    cx="8.5"
+                    cy="9"
+                    r="1.5"
+                />
+
+                <path d="m21 15-5-5L5 20"/>
+
+            </svg>
+
+            <span>IMAGE</span>
+
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         LIVE PANEL
+    ====================================================== -->
+
+    <div
+        class="live-panel"
+        id="livePanel"
+    >
+
+
+        <!-- =================================================
+             LINK VIEW
+        ================================================== -->
+
+        <div
+            class="scanner-view"
+            id="linkView"
+        >
+
+            <div class="panel-top">
+
+                <div>
+
+                    <div class="panel-heading">
+                        Check Link
+                    </div>
+
+                    <div class="panel-description">
+                        Paste a URL to inspect common risk signals.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <label class="input-label">
+                WEBSITE / URL
+            </label>
+
+
+            <input
+                class="input"
+                id="linkInput"
+                type="url"
+                placeholder="https://example.com"
+                autocomplete="off"
+            >
+
+
+            <button
+                class="check-button"
+                onclick="checkLink()"
+            >
+                CHECK LINK
+            </button>
+
+
+            <div
+                class="result"
+                id="linkResult"
+            ></div>
+
+        </div>
+
+
+        <!-- =================================================
+             PHONE VIEW
+        ================================================== -->
+
+        <div
+            class="scanner-view"
+            id="phoneView"
+            style="display:none;"
+        >
+
+            <div class="panel-top">
+
+                <div>
+
+                    <div class="panel-heading">
+                        Check Phone Number
+                    </div>
+
+                    <div class="panel-description">
+                        Check the number using the SAFNEX NOVA phone analysis engine.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <label class="input-label">
+                PHONE NUMBER
+            </label>
+
+
+            <input
+                class="input"
+                id="phoneInput"
+                type="tel"
+                inputmode="tel"
+                placeholder="+91 98765 43210"
+                autocomplete="off"
+            >
+
+
+            <button
+                class="check-button"
+                onclick="checkPhone()"
+            >
+                CHECK PHONE NUMBER
+            </button>
+
+
+            <div
+                class="result"
+                id="phoneResult"
+            ></div>
+
+        </div>
+
+
+        <!-- =================================================
+             MESSAGE VIEW
+        ================================================== -->
+
+        <div
+            class="scanner-view"
+            id="messageView"
+            style="display:none;"
+        >
+
+            <div class="panel-top">
+
+                <div>
+
+                    <div class="panel-heading">
+                        Check Message
+                    </div>
+
+                    <div class="panel-description">
+                        Paste an SMS, WhatsApp or email message.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <label class="input-label">
+                MESSAGE CONTENT
+            </label>
+
+
+            <textarea
+                class="input"
+                id="messageInput"
+                placeholder="Paste the suspicious message here..."
+            ></textarea>
+
+
+            <button
+                class="check-button"
+                onclick="checkMessage()"
+            >
+                CHECK MESSAGE
+            </button>
+
+
+            <div
+                class="result"
+                id="messageResult"
+            ></div>
+
+        </div>
+
+
+        <!-- =================================================
+             QR VIEW
+        ================================================== -->
+
+        <div
+            class="scanner-view"
+            id="qrView"
+            style="display:none;"
+        >
+
+            <div class="panel-top">
+
+                <div>
+
+                    <div class="panel-heading">
+                        Check QR Code
+                    </div>
+
+                    <div class="panel-description">
+                        Upload a QR image and SAFNEX NOVA will read it.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <label
+                class="qr-upload"
+                for="qrFile"
+            >
+
+                <div class="qr-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+
+                        <path d="M4 4h6v6H4z"/>
+                        <path d="M14 4h6v6h-6z"/>
+                        <path d="M4 14h6v6H4z"/>
+                        <path d="M14 14h2"/>
+                        <path d="M18 14h2v2"/>
+                        <path d="M14 18h2v2"/>
+                        <path d="M18 18h2"/>
+
+                    </svg>
+
+                </div>
+
+
+                <strong>
+                    Upload QR Code
+                </strong>
+
+
+                <p>
+                    PNG, JPG or WEBP
+                </p>
+
+            </label>
+
+
+            <input
+                id="qrFile"
+                type="file"
+                accept="image/*"
+                onchange="readQR(event)"
+            >
+
+
+            <div
+                class="result"
+                id="qrResult"
+            ></div>
+
+        </div>
+
+
+        <!-- =================================================
+             VIDEO VIEW
+        ================================================== -->
+
+        <div
+            class="scanner-view"
+            id="videoView"
+            style="display:none;"
+        >
+
+            <div class="panel-top">
+
+                <div>
+
+                    <div class="panel-heading">
+                        Detect Video
+                    </div>
+
+                    <div class="panel-description">
+                        Upload a video to inspect basic file and media signals.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <label
+                class="media-upload"
+                for="videoFile"
+            >
+
+                <div class="media-upload-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+
+                        <rect
+                            x="3"
+                            y="5"
+                            width="13"
+                            height="14"
+                            rx="2"
+                        />
+
+                        <path d="m16 10 5-3v10l-5-3z"/>
+
+                    </svg>
+
+                </div>
+
+
+                <strong>
+                    Upload Video
+                </strong>
+
+
+                <p>
+                    MP4, WEBM, MOV or another supported video file
+                </p>
+
+            </label>
+
+
+            <input
+                class="media-file"
+                id="videoFile"
+                type="file"
+                accept="video/*"
+                onchange="detectVideo(event)"
+            >
+
+
+            <div
+                class="media-preview"
+                id="videoPreview"
+            ></div>
+
+
+            <div
+                class="result"
+                id="videoResult"
+            ></div>
+
+        </div>
+
+
+        <!-- =================================================
+             AUDIO VIEW
+        ================================================== -->
+
+        <div
+            class="scanner-view"
+            id="audioView"
+            style="display:none;"
+        >
+
+            <div class="panel-top">
+
+                <div>
+
+                    <div class="panel-heading">
+                        Detect Audio
+                    </div>
+
+                    <div class="panel-description">
+                        Upload an audio file to inspect basic file and media signals.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <label
+                class="media-upload"
+                for="audioFile"
+            >
+
+                <div class="media-upload-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+
+                        <path d="M12 3v18"/>
+                        <path d="M8 7v10"/>
+                        <path d="M4 10v4"/>
+                        <path d="M16 6v12"/>
+                        <path d="M20 10v4"/>
+
+                    </svg>
+
+                </div>
+
+
+                <strong>
+                    Upload Audio
+                </strong>
+
+
+                <p>
+                    MP3, WAV, M4A or another supported audio file
+                </p>
+
+            </label>
+
+
+            <input
+                class="media-file"
+                id="audioFile"
+                type="file"
+                accept="audio/*"
+                onchange="detectAudio(event)"
+            >
+
+
+            <div
+                class="audio-preview"
+                id="audioPreview"
+            ></div>
+
+
+            <div
+                class="result"
+                id="audioResult"
+            ></div>
+
+        </div>
+
+
+        <!-- =================================================
+             IMAGE VIEW
+        ================================================== -->
+
+        <div
+            class="scanner-view"
+            id="imageView"
+            style="display:none;"
+        >
+
+            <div class="panel-top">
+
+                <div>
+
+                    <div class="panel-heading">
+                        Detect Image
+                    </div>
+
+                    <div class="panel-description">
+                        Upload an image to inspect basic file and image signals.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <label
+                class="media-upload"
+                for="imageFile"
+            >
+
+                <div class="media-upload-icon">
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+
+                        <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="16"
+                            rx="2"
+                        />
+
+                        <circle
+                            cx="8.5"
+                            cy="9"
+                            r="1.5"
+                        />
+
+                        <path d="m21 15-5-5L5 20"/>
+
+                    </svg>
+
+                </div>
+
+
+                <strong>
+                    Upload Image
+                </strong>
+
+
+                <p>
+                    PNG, JPG, WEBP or another supported image file
+                </p>
+
+            </label>
+
+
+            <input
+                class="media-file"
+                id="imageFile"
+                type="file"
+                accept="image/*"
+                onchange="detectImage(event)"
+            >
+
+
+            <div
+                class="media-preview"
+                id="imagePreview"
+            ></div>
+
+
+            <div
+                class="result"
+                id="imageResult"
+            ></div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     INFORMATION
+========================================================= -->
+
+<section class="info-section">
+
+    <div class="section-header">
+
+        <div>
+
+            <div class="section-title">
+                SAFNEX NOVA
+            </div>
+
+            <div class="section-subtitle">
+                One place for everyday digital safety.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="info-grid">
+
+
+        <article class="info-card">
+
+            <div class="info-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+
+                    <path d="
+                        M12 3
+                        20 6
+                        v5
+                        c0 5-3.4 8.8-8 10
+                        -4.6-1.2-8-5-8-10V6
+                        l8-3Z
+                    "/>
+
+                    <path d="m9 12 2 2 4-4"/>
+
+                </svg>
+
+            </div>
+
+
+            <strong>
+                Simple protection
+            </strong>
+
+
+            <p>
+                Check suspicious content before
+                taking action.
+            </p>
+
+        </article>
+
+
+        <article class="info-card">
+
+            <div class="info-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+
+                    <path d="
+                        M20 15
+                        a3 3 0 0 1-3 3
+                        H9l-5 3v-6
+                        a3 3 0 0 1-2-3V6
+                        a3 3 0 0 1 3-3h12
+                        a3 3 0 0 1 3 3v9Z
+                    "/>
+
+                </svg>
+
+            </div>
+
+
+            <strong>
+                Multiple checks
+            </strong>
+
+
+            <p>
+                Phone, message, link and QR
+                analysis in one interface.
+            </p>
+
+        </article>
+
+
+        <article class="info-card">
+
+            <div class="info-icon">
+
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+
+                    <path d="
+                        M12 3
+                        20 6
+                        v5
+                        c0 5-3.4 8.8-8 10
+                        -4.6-1.2-8-5-8-10V6
+                        l8-3Z
+                    "/>
+
+                    <path d="M12 8v4"/>
+
+                    <circle
+                        cx="12"
+                        cy="15.5"
+                        r=".6"
+                        fill="currentColor"
+                    />
+
+                </svg>
+
+            </div>
+
+
+            <strong>
+                Privacy focused
+            </strong>
+
+
+            <p>
+                This page performs basic checks
+                without claiming access to private records.
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="footer">
+
+    <div class="footer-inner">
+
+        <div>
+
+            <strong>
+                SAFNEX NOVA
+            </strong>
+
+            <p>
+                Digital safety made simple.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                Support
+            </strong>
+
+            <p>
+
+                <a href="mailto:muthukrishnan11028@gmail.com">
+                    muthukrishnan11028@gmail.com
+                </a>
+
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <p>
+                © 2026 SAFNEX NOVA
+            </p>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     MOBILE NAV
+========================================================= -->
+
+<nav class="bottom-nav">
+
+
+    <button
+        class="bottom-item active"
+        onclick="goTop()"
+    >
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+        >
+
+            <path d="
+                m3 10
+                9-7
+                9 7
+                v10
+                a1 1 0 0 1-1 1
+                h-5v-6H9v6H4
+                a1 1 0 0 1-1-1V10Z
+            "/>
+
+        </svg>
+
+        Home
+
+    </button>
+
+
+    <button
+        class="bottom-item"
+        onclick="showToast('Profile')"
+    >
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+        >
+
+            <circle
+                cx="12"
+                cy="8"
+                r="4"
+            />
+
+            <path d="M4 21a8 8 0 0 1 16 0"/>
+
+        </svg>
+
+        Profile
+
+    </button>
+
+
+    <button
+        class="bottom-item"
+        onclick="showToast('AI Support')"
+    >
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+        >
+
+            <path d="
+                M12 3
+                a7 7 0 0 0-7 7
+                v3
+                a7 7 0 0 0 14 0
+                v-3
+                a7 7 0 0 0-7-7Z
+            "/>
+
+            <path d="
+                M5 13H3
+                a2 2 0 0 0 0 4h2
+            "/>
+
+            <path d="
+                M19 13h2
+                a2 2 0 0 1 0 4h-2
+            "/>
+
+            <path d="M9 20h6"/>
+
+        </svg>
+
+        AI Support
+
+    </button>
+
+
+    <button
+        class="bottom-item"
+        onclick="switchScanner('image');scrollToScanner()"
+    >
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+        >
+
+            <rect
+                x="3"
+                y="4"
+                width="18"
+                height="16"
+                rx="2"
+            />
+
+            <circle
+                cx="8.5"
+                cy="9"
+                r="1.5"
+            />
+
+            <path d="m21 15-5-5L5 20"/>
+
+        </svg>
+
+        Scan
+
+    </button>
+
+</nav>
+
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+
+<script>
+
+/* =========================================================
+   CONFIGURATION
+========================================================= */
+
+/*
+ * Full link analysis page
+ */
+const FULL_LINK_REPORT_PAGE =
+    "link-detector.html";
+
+
+/*
+ * Full phone analysis page
+ *
+ * Change this filename ONLY if your phone detector
+ * HTML file has a different name.
+ */
+const FULL_PHONE_REPORT_PAGE =
+    "phonenumber-detect.html";
+
+
+/*
+ * Link backend
+ */
+const LINK_API_URL =
+    window.SAFNEX_API_URL ||
+    "http://localhost:3000/api/analyze";
+
+
+/*
+ * Phone backend
+ */
+const PHONE_API_URL =
+    window.SAFNEX_PHONE_API_URL ||
+    "http://localhost:4000/api/phone-check";
+
+
+/* =========================================================
+   CURRENT VALUES
+========================================================= */
+
+let currentLink = "";
+let currentPhone = "";
+
+
+/* =========================================================
+   TAB SWITCHING
+========================================================= */
+
+function switchScanner(type){
+
+    document
+        .querySelectorAll(".tab")
+        .forEach(function(tab){
+
+            tab.classList.remove("active");
+
+            if(
+                tab.dataset.type === type
+            ){
+
+                tab.classList.add("active");
+
+            }
+
+        });
+
+
+    document
+        .querySelectorAll(".scanner-view")
+        .forEach(function(view){
+
+            view.style.display =
+                "none";
+
+        });
+
+
+    const selected =
+        document.getElementById(
+            type + "View"
+        );
+
+
+    if(selected){
+
+        selected.style.display =
+            "block";
+
+    }
+
+}
+
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+function scrollToScanner(){
+
+    const scanner =
+        document.getElementById(
+            "scanner"
+        );
+
+    if(scanner){
+
+        scanner.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+
+    }
+
+}
+
+
+function goTop(){
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+
+function showToast(message){
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    toast.textContent =
+        String(message);
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        toastTimer
+    );
+
+
+    toastTimer =
+        setTimeout(
+            function(){
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            2200
+        );
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value){
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   GENERIC RESULT
+========================================================= */
+
+function showResult(
+    id,
+    type,
+    icon,
+    title,
+    level,
+    body,
+    reasons
+){
+
+    const box =
+        document.getElementById(
+            id
+        );
+
+
+    if(!box){
+        return;
+    }
+
+
+    box.className =
+        "result show " +
+        type;
+
+
+    let list = "";
+
+
+    if(
+        reasons &&
+        reasons.length
+    ){
+
+        list =
+            "<ul class='reason-list'>" +
+
+            reasons
+                .map(
+                    function(reason){
+
+                        return "<li>" +
+                            escapeHTML(reason) +
+                            "</li>";
+
+                    }
+                )
+                .join("") +
+
+            "</ul>";
+
+    }
+
+
+    box.innerHTML =
+
+        "<div class='result-head'>" +
+
+            "<div class='result-icon'>" +
+                icon +
+            "</div>" +
+
+            "<div>" +
+
+                "<div class='result-title'>" +
+                    escapeHTML(title) +
+                "</div>" +
+
+                "<div class='result-level'>" +
+                    escapeHTML(level) +
+                "</div>" +
+
+            "</div>" +
+
+        "</div>" +
+
+
+        "<div class='result-body'>" +
+
+            escapeHTML(body) +
+
+            list +
+
+        "</div>" +
+
+
+        "<button " +
+            "class='again-button' " +
+            "onclick=\"resetResult('" +
+                id +
+            "')\">" +
+
+            "CHECK AGAIN" +
+
+        "</button>";
+
+
+    box.scrollIntoView({
+        behavior:"smooth",
+        block:"nearest"
+    });
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetResult(id){
+
+    if(id === "linkResult"){
+        stopLinkLoading();
+    }
+
+    const box =
+        document.getElementById(
+            id
+        );
+
+
+    if(!box){
+        return;
+    }
+
+
+    box.className =
+        "result";
+
+
+    box.innerHTML =
+        "";
+
+}
+
+
+/* =========================================================
+   PHONE CHECK
+========================================================= */
+
+/*
+ * IMPORTANT:
+ *
+ * Home page does NOT calculate the phone score itself.
+ *
+ * It asks phone-server.js for the score.
+ *
+ * This keeps Home and phonenumber-detect.html
+ * connected to the same phone analysis engine.
+ */
+
+async function checkPhone(){
+
+    const input =
+        document
+        .getElementById(
+            "phoneInput"
+        )
+        .value
+        .trim();
+
+
+    if(!input){
+
+        showToast(
+            "Enter a phone number first."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Keep + and digits.
+     */
+    const cleaned =
+        input.replace(
+            /[^\d+]/g,
+            ""
+        );
+
+
+    const digits =
+        cleaned.replace(
+            /\D/g,
+            ""
+        );
+
+
+    if(
+        digits.length < 7 ||
+        digits.length > 15
+    ){
+
+        showResult(
+
+            "phoneResult",
+
+            "warning",
+
+            "!",
+
+            "Check this phone number",
+
+            "INVALID INPUT",
+
+            "Enter a phone number with a valid international or national length.",
+
+            [
+                "Number is too short or too long"
+            ]
+
+        );
+
+        return;
+
+    }
+
+
+    currentPhone =
+        cleaned;
+
+
+    const box =
+        document.getElementById(
+            "phoneResult"
+        );
+
+
+    box.className =
+        "result show warning";
+
+
+    box.innerHTML =
+
+        "<div class='link-score-result'>" +
+
+            "<div " +
+                "class='link-score' " +
+                "style='color:#5367ff'>" +
+
+                "…" +
+
+            "</div>" +
+
+            "<div class='link-score-label'>" +
+
+                "SAFNEX NOVA PHONE SCORE" +
+
+            "</div>" +
+
+            "<div class='link-risk warning'>" +
+
+                "⏳ ANALYZING NUMBER" +
+
+            "</div>" +
+
+            "<div " +
+                "style='margin-top:10px;font-size:9px;color:#858896'>" +
+
+                "Checking the SAFNEX NOVA phone analysis engine." +
+
+            "</div>" +
+
+            "<button " +
+                "class='again-button' " +
+                "onclick=\"resetResult('phoneResult')\">" +
+
+                "CANCEL" +
+
+            "</button>" +
+
+        "</div>";
+
+
+    box.scrollIntoView({
+        behavior:"smooth",
+        block:"nearest"
+    });
+
+
+    try{
+
+        const response =
+            await fetch(
+                PHONE_API_URL,
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            phone:
+                                currentPhone
+                        })
+                }
+            );
+
+
+        let data = {};
+
+
+        try{
+
+            data =
+                await response.json();
+
+        }
+        catch(error){
+
+            data = {};
+
+        }
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data?.error ||
+                "Phone analysis failed."
+            );
+
+        }
+
+
+        /*
+         * Accept the backend score.
+         *
+         * We NEVER invent a score here.
+         */
+        const backendScore =
+            data?.securityScore ??
+            data?.security?.score ??
+            data?.score ??
+            null;
+
+
+        const numericScore =
+            Number(
+                backendScore
+            );
+
+
+        if(
+            backendScore === null ||
+            backendScore === undefined ||
+            !Number.isFinite(
+                numericScore
+            )
+        ){
+
+            showPhoneUnverified(
+                currentPhone,
+                "The phone analysis server did not return a verified score."
+            );
+
+            return;
+
+        }
+
+
+        const score =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    Math.round(
+                        numericScore
+                    )
+                )
+            );
+
+
+        let verdict =
+            data?.security?.verdict ??
+            data?.verdict ??
+            data?.risk?.level ??
+            "";
+
+
+        if(!verdict){
+
+            if(score >= 80){
+
+                verdict =
+                    "LIKELY VALID";
+
+            }
+            else if(score >= 60){
+
+                verdict =
+                    "REVIEW";
+
+            }
+            else if(score >= 40){
+
+                verdict =
+                    "SUSPICIOUS";
+
+            }
+            else{
+
+                verdict =
+                    "HIGH RISK";
+
+            }
+
+        }
+
+
+        const normalized =
+            String(
+                verdict
+            ).toUpperCase();
+
+
+        let type =
+            "warning";
+
+
+        if(
+            normalized.includes(
+                "HIGH RISK"
+            ) ||
+            normalized.includes(
+                "INVALID"
+            ) ||
+            normalized.includes(
+                "SUSPICIOUS"
+            ) &&
+            score < 50
+        ){
+
+            type =
+                "danger";
+
+        }
+        else if(
+            score >= 80
+        ){
+
+            type =
+                "safe";
+
+        }
+
+
+        showPhoneScoreResult(
+            score,
+            verdict,
+            type,
+            currentPhone
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "SAFNEX NOVA phone analysis error:",
+            error
+        );
+
+
+        /*
+         * No fake score.
+         */
+        showPhoneUnverified(
+            currentPhone,
+            "The phone analysis server could not verify this number."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PHONE SCORE RESULT
+========================================================= */
+
+function showPhoneScoreResult(
+    score,
+    verdict,
+    type,
+    phone
+){
+
+    const box =
+        document.getElementById(
+            "phoneResult"
+        );
+
+
+    let scoreColor =
+        "#f59a45";
+
+
+    let icon =
+        "!";
+
+
+    if(type === "safe"){
+
+        scoreColor =
+            "#17b879";
+
+        icon =
+            "✓";
+
+    }
+    else if(type === "danger"){
+
+        scoreColor =
+            "#ed5964";
+
+        icon =
+            "⚠";
+
+    }
+
+
+    box.className =
+        "result show " +
+        type;
+
+
+    box.innerHTML =
+
+        "<div class='link-score-result'>" +
+
+            "<div " +
+                "class='link-score' " +
+                "style='color:" +
+                    scoreColor +
+                "'>" +
+
+                score +
+                " / 100" +
+
+            "</div>" +
+
+            "<div class='link-score-label'>" +
+
+                "SAFNEX NOVA PHONE SCORE" +
+
+            "</div>" +
+
+            "<div class='link-risk " +
+                type +
+            "'>" +
+
+                icon +
+                " " +
+                escapeHTML(verdict) +
+
+            "</div>" +
+
+            "<div " +
+                "style='margin-top:10px;font-size:9px;color:#646774;line-height:1.6'>" +
+
+                "This score is based on the phone analysis signals returned by SAFNEX NOVA. It does not prove that a SIM is active or that calls can be made or received." +
+
+            "</div>" +
+
+            "<button " +
+                "class='full-report-button' " +
+                "onclick=\"openFullPhoneReport()\">" +
+
+                "CHECK FULL PHONE REPORT →" +
+
+            "</button>" +
+
+            "<button " +
+                "class='again-button' " +
+                "onclick=\"resetResult('phoneResult')\">" +
+
+                "CHECK ANOTHER NUMBER" +
+
+            "</button>" +
+
+        "</div>";
+
+
+    box.scrollIntoView({
+        behavior:"smooth",
+        block:"nearest"
+    });
+
+}
+
+
+/* =========================================================
+   PHONE UNVERIFIED
+========================================================= */
+
+function showPhoneUnverified(
+    phone,
+    message
+){
+
+    const box =
+        document.getElementById(
+            "phoneResult"
+        );
+
+
+    box.className =
+        "result show warning";
+
+
+    box.innerHTML =
+
+        "<div class='link-score-result'>" +
+
+            "<div " +
+                "class='link-score' " +
+                "style='color:#f59a45'>" +
+
+                "—" +
+
+            "</div>" +
+
+            "<div class='link-score-label'>" +
+
+                "SAFNEX NOVA PHONE SCORE" +
+
+            "</div>" +
+
+            "<div class='link-risk warning'>" +
+
+                "⚠ UNVERIFIED" +
+
+            "</div>" +
+
+            "<div " +
+                "style='margin-top:10px;font-size:9px;color:#646774;line-height:1.6'>" +
+
+                escapeHTML(
+                    message
+                ) +
+
+            "</div>" +
+
+            "<div " +
+                "style='margin-top:8px;font-size:8px;color:#858896;word-break:break-all'>" +
+
+                escapeHTML(
+                    phone
+                ) +
+
+            "</div>" +
+
+            "<button " +
+                "class='full-report-button' " +
+                "onclick=\"openFullPhoneReport()\">" +
+
+                "OPEN FULL PHONE REPORT →" +
+
+            "</button>" +
+
+            "<button " +
+                "class='again-button' " +
+                "onclick=\"resetResult('phoneResult')\">" +
+
+                "CHECK ANOTHER NUMBER" +
+
+            "</button>" +
+
+        "</div>";
+
+
+    box.scrollIntoView({
+        behavior:"smooth",
+        block:"nearest"
+    });
+
+}
+
+
+/* =========================================================
+   OPEN FULL PHONE REPORT
+========================================================= */
+
+function openFullPhoneReport(){
+
+    if(!currentPhone){
+
+        showToast(
+            "Please enter a phone number first."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * This is the important connection:
+     *
+     * Home:
+     * phonenumber-detect.html?phone=+919876543210
+     *
+     * Phone detector reads ?phone=
+     * and fills its input automatically.
+     */
+
+    window.location.href =
+        FULL_PHONE_REPORT_PAGE +
+        "?phone=" +
+        encodeURIComponent(
+            currentPhone
+        );
+
+}
+
+
+
+let linkLoadingTimer = null;
+
+function startLinkLoading(){
+
+    stopLinkLoading();
+
+    const steps = [
+        document.getElementById("linkLoadStep1"),
+        document.getElementById("linkLoadStep2"),
+        document.getElementById("linkLoadStep3"),
+        document.getElementById("linkLoadStep4")
+    ];
+
+    let index = 0;
+
+    linkLoadingTimer = window.setInterval(function(){
+
+        if(index >= steps.length - 1){
+            return;
+        }
+
+        if(steps[index]){
+            steps[index].classList.remove("active");
+            steps[index].classList.add("done");
+        }
+
+        index++;
+
+        if(steps[index]){
+            steps[index].classList.add("active");
+        }
+
+    }, 850);
+}
+
+function stopLinkLoading(){
+
+    if(linkLoadingTimer !== null){
+        window.clearInterval(linkLoadingTimer);
+        linkLoadingTimer = null;
+    }
+}
+
+
+/* =========================================================
+   LINK CHECK
+========================================================= */
+
+function checkLink(){
+
+    let value =
+        document
+        .getElementById(
+            "linkInput"
+        )
+        .value
+        .trim();
+
+
+    if(!value){
+
+        showToast(
+            "Enter a link first."
+        );
+
+        return;
+
+    }
+
+
+    let url =
+        value;
+
+
+    if(
+        !/^https?:\/\//i.test(
+            url
+        )
+    ){
+
+        url =
+            "https://" +
+            url;
+
+    }
+
+
+    let parsed;
+
+
+    try{
+
+        parsed =
+            new URL(
+                url
+            );
+
+    }
+    catch(error){
+
+        showResult(
+
+            "linkResult",
+
+            "danger",
+
+            "✕",
+
+            "Invalid link",
+
+            "INVALID",
+
+            "The value entered does not appear to be a valid web URL.",
+
+            [
+                "Invalid URL format"
+            ]
+
+        );
+
+        return;
+
+    }
+
+
+    currentLink =
+        parsed.href;
+
+
+    const box =
+        document.getElementById(
+            "linkResult"
+        );
+
+
+    box.className =
+        "result show warning";
+
+
+    box.innerHTML =
+
+        "<div class='link-loading'>" +
+
+            "<div class='loading-main'>" +
+
+                "<div class='loading-orbit' aria-hidden='true'></div>" +
+
+                "<div class='loading-copy'>" +
+
+                    "<div class='loading-kicker'>" +
+                        "<i></i>" +
+                        "LIVE SECURITY ANALYSIS" +
+                    "</div>" +
+
+                    "<div class='loading-title'>" +
+                        "Analyzing this link" +
+                    "</div>" +
+
+                    "<div class='loading-url' title='" +
+                        escapeHTML(currentLink) +
+                    "'>" +
+                        escapeHTML(currentLink) +
+                    "</div>" +
+
+                "</div>" +
+
+            "</div>" +
+
+            "<div class='loading-progress' aria-hidden='true'>" +
+                "<span></span>" +
+            "</div>" +
+
+            "<div class='loading-steps'>" +
+
+                "<div class='loading-step active' id='linkLoadStep1'>" +
+                    "<div class='loading-step-top'>" +
+                        "<span class='loading-step-dot'></span>" +
+                        "<span class='loading-step-label'>Checking URL</span>" +
+                    "</div>" +
+                "</div>" +
+
+                "<div class='loading-step' id='linkLoadStep2'>" +
+                    "<div class='loading-step-top'>" +
+                        "<span class='loading-step-dot'></span>" +
+                        "<span class='loading-step-label'>Inspecting Domain</span>" +
+                    "</div>" +
+                "</div>" +
+
+                "<div class='loading-step' id='linkLoadStep3'>" +
+                    "<div class='loading-step-top'>" +
+                        "<span class='loading-step-dot'></span>" +
+                        "<span class='loading-step-label'>Analyzing Signals</span>" +
+                    "</div>" +
+                "</div>" +
+
+                "<div class='loading-step' id='linkLoadStep4'>" +
+                    "<div class='loading-step-top'>" +
+                        "<span class='loading-step-dot'></span>" +
+                        "<span class='loading-step-label'>Calculating Risk</span>" +
+                    "</div>" +
+                "</div>" +
+
+            "</div>" +
+
+            "<div class='loading-note'>" +
+                "SAFNEX NOVA is checking the security engine. This may take a few seconds." +
+            "</div>" +
+
+            "<button " +
+                "class='again-button' " +
+                "onclick=\"resetResult('linkResult')\">" +
+                "CANCEL ANALYSIS" +
+            "</button>" +
+
+        "</div>";
+
+
+    startLinkLoading();
+
+
+    box.scrollIntoView({
+        behavior:"smooth",
+        block:"nearest"
+    });
+
+
+    fetch(
+        LINK_API_URL,
+        {
+            method:"POST",
+
+            headers:{
+                "Content-Type":
+                    "application/json"
+            },
+
+            body:
+                JSON.stringify({
+                    url:
+                        currentLink
+                })
+        }
+    )
+
+    .then(
+        async function(response){
+
+            let data = {};
+
+
+            try{
+
+                data =
+                    await response.json();
+
+            }
+            catch(e){
+
+                data = {};
+
+            }
+
+
+            if(!response.ok){
+
+                throw new Error(
+                    data?.error ||
+                    "Analysis request failed."
+                );
+
+            }
+
+
+            return data;
+
+        }
+    )
+
+    .then(
+        function(data){
+
+            const backendScore =
+                data?.securityScore ??
+                data?.security?.score ??
+                null;
+
+
+            const numericScore =
+                Number(
+                    backendScore
+                );
+
+
+            if(
+                backendScore === null ||
+                backendScore === undefined ||
+                !Number.isFinite(
+                    numericScore
+                )
+            ){
+
+                showUnverifiedLinkResult(
+                    currentLink,
+                    "SAFNEX NOVA could not obtain a verified security score from the analysis server."
+                );
+
+                return;
+
+            }
+
+
+            const score =
+                Math.max(
+                    0,
+                    Math.min(
+                        100,
+                        Math.round(
+                            numericScore
+                        )
+                    )
+                );
+
+
+            let verdict =
+                data?.security?.verdict ??
+                data?.verdict ??
+                "";
+
+
+            if(!verdict){
+
+                if(score >= 85){
+
+                    verdict =
+                        "LIKELY SAFE";
+
+                }
+                else if(score >= 70){
+
+                    verdict =
+                        "REVIEW";
+
+                }
+                else if(score >= 40){
+
+                    verdict =
+                        "SUSPICIOUS";
+
+                }
+                else{
+
+                    verdict =
+                        "HIGH RISK";
+
+                }
+
+            }
+
+
+            const normalizedVerdict =
+                String(
+                    verdict
+                ).toUpperCase();
+
+
+            let type =
+                "warning";
+
+
+            if(
+                normalizedVerdict.includes(
+                    "HIGH RISK"
+                ) ||
+                normalizedVerdict.includes(
+                    "MALICIOUS"
+                )
+            ){
+
+                type =
+                    "danger";
+
+            }
+            else if(
+                normalizedVerdict.includes(
+                    "SAFE"
+                ) &&
+                score >= 85
+            ){
+
+                type =
+                    "safe";
+
+            }
+
+
+            showLinkScoreResult(
+                score,
+                verdict,
+                type,
+                currentLink
+            );
+
+        }
+    )
+
+    .catch(
+        function(error){
+
+            console.error(
+                "SAFNEX NOVA link analysis error:",
+                error
+            );
+
+
+            showUnverifiedLinkResult(
+                currentLink,
+                "The security analysis server could not verify this link. No safety score was invented."
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   LINK UNVERIFIED
+========================================================= */
+
+function showUnverifiedLinkResult(
+    url,
+    message
+){
+
+    stopLinkLoading();
+
+    const box =
+        document.getElementById(
+            "linkResult"
+        );
+
+
+    box.className =
+        "result show warning";
+
+
+    box.innerHTML =
+
+        "<div class='link-score-result'>" +
+
+            "<div " +
+                "class='link-score' " +
+                "style='color:#f59a45'>" +
+
+                "—" +
+
+            "</div>" +
+
+            "<div class='link-score-label'>" +
+
+                "SAFNEX NOVA SAFETY SCORE" +
+
+            "</div>" +
+
+            "<div class='link-risk warning'>" +
+
+                "⚠ UNVERIFIED" +
+
+            "</div>" +
+
+            "<div " +
+                "style='margin-top:10px;font-size:9px;color:#646774;line-height:1.6'>" +
+
+                escapeHTML(
+                    message
+                ) +
+
+            "</div>" +
+
+            "<div " +
+                "style='margin-top:8px;font-size:8px;color:#858896;word-break:break-all'>" +
+
+                escapeHTML(
+                    url
+                ) +
+
+            "</div>" +
+
+            "<button " +
+                "class='full-report-button' " +
+                "onclick=\"openFullReport()\">" +
+
+                "CHECK FULL REPORT →" +
+
+            "</button>" +
+
+            "<button " +
+                "class='again-button' " +
+                "onclick=\"resetResult('linkResult')\">" +
+
+                "CHECK ANOTHER LINK" +
+
+            "</button>" +
+
+        "</div>";
+
+
+    box.scrollIntoView({
+        behavior:"smooth",
+        block:"nearest"
+    });
+
+}
+
+
+/* =========================================================
+   LINK SCORE RESULT
+========================================================= */
+
+function showLinkScoreResult(
+    score,
+    level,
+    type,
+    url
+){
+
+    stopLinkLoading();
+
+    const box =
+        document.getElementById(
+            "linkResult"
+        );
+
+
+    let icon =
+        type === "safe"
+            ? "✓"
+            : type === "warning"
+                ? "!"
+                : "⚠";
+
+
+    let scoreColor =
+        type === "safe"
+            ? "#17b879"
+            : type === "warning"
+                ? "#f59a45"
+                : "#ed5964";
+
+
+    box.className =
+        "result show " +
+        type;
+
+
+    box.innerHTML =
+
+        "<div class='link-score-result'>" +
+
+            "<div " +
+                "class='link-score' " +
+                "style='color:" +
+                    scoreColor +
+                "'>" +
+
+                score +
+                " / 100" +
+
+            "</div>" +
+
+            "<div class='link-score-label'>" +
+
+                "SAFNEX NOVA SAFETY SCORE" +
+
+            "</div>" +
+
+            "<div class='link-risk " +
+                type +
+            "'>" +
+
+                icon +
+                " " +
+                escapeHTML(
+                    level
+                ) +
+
+            "</div>" +
+
+            "<button " +
+                "class='full-report-button' " +
+                "onclick=\"openFullReport()\">" +
+
+                "CHECK FULL REPORT →" +
+
+            "</button>" +
+
+            "<button " +
+                "class='again-button' " +
+                "onclick=\"resetResult('linkResult')\">" +
+
+                "CHECK ANOTHER LINK" +
+
+            "</button>" +
+
+        "</div>";
+
+
+    box.scrollIntoView({
+        behavior:"smooth",
+        block:"nearest"
+    });
+
+}
+
+
+/* =========================================================
+   OPEN FULL LINK REPORT
+========================================================= */
+
+function openFullReport(){
+
+    if(!currentLink){
+
+        showToast(
+            "Please check a link first."
+        );
+
+        return;
+
+    }
+
+
+    window.location.href =
+        FULL_LINK_REPORT_PAGE +
+        "?url=" +
+        encodeURIComponent(
+            currentLink
+        );
+
+}
+
+
+/* =========================================================
+   MESSAGE CHECK
+========================================================= */
+
+function checkMessage(){
+
+    const message =
+        document
+        .getElementById(
+            "messageInput"
+        )
+        .value
+        .trim();
+
+
+    if(
+        message.length < 5
+    ){
+
+        showToast(
+            "Paste the message first."
+        );
+
+        return;
+
+    }
+
+
+    const text =
+        message.toLowerCase();
+
+
+    let reasons = [];
+
+    let score = 0;
+
+
+    const urgentWords = [
+
+        "urgent",
+        "immediately",
+        "act now",
+        "within 24 hours",
+        "account will be blocked",
+        "verify now",
+        "last chance"
+
+    ];
+
+
+    const moneyWords = [
+
+        "won",
+        "winner",
+        "prize",
+        "lottery",
+        "cashback",
+        "reward",
+        "₹",
+        "rs ",
+        "rupees",
+        "money"
+
+    ];
+
+
+    const credentialWords = [
+
+        "otp",
+        "password",
+        "pin",
+        "cvv",
+        "card number",
+        "bank details",
+        "login"
+
+    ];
+
+
+    const linkPattern =
+        /(https?:\/\/|www\.|bit\.ly|tinyurl|t\.co\/)/i;
+
+
+    urgentWords.forEach(
+        function(word){
+
+            if(
+                text.includes(word)
+            ){
+
+                score++;
+
+                reasons.push(
+                    "Urgency or pressure language detected"
+                );
+
+            }
+
+        }
+    );
+
+
+    moneyWords.forEach(
+        function(word){
+
+            if(
+                text.includes(word)
+            ){
+
+                score++;
+
+                reasons.push(
+                    "Prize, money or reward language detected"
+                );
+
+            }
+
+        }
+    );
+
+
+    credentialWords.forEach(
+        function(word){
+
+            if(
+                text.includes(word)
+            ){
+
+                score += 2;
+
+                reasons.push(
+                    "Sensitive information request detected"
+                );
+
+            }
+
+        }
+    );
+
+
+    if(
+        linkPattern.test(
+            text
+        )
+    ){
+
+        score++;
+
+        reasons.push(
+            "A web link was found in the message"
+        );
+
+    }
+
+
+    reasons =
+        [
+            ...new Set(
+                reasons
+            )
+        ];
+
+
+    if(
+        score >= 4
+    ){
+
+        showResult(
+
+            "messageResult",
+
+            "danger",
+
+            "⚠️",
+
+            "Possible scam message",
+
+            "HIGH RISK",
+
+            "Several common scam indicators were detected. Do not share OTPs, passwords, banking information or send money based only on this message.",
+
+            reasons
+
+        );
+
+        return;
+
+    }
+
+
+    if(
+        score >= 2
+    ){
+
+        showResult(
+
+            "messageResult",
+
+            "warning",
+
+            "⚠️",
+
+            "Message needs caution",
+
+            "MEDIUM RISK",
+
+            "Some suspicious patterns were detected. Verify the sender independently before clicking links or sharing information.",
+
+            reasons
+
+        );
+
+        return;
+
+    }
+
+
+    showResult(
+
+        "messageResult",
+
+        "safe",
+
+        "✓",
+
+        "No obvious scam pattern",
+
+        "LOW RISK",
+
+        "No major scam indicators were detected by this basic text check. This is not a guarantee that the message is genuine.",
+
+        []
+
+    );
+
+}
+
+
+/* =========================================================
+   QR READER
+========================================================= */
+
+
+
+
+/* =========================================================
+   MEDIA HELPERS
+========================================================= */
+
+function formatBytes(bytes){
+
+    if(
+        !Number.isFinite(
+            bytes
+        ) ||
+        bytes < 0
+    ){
+
+        return "Unknown size";
+
+    }
+
+
+    if(
+        bytes < 1024
+    ){
+
+        return bytes +
+            " B";
+
+    }
+
+
+    if(
+        bytes <
+        1024 * 1024
+    ){
+
+        return (
+            bytes / 1024
+        ).toFixed(1) +
+        " KB";
+
+    }
+
+
+    if(
+        bytes <
+        1024 * 1024 * 1024
+    ){
+
+        return (
+            bytes /
+            (1024 * 1024)
+        ).toFixed(1) +
+        " MB";
+
+    }
+
+
+    return (
+        bytes /
+        (1024 * 1024 * 1024)
+    ).toFixed(2) +
+    " GB";
+
+}
+
+
+function mediaResult(
+    id,
+    title,
+    level,
+    body,
+    reasons,
+    type
+){
+
+    showResult(
+
+        id,
+
+        type ||
+            "safe",
+
+        type === "safe"
+            ? "✓"
+            : type === "danger"
+                ? "⚠️"
+                : "!",
+
+        title,
+
+        level,
+
+        body,
+
+        reasons || []
+
+    );
+
+}
+
+
+/* =========================================================
+   VIDEO
+========================================================= */
+
+function detectVideo(event){
+
+    const file =
+        event.target.files[0];
+
+
+    if(!file){
+        return;
+    }
+
+
+    const preview =
+        document.getElementById(
+            "videoPreview"
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            file
+        );
+
+
+    preview.innerHTML =
+
+        "<video " +
+            "controls " +
+            "preload='metadata' " +
+            "src='" +
+                url +
+            "'>" +
+        "</video>";
+
+
+    preview.classList.add(
+        "show"
+    );
+
+
+    const video =
+        document.createElement(
+            "video"
+        );
+
+
+    video.preload =
+        "metadata";
+
+
+    video.onloadedmetadata =
+        function(){
+
+            const duration =
+                Number.isFinite(
+                    video.duration
+                )
+                    ? Math.round(
+                        video.duration
+                    )
+                    : null;
+
+
+            mediaResult(
+
+                "videoResult",
+
+                "Video file inspected",
+
+                "BASIC MEDIA CHECK",
+
+                "The file was opened successfully. This page currently reports file-level and media metadata only; it does not claim to prove whether a video is AI-generated, deepfaked, or authentic.",
+
+                [
+                    "File type: " +
+                        (file.type || "Unknown"),
+
+                    "File size: " +
+                        formatBytes(
+                            file.size
+                        ),
+
+                    "Duration: " +
+                        (
+                            duration !== null
+                                ? duration +
+                                  " seconds"
+                                : "Unknown"
+                        ),
+
+                    "Name: " +
+                        file.name
+                ],
+
+                "safe"
+
+            );
+
+        };
+
+
+    video.onerror =
+        function(){
+
+            mediaResult(
+
+                "videoResult",
+
+                "Video could not be inspected",
+
+                "CHECK FILE",
+
+                "The browser could not read this video file.",
+
+                [
+                    "Try a supported video format",
+                    "Make sure the file is not damaged"
+                ],
+
+                "warning"
+
+            );
+
+        };
+
+
+    video.src =
+        url;
+
+}
+
+
+/* =========================================================
+   AUDIO
+========================================================= */
+
+function detectAudio(event){
+
+    const file =
+        event.target.files[0];
+
+
+    if(!file){
+        return;
+    }
+
+
+    const preview =
+        document.getElementById(
+            "audioPreview"
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            file
+        );
+
+
+    preview.innerHTML =
+
+        "<audio " +
+            "controls " +
+            "preload='metadata' " +
+            "src='" +
+                url +
+            "'>" +
+        "</audio>";
+
+
+    preview.classList.add(
+        "show"
+    );
+
+
+    const audio =
+        document.createElement(
+            "audio"
+        );
+
+
+    audio.preload =
+        "metadata";
+
+
+    audio.onloadedmetadata =
+        function(){
+
+            const duration =
+                Number.isFinite(
+                    audio.duration
+                )
+                    ? Math.round(
+                        audio.duration
+                    )
+                    : null;
+
+
+            mediaResult(
+
+                "audioResult",
+
+                "Audio file inspected",
+
+                "BASIC MEDIA CHECK",
+
+                "The file was opened successfully. This page currently reports file-level and audio metadata only; it does not claim to prove whether a voice recording is AI-generated or authentic.",
+
+                [
+                    "File type: " +
+                        (file.type || "Unknown"),
+
+                    "File size: " +
+                        formatBytes(
+                            file.size
+                        ),
+
+                    "Duration: " +
+                        (
+                            duration !== null
+                                ? duration +
+                                  " seconds"
+                                : "Unknown"
+                        ),
+
+                    "Name: " +
+                        file.name
+                ],
+
+                "safe"
+
+            );
+
+        };
+
+
+    audio.onerror =
+        function(){
+
+            mediaResult(
+
+                "audioResult",
+
+                "Audio could not be inspected",
+
+                "CHECK FILE",
+
+                "The browser could not read this audio file.",
+
+                [
+                    "Try a supported audio format",
+                    "Make sure the file is not damaged"
+                ],
+
+                "warning"
+
+            );
+
+        };
+
+
+    audio.src =
+        url;
+
+}
+
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+function detectImage(event){
+
+    const file =
+        event.target.files[0];
+
+
+    if(!file){
+        return;
+    }
+
+
+    const preview =
+        document.getElementById(
+            "imagePreview"
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            file
+        );
+
+
+    preview.innerHTML =
+
+        "<img " +
+            "src='" +
+                url +
+            "' " +
+            "alt='Uploaded image preview'>" ;
+
+
+    preview.classList.add(
+        "show"
+    );
+
+
+    const image =
+        new Image();
+
+
+    image.onload =
+        function(){
+
+            mediaResult(
+
+                "imageResult",
+
+                "Image file inspected",
+
+                "BASIC MEDIA CHECK",
+
+                "The image was opened successfully. This page currently reports file-level and image metadata only; it does not claim to prove whether an image is AI-generated, edited, or authentic.",
+
+                [
+                    "File type: " +
+                        (file.type || "Unknown"),
+
+                    "File size: " +
+                        formatBytes(
+                            file.size
+                        ),
+
+                    "Dimensions: " +
+                        image.naturalWidth +
+                        " × " +
+                        image.naturalHeight,
+
+                    "Name: " +
+                        file.name
+                ],
+
+                "safe"
+
+            );
+
+        };
+
+
+    image.onerror =
+        function(){
+
+            mediaResult(
+
+                "imageResult",
+
+                "Image could not be inspected",
+
+                "CHECK FILE",
+
+                "The browser could not read this image file.",
+
+                [
+                    "Try a supported image format",
+                    "Make sure the file is not damaged"
+                ],
+
+                "warning"
+
+            );
+
+        };
+
+
+    image.src =
+        url;
+
+}
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key === "Enter" &&
+            event.ctrlKey
+        ){
+
+            const active =
+                document.querySelector(
+                    ".tab.active"
+                );
+
+
+            if(!active){
+                return;
+            }
+
+
+            const type =
+                active.dataset.type;
+
+
+            if(
+                type === "phone"
+            ){
+
+                checkPhone();
+
+            }
+
+
+            if(
+                type === "message"
+            ){
+
+                checkMessage();
+
+            }
+
+
+            if(
+                type === "link"
+            ){
+
+                checkLink();
+
+            }
+
+
+            if(
+                type === "video"
+            ){
+
+                document
+                    .getElementById(
+                        "videoFile"
+                    )
+                    ?.click();
+
+            }
+
+
+            if(
+                type === "audio"
+            ){
+
+                document
+                    .getElementById(
+                        "audioFile"
+                    )
+                    ?.click();
+
+            }
+
+
+            if(
+                type === "image"
+            ){
+
+                document
+                    .getElementById(
+                        "imageFile"
+                    )
+                    ?.click();
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INITIAL VIEW
+========================================================= */
+
+switchScanner(
+    "link"
+);
+document.addEventListener("DOMContentLoaded", function(){
+
+    const params = new URLSearchParams(
+        window.location.search
+    );
+
+    const phone =
+        params.get("phone");
+
+    if(phone){
+
+        const input =
+            document.getElementById(
+                "phoneInput"
+            );
+
+        if(input){
+
+            input.value = phone;
+
+        }
+
+    }
+
+});
+</script>
+
+</div>
+
+
+<script id="safnex-qr-home-only-script">
+(function () {
+    "use strict";
+
+    let qrReportData = null;
+    let qrImageDataUrl = null;
+
+    function quickQRVerdict(data) {
+        const value = String(data || "").trim();
+
+        if (!value) return false;
+
+        /*
+         * Home page = quick indication only.
+         * qr-detector.html = complete QR security report.
+         */
+        if (/^https?:\/\//i.test(value)) {
+            try {
+                const url = new URL(value);
+                const host = url.hostname.toLowerCase();
+
+                const suspiciousPath =
+                    /(login|signin|verify|verification|secure|account|password|wallet|claim|gift|prize|update|confirm)/i
+                        .test(url.pathname + url.search);
+
+                const obviousRisk =
+                    url.protocol !== "https:" ||
+                    /xn--/i.test(host) ||
+                    /^(?:\d{1,3}\.){3}\d{1,3}$/.test(host) ||
+                    /@/.test(value) ||
+                    suspiciousPath;
+
+                return !obviousRisk;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        /* Non-URL QR payloads are not automatically called unsafe here.
+           The full QR detector performs the detailed classification. */
+        return true;
+    }
+
+    function showQRHomeVerdict(data) {
+        const result = document.getElementById("qrResult");
+        if (!result) return;
+
+        const value = String(data || "").trim();
+        if (!value) {
+            showNoQR();
+            return;
+        }
+
+        const safe = quickQRVerdict(value);
+
+        qrReportData = {
+            data: value,
+            safe: safe,
+            image: qrImageDataUrl,
+            createdAt: Date.now()
+        };
+
+        result.className = "result show";
+        result.innerHTML =
+            '<div class="qr-home-status ' + (safe ? "safe" : "unsafe") + '">' +
+                '<div class="qr-home-verdict">' +
+                    '<span class="qr-home-dot"></span>' +
+                    '<span>' + (safe ? "SAFE" : "UNSAFE") + '</span>' +
+                '</div>' +
+                '<button type="button" class="full-report-button qr-full-report" onclick="openQRFullReport()">' +
+                    'FULL REPORT →' +
+                '</button>' +
+            '</div>';
+    }
+
+    function showNoQR() {
+        const result = document.getElementById("qrResult");
+        if (!result) return;
+
+        qrReportData = null;
+        qrImageDataUrl = null;
+        result.className = "result show";
+        result.innerHTML =
+            '<div class="qr-home-status unsafe">' +
+                '<div class="qr-home-verdict">' +
+                    '<span class="qr-home-dot"></span>' +
+                    '<span>NO QR CODE DETECTED</span>' +
+                '</div>' +
+            '</div>';
+    }
+
+    function resetQRResult() {
+        const result = document.getElementById("qrResult");
+        if (!result) return;
+        qrReportData = null;
+        qrImageDataUrl = null;
+        result.className = "result";
+        result.innerHTML = "";
+    }
+
+    window.openQRFullReport = function () {
+        if (!qrReportData || !qrReportData.data) return;
+
+        try {
+            sessionStorage.setItem(
+                "safnexQrResult",
+                JSON.stringify(qrReportData)
+            );
+        } catch (e) {
+            console.warn("SAFNEX NOVA QR session storage unavailable:", e);
+        }
+
+        window.location.href = "qr-detector.html";
+    };
+
+    window.readQR = function (event) {
+        const file =
+            event &&
+            event.target &&
+            event.target.files &&
+            event.target.files[0];
+
+        if (!file) {
+            resetQRResult();
+            return;
+        }
+
+        resetQRResult();
+
+        if (!file.type || !file.type.startsWith("image/")) {
+            showNoQR();
+            return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+            showNoQR();
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onerror = showNoQR;
+
+        reader.onload = function () {
+            qrImageDataUrl = reader.result;
+            const image = new Image();
+
+            image.onerror = showNoQR;
+
+            image.onload = function () {
+                let width = image.naturalWidth || image.width;
+                let height = image.naturalHeight || image.height;
+
+                if (!width || !height || typeof jsQR !== "function") {
+                    showNoQR();
+                    return;
+                }
+
+                const maxSize = 1800;
+
+                if (Math.max(width, height) > maxSize) {
+                    const scale = maxSize / Math.max(width, height);
+                    width = Math.max(1, Math.round(width * scale));
+                    height = Math.max(1, Math.round(height * scale));
+                }
+
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext(
+                    "2d",
+                    { willReadFrequently: true }
+                );
+
+                if (!ctx) {
+                    showNoQR();
+                    return;
+                }
+
+                try {
+                    ctx.drawImage(image, 0, 0, width, height);
+
+                    const imageData = ctx.getImageData(
+                        0,
+                        0,
+                        width,
+                        height
+                    );
+
+                    const code = jsQR(
+                        imageData.data,
+                        imageData.width,
+                        imageData.height,
+                        {
+                            inversionAttempts: "attemptBoth"
+                        }
+                    );
+
+                    if (!code || !String(code.data || "").trim()) {
+                        showNoQR();
+                        return;
+                    }
+
+                    showQRHomeVerdict(code.data);
+                } catch (error) {
+                    console.error(
+                        "SAFNEX NOVA QR detection error:",
+                        error
+                    );
+                    showNoQR();
+                }
+            };
+
+            image.src = reader.result;
+        };
+
+        reader.readAsDataURL(file);
+    };
+})();
+</script>
+
+</body>
+
+</html>
