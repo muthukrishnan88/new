@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import OpenAI from "openai";
 import dns from "node:dns/promises";
 import net from "node:net";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import {
     parsePhoneNumberFromString,
@@ -456,39 +458,26 @@ function detectKnownService(url) {
     const host = url.hostname.toLowerCase();
     const path = url.pathname.toLowerCase();
 
-    /* Google Sheets */
-
     if (
         host === "docs.google.com" &&
         path.startsWith("/spreadsheets/")
     ) {
         return {
             provider: "Google",
-
             name: "Google Sheets",
-
             type: "Spreadsheet / Collaboration",
-
             category: "Google Workspace",
-
             purpose:
                 "A Google Sheets document used for spreadsheets, tables, calculations, shared data, or collaboration.",
-
             summary:
                 "This link points to Google Sheets.",
-
             confidence: "High",
-
             service: "Google Sheets",
-
             contentDescription:
                 "A spreadsheet containing rows, columns, tables, formulas, or shared data. Actual contents depend on sharing permissions.",
-
             official: true
         };
     }
-
-    /* Google Docs */
 
     if (
         host === "docs.google.com" &&
@@ -496,31 +485,20 @@ function detectKnownService(url) {
     ) {
         return {
             provider: "Google",
-
             name: "Google Docs",
-
             type: "Document / Collaboration",
-
             category: "Google Workspace",
-
             purpose:
                 "A document hosted by Google Docs.",
-
             summary:
                 "This link points to Google Docs.",
-
             confidence: "High",
-
             service: "Google Docs",
-
             contentDescription:
                 "A shared Google document. Actual contents depend on access permissions.",
-
             official: true
         };
     }
-
-    /* Google Forms */
 
     if (
         host === "docs.google.com" &&
@@ -528,26 +506,17 @@ function detectKnownService(url) {
     ) {
         return {
             provider: "Google",
-
             name: "Google Forms",
-
             type: "Online Form",
-
             category: "Google Workspace",
-
             purpose:
                 "An online form used to collect information and responses.",
-
             summary:
                 "This link points to Google Forms.",
-
             confidence: "High",
-
             service: "Google Forms",
-
             contentDescription:
                 "An online form that may contain questions, fields, choices, and response collection.",
-
             official: true
         };
     }
@@ -555,60 +524,38 @@ function detectKnownService(url) {
     if (host === "forms.gle") {
         return {
             provider: "Google",
-
             name: "Google Forms",
-
             type: "Online Form / Short Link",
-
             category: "Google Workspace",
-
             purpose:
                 "A shortened Google Forms link.",
-
             summary:
                 "This link uses Google's forms.gle service.",
-
             confidence: "High",
-
             service: "Google Forms",
-
             contentDescription:
                 "A Google Forms destination. Actual contents depend on the final destination and permissions.",
-
             official: true
         };
     }
-
-    /* Google Drive */
 
     if (isDomainUnder(host, "drive.google.com")) {
         return {
             provider: "Google",
-
             name: "Google Drive",
-
             type: "Cloud Storage / File Sharing",
-
             category: "Google Workspace",
-
             purpose:
                 "A Google Drive file or folder.",
-
             summary:
                 "This link points to Google Drive.",
-
             confidence: "High",
-
             service: "Google Drive",
-
             contentDescription:
                 "A file or folder hosted by Google Drive.",
-
             official: true
         };
     }
-
-    /* Google Slides */
 
     if (
         host === "docs.google.com" &&
@@ -616,31 +563,20 @@ function detectKnownService(url) {
     ) {
         return {
             provider: "Google",
-
             name: "Google Slides",
-
             type: "Presentation / Collaboration",
-
             category: "Google Workspace",
-
             purpose:
                 "A presentation hosted by Google Slides.",
-
             summary:
                 "This link points to Google Slides.",
-
             confidence: "High",
-
             service: "Google Slides",
-
             contentDescription:
                 "A presentation containing slides and visual content.",
-
             official: true
         };
     }
-
-    /* YouTube */
 
     if (
         host === "youtube.com" ||
@@ -650,31 +586,20 @@ function detectKnownService(url) {
     ) {
         return {
             provider: "Google",
-
             name: "YouTube",
-
             type: "Video Platform",
-
             category: "Entertainment / Media",
-
             purpose:
                 "A video hosting and streaming platform.",
-
             summary:
                 "This link points to YouTube.",
-
             confidence: "High",
-
             service: "YouTube",
-
             contentDescription:
                 "Video content, channels, comments, or media pages.",
-
             official: true
         };
     }
-
-    /* GitHub */
 
     if (
         host === "github.com" ||
@@ -682,31 +607,20 @@ function detectKnownService(url) {
     ) {
         return {
             provider: "GitHub",
-
             name: "GitHub",
-
             type: "Code Hosting / Development",
-
             category: "Software Development",
-
             purpose:
                 "A platform for source code, repositories, issues, projects, and developer collaboration.",
-
             summary:
                 "This link points to GitHub.",
-
             confidence: "High",
-
             service: "GitHub",
-
             contentDescription:
                 "Code repositories, files, documentation, issues, releases, or developer projects.",
-
             official: true
         };
     }
-
-    /* Microsoft */
 
     if (
         isDomainUnder(host, "microsoft.com") ||
@@ -717,31 +631,20 @@ function detectKnownService(url) {
     ) {
         return {
             provider: "Microsoft",
-
             name: "Microsoft Service",
-
             type: "Microsoft Online Service",
-
             category: "Productivity / Cloud",
-
             purpose:
                 "A Microsoft online service or cloud platform.",
-
             summary:
                 "This link points to a Microsoft-controlled domain.",
-
             confidence: "High",
-
             service: "Microsoft",
-
             contentDescription:
                 "Microsoft-hosted content or services.",
-
             official: true
         };
     }
-
-    /* LinkedIn */
 
     if (
         host === "linkedin.com" ||
@@ -749,31 +652,20 @@ function detectKnownService(url) {
     ) {
         return {
             provider: "LinkedIn",
-
             name: "LinkedIn",
-
             type: "Professional Social Network",
-
             category: "Social Media",
-
             purpose:
                 "A professional networking and career platform.",
-
             summary:
                 "This link points to LinkedIn.",
-
             confidence: "High",
-
             service: "LinkedIn",
-
             contentDescription:
                 "Professional profiles, company pages, jobs, posts, and networking content.",
-
             official: true
         };
     }
-
-    /* Instagram */
 
     if (
         host === "instagram.com" ||
@@ -781,31 +673,20 @@ function detectKnownService(url) {
     ) {
         return {
             provider: "Instagram",
-
             name: "Instagram",
-
             type: "Social Media",
-
             category: "Social Media",
-
             purpose:
                 "A social media platform for photos, videos, profiles, and messages.",
-
             summary:
                 "This link points to Instagram.",
-
             confidence: "High",
-
             service: "Instagram",
-
             contentDescription:
                 "Photos, videos, profiles, posts, reels, and social content.",
-
             official: true
         };
     }
-
-    /* Facebook */
 
     if (
         host === "facebook.com" ||
@@ -813,26 +694,17 @@ function detectKnownService(url) {
     ) {
         return {
             provider: "Meta",
-
             name: "Facebook",
-
             type: "Social Media",
-
             category: "Social Media",
-
             purpose:
                 "A social media platform for profiles, pages, posts, groups, and communication.",
-
             summary:
                 "This link points to Facebook.",
-
             confidence: "High",
-
             service: "Facebook",
-
             contentDescription:
                 "Profiles, pages, posts, groups, or social media content.",
-
             official: true
         };
     }
@@ -1214,10 +1086,6 @@ function analyzeSecurity(
         });
     }
 
-    /* -----------------------------------------------
-       Known phishing
-    ----------------------------------------------- */
-
     const phishing =
         detectKnownPhishingCampaign(url);
 
@@ -1229,10 +1097,6 @@ function analyzeSecurity(
             item.points
         );
     }
-
-    /* -----------------------------------------------
-       HTTPS
-    ----------------------------------------------- */
 
     if (url.protocol !== "https:") {
         add(
@@ -1255,10 +1119,6 @@ function analyzeSecurity(
         });
     }
 
-    /* -----------------------------------------------
-       Test / staging / development domain
-    ----------------------------------------------- */
-
     const nonProductionLabels =
         detectNonProductionDomain(url);
 
@@ -1277,10 +1137,6 @@ function analyzeSecurity(
             18
         );
     }
-
-    /* -----------------------------------------------
-       Payment signals
-    ----------------------------------------------- */
 
     const paymentSignals =
         detectPaymentSignals(url);
@@ -1317,10 +1173,6 @@ function analyzeSecurity(
         );
     }
 
-    /* -----------------------------------------------
-       Raw IP
-    ----------------------------------------------- */
-
     if (net.isIP(hostname)) {
         add(
             "danger",
@@ -1333,10 +1185,6 @@ function analyzeSecurity(
         );
     }
 
-    /* -----------------------------------------------
-       Punycode
-    ----------------------------------------------- */
-
     if (hostname.includes("xn--")) {
         add(
             "danger",
@@ -1348,10 +1196,6 @@ function analyzeSecurity(
             18
         );
     }
-
-    /* -----------------------------------------------
-       Deep subdomain
-    ----------------------------------------------- */
 
     const labels =
         hostname
@@ -1370,10 +1214,6 @@ function analyzeSecurity(
         );
     }
 
-    /* -----------------------------------------------
-       @ symbol
-    ----------------------------------------------- */
-
     if (rawUrl.includes("@")) {
         add(
             "danger",
@@ -1385,10 +1225,6 @@ function analyzeSecurity(
             18
         );
     }
-
-    /* -----------------------------------------------
-       URL shorteners
-    ----------------------------------------------- */
 
     const shorteners = [
         "bit.ly",
@@ -1420,10 +1256,6 @@ function analyzeSecurity(
             8
         );
     }
-
-    /* -----------------------------------------------
-       Suspicious words
-    ----------------------------------------------- */
 
     const suspiciousWords = [
         "login",
@@ -1480,10 +1312,6 @@ function analyzeSecurity(
         );
     }
 
-    /* -----------------------------------------------
-       Redirect parameters
-    ----------------------------------------------- */
-
     const redirectKeys = [
         "redirect",
         "redirect_url",
@@ -1520,10 +1348,6 @@ function analyzeSecurity(
         );
     }
 
-    /* -----------------------------------------------
-       Encoded URL
-    ----------------------------------------------- */
-
     if (
         /%[0-9a-f]{2}/i.test(rawUrl)
     ) {
@@ -1537,10 +1361,6 @@ function analyzeSecurity(
             3
         );
     }
-
-    /* -----------------------------------------------
-       Long URL
-    ----------------------------------------------- */
 
     if (rawUrl.length > 180) {
         add(
@@ -1566,10 +1386,6 @@ function analyzeSecurity(
         );
     }
 
-    /* -----------------------------------------------
-       Non-standard port
-    ----------------------------------------------- */
-
     if (
         url.port &&
         !["80", "443"].includes(url.port)
@@ -1584,10 +1400,6 @@ function analyzeSecurity(
             6
         );
     }
-
-    /* -----------------------------------------------
-       Executable / archive
-    ----------------------------------------------- */
 
     if (
         /\.(exe|scr|bat|cmd|msi|apk|dmg|jar|iso|zip|rar)(?:$|[?#])/i.test(
@@ -1604,10 +1416,6 @@ function analyzeSecurity(
             22
         );
     }
-
-    /* -----------------------------------------------
-       Suspicious hostname wording
-    ----------------------------------------------- */
 
     const hostnameWords = [
         "secure",
@@ -1653,10 +1461,6 @@ function analyzeSecurity(
         );
     }
 
-    /* -----------------------------------------------
-       Hyphen-heavy hostname
-    ----------------------------------------------- */
-
     const hyphenCount =
         (hostname.match(/-/g) || [])
             .length;
@@ -1672,10 +1476,6 @@ function analyzeSecurity(
             5
         );
     }
-
-    /* -----------------------------------------------
-       Brand impersonation
-    ----------------------------------------------- */
 
     const brands =
         detectBrandImpersonation(
@@ -1693,10 +1493,6 @@ function analyzeSecurity(
             22
         );
     }
-
-    /* -----------------------------------------------
-       Redirect chain
-    ----------------------------------------------- */
 
     if (
         fetchResult &&
@@ -1719,10 +1515,6 @@ function analyzeSecurity(
         );
     }
 
-    /* -----------------------------------------------
-       HTTP error
-    ----------------------------------------------- */
-
     if (
         fetchResult &&
         fetchResult.status >= 400
@@ -1740,12 +1532,6 @@ function analyzeSecurity(
         );
     }
 
-    /* -----------------------------------------------
-       WEBSITE NOT VERIFIED
-       
-       IMPORTANT FIX
-    ----------------------------------------------- */
-
     if (fetchError) {
         add(
             "warning",
@@ -1757,10 +1543,6 @@ function analyzeSecurity(
             15
         );
     }
-
-    /* -----------------------------------------------
-       No fetch and no known service
-    ----------------------------------------------- */
 
     if (
         !fetchResult &&
@@ -1777,21 +1559,8 @@ function analyzeSecurity(
         );
     }
 
-    /* =================================================
-       SCORE
-       
-       IMPORTANT:
-       We no longer use:
-       
-       score = 100 - riskPoints
-       
-       as the only calculation.
-    ================================================= */
-
     let securityScore =
         100 - riskPoints;
-
-    /* Known official services get only a small benefit. */
 
     if (
         knownService &&
@@ -1800,8 +1569,6 @@ function analyzeSecurity(
         securityScore += 4;
     }
 
-    /* Successfully fetched destination gives evidence. */
-
     if (
         fetchResult &&
         fetchResult.status >= 200 &&
@@ -1809,10 +1576,6 @@ function analyzeSecurity(
     ) {
         securityScore += 5;
     }
-
-    /* -----------------------------------------------
-       No fetch = cannot be 100
-    ----------------------------------------------- */
 
     if (!fetchResult) {
         securityScore =
@@ -1824,13 +1587,6 @@ function analyzeSecurity(
             );
     }
 
-    /* -----------------------------------------------
-       Test/dev/staging + unreachable
-       
-       This specifically fixes:
-       test.safnexnova.com
-    ----------------------------------------------- */
-
     if (
         nonProductionLabels.length &&
         !fetchResult
@@ -1841,10 +1597,6 @@ function analyzeSecurity(
                 65
             );
     }
-
-    /* -----------------------------------------------
-       Payment + account verification + unreachable
-    ----------------------------------------------- */
 
     if (
         (
@@ -1860,10 +1612,6 @@ function analyzeSecurity(
             );
     }
 
-    /* -----------------------------------------------
-       Known phishing
-    ----------------------------------------------- */
-
     if (phishing.length) {
         securityScore =
             Math.min(
@@ -1871,10 +1619,6 @@ function analyzeSecurity(
                 20
             );
     }
-
-    /* -----------------------------------------------
-       Clamp
-    ----------------------------------------------- */
 
     securityScore =
         Math.max(
@@ -1890,10 +1634,6 @@ function analyzeSecurity(
     const riskScore =
         100 - securityScore;
 
-    /* =================================================
-       CONFIDENCE
-    ================================================= */
-
     let confidence;
 
     if (
@@ -1908,10 +1648,6 @@ function analyzeSecurity(
     } else {
         confidence = "Low";
     }
-
-    /* =================================================
-       VERDICT
-    ================================================= */
 
     let verdict;
 
@@ -1936,10 +1672,6 @@ function analyzeSecurity(
         verdict = "High Risk";
     }
 
-    /* =================================================
-       RISK LEVEL
-    ================================================= */
-
     let riskLevel;
 
     if (
@@ -1961,15 +1693,10 @@ function analyzeSecurity(
 
     return {
         score: securityScore,
-
         riskScore,
-
         verdict,
-
         riskLevel,
-
         confidence,
-
         indicators,
 
         knownPhishing:
@@ -2076,8 +1803,6 @@ async function fetchWebsite(startUrl) {
 
         clearTimeout(timeout);
 
-        /* Redirect */
-
         if (
             response.status >= 300 &&
             response.status < 400
@@ -2112,9 +1837,7 @@ async function fetchWebsite(startUrl) {
 
             redirects.push({
                 from: currentUrl,
-
                 to: nextUrl,
-
                 status:
                     response.status
             });
@@ -2231,13 +1954,9 @@ function extractWebsiteData(fetchResult) {
 
     return {
         title,
-
         description,
-
         headings,
-
         links,
-
         images,
 
         text:
@@ -2737,7 +2456,10 @@ app.get(
                 Boolean(
                     openai &&
                     OPENAI_MODEL
-                )
+                ),
+
+            phoneAnalyzer:
+                "POST /api/phone-check"
         });
     }
 );
@@ -2772,18 +2494,10 @@ app.post(
     "/api/analyze",
     async (req, res) => {
         try {
-            /* -----------------------------------------
-               1. URL
-            ----------------------------------------- */
-
             const rawUrl =
                 normalizeUrl(
                     req.body?.url
                 );
-
-            /* -----------------------------------------
-               2. PARSE
-            ----------------------------------------- */
 
             const urlInfo =
                 parseUrl(
@@ -2795,18 +2509,10 @@ app.post(
                     rawUrl
                 );
 
-            /* -----------------------------------------
-               3. KNOWN SERVICE
-            ----------------------------------------- */
-
             const knownService =
                 detectKnownService(
                     parsedUrl
                 );
-
-            /* -----------------------------------------
-               4. FETCH
-            ----------------------------------------- */
 
             let fetchResult =
                 null;
@@ -2864,10 +2570,6 @@ app.post(
                 }
             }
 
-            /* -----------------------------------------
-               5. SECURITY
-            ----------------------------------------- */
-
             const security =
                 analyzeSecurity(
                     rawUrl,
@@ -2875,10 +2577,6 @@ app.post(
                     knownService,
                     fetchError
                 );
-
-            /* -----------------------------------------
-               6. WEBSITE DATA
-            ----------------------------------------- */
 
             let websiteData;
 
@@ -2941,10 +2639,6 @@ app.post(
                         "Unverified"
                 };
             }
-
-            /* -----------------------------------------
-               7. CONTENT
-            ----------------------------------------- */
 
             let content;
 
@@ -3031,10 +2725,6 @@ app.post(
                 };
             }
 
-            /* -----------------------------------------
-               8. THREE QUESTIONS
-            ----------------------------------------- */
-
             const questions = {
                 websiteType:
                     websiteData.type,
@@ -3059,10 +2749,6 @@ app.post(
                         parsedUrl
                     )
             };
-
-            /* -----------------------------------------
-               9. FINAL RESPONSE
-            ----------------------------------------- */
 
             return res.json({
                 ok: true,
@@ -3187,99 +2873,9 @@ app.post(
 );
 
 /* =========================================================
-   API 404
-========================================================= */
-
-app.use(
-    "/api",
-    (req, res) => {
-        res
-            .status(404)
-            .json({
-                ok: false,
-
-                error:
-                    "API endpoint not found."
-            });
-    }
-);
-
-/* =========================================================
-   GENERAL ERROR
-========================================================= */
-
-app.use(
-    (err, req, res, next) => {
-        console.error(
-            "SERVER ERROR:",
-            err
-        );
-
-        res
-            .status(500)
-            .json({
-                ok: false,
-
-                error:
-                    "Internal server error."
-            });
-    }
-);
-
-/* =========================================================
-   START
-========================================================= */
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-app.use(express.static(__dirname));
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.listen(
-    PORT,
-    "0.0.0.0",
-    () => {
-        console.log(
-            "=============================================="
-        );
-
-        console.log(
-            "SAFNEX NOVA LINK ANALYZER"
-        );
-
-        console.log(
-            "=============================================="
-        );
-
-        console.log(
-            `Server running on port ${PORT}`
-        );
-
-        console.log(
-            `Health: /api/health`
-        );
-
-        console.log(
-            `Analyze: POST /api/analyze`
-        );
-
-        console.log(
-            `AI configured: ${Boolean(OPENAI_API_KEY)}`
-        );
-
-        console.log(
-            "=============================================="
-        );
-    }
-);
-/* =========================================================
    PHONE NUMBER ANALYZER
+   IMPORTANT:
+   ALL PHONE ROUTES ARE REGISTERED BEFORE app.listen()
 ========================================================= */
 
 const PHONE_COUNTRIES = {
@@ -3324,7 +2920,8 @@ const PHONE_COUNTRIES = {
 --------------------------------------------------------- */
 
 function maskPhoneNumber(phoneNumber) {
-    const value = String(phoneNumber || "");
+    const value =
+        String(phoneNumber || "");
 
     if (value.length <= 4) {
         return "****";
@@ -3544,12 +3141,14 @@ function analyzePhone(
 
     const countryCode =
         phoneNumber
-            ? phoneNumber.country || selectedCountry
+            ? phoneNumber.country ||
+              selectedCountry
             : selectedCountry;
 
     const callingCode =
         phoneNumber
-            ? "+" + phoneNumber.countryCallingCode
+            ? "+" +
+              phoneNumber.countryCallingCode
             : null;
 
     const nationalNumber =
@@ -3575,7 +3174,8 @@ function analyzePhone(
     return {
         ok: true,
 
-        securityScore: score,
+        securityScore:
+            score,
 
         riskScore:
             100 - score,
@@ -3587,7 +3187,8 @@ function analyzePhone(
         confidence,
 
         phone: {
-            input: rawPhone,
+            input:
+                rawPhone,
 
             masked:
                 maskPhoneNumber(
@@ -3745,11 +3346,24 @@ app.post(
                 );
             }
 
+            const selectedCountry =
+                String(country)
+                    .toUpperCase();
+
+            if (
+                !PHONE_COUNTRIES[
+                    selectedCountry
+                ]
+            ) {
+                throw new Error(
+                    "Unsupported country code."
+                );
+            }
+
             const parsed =
                 parsePhoneNumberFromString(
                     rawPhone,
-                    String(country)
-                        .toUpperCase()
+                    selectedCountry
                 );
 
             const valid =
@@ -3771,14 +3385,12 @@ app.post(
 
                 country:
                     parsed?.country ||
-                    String(country)
-                        .toUpperCase(),
+                    selectedCountry,
 
                 countryName:
                     PHONE_COUNTRIES[
                         parsed?.country ||
-                        String(country)
-                            .toUpperCase()
+                        selectedCountry
                     ] ||
                     "Unknown",
 
@@ -3825,8 +3437,9 @@ app.post(
 
 /* ---------------------------------------------------------
    GET /api/phone-check
+
    Example:
-   /api/phone-check?phone=9876543210
+   /api/phone-check?phone=9876543210&country=IN
 --------------------------------------------------------- */
 
 app.get(
@@ -3861,5 +3474,129 @@ app.get(
                         "Phone analysis failed."
                 });
         }
+    }
+);
+
+/* =========================================================
+   API 404
+   IMPORTANT:
+   This comes AFTER all API routes.
+========================================================= */
+
+app.use(
+    "/api",
+    (req, res) => {
+        res
+            .status(404)
+            .json({
+                ok: false,
+
+                error:
+                    "API endpoint not found."
+            });
+    }
+);
+
+/* =========================================================
+   GENERAL ERROR
+========================================================= */
+
+app.use(
+    (err, req, res, next) => {
+        console.error(
+            "SERVER ERROR:",
+            err
+        );
+
+        res
+            .status(500)
+            .json({
+                ok: false,
+
+                error:
+                    "Internal server error."
+            });
+    }
+);
+
+/* =========================================================
+   STATIC FRONTEND
+========================================================= */
+
+const __filename =
+    fileURLToPath(import.meta.url);
+
+const __dirname =
+    path.dirname(__filename);
+
+app.use(
+    express.static(__dirname)
+);
+
+app.get(
+    "/",
+    (req, res) => {
+        res.sendFile(
+            path.join(
+                __dirname,
+                "index.html"
+            )
+        );
+    }
+);
+
+/* =========================================================
+   START SERVER
+   IMPORTANT:
+   app.listen() MUST BE LAST
+========================================================= */
+
+app.listen(
+    PORT,
+    "0.0.0.0",
+    () => {
+        console.log(
+            "=============================================="
+        );
+
+        console.log(
+            "SAFNEX NOVA LINK ANALYZER"
+        );
+
+        console.log(
+            "=============================================="
+        );
+
+        console.log(
+            `Server running on port ${PORT}`
+        );
+
+        console.log(
+            `Health: /api/health`
+        );
+
+        console.log(
+            `Analyze: POST /api/analyze`
+        );
+
+        console.log(
+            `Phone Check: POST /api/phone-check`
+        );
+
+        console.log(
+            `Phone Validate: POST /api/phone-validate`
+        );
+
+        console.log(
+            `Phone Check GET: /api/phone-check?phone=...`
+        );
+
+        console.log(
+            `AI configured: ${Boolean(OPENAI_API_KEY)}`
+        );
+
+        console.log(
+            "=============================================="
+        );
     }
 );
