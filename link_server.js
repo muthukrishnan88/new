@@ -5,6 +5,11 @@ import OpenAI from "openai";
 import dns from "node:dns/promises";
 import net from "node:net";
 
+import {
+    parsePhoneNumberFromString,
+    validatePhoneNumberLength
+} from "libphonenumber-js/max";
+
 dotenv.config();
 
 const app = express();
@@ -3271,5 +3276,590 @@ app.listen(
         console.log(
             "=============================================="
         );
+    }
+);
+/* =========================================================
+   PHONE NUMBER ANALYZER
+========================================================= */
+
+const PHONE_COUNTRIES = {
+    IN: "India",
+    US: "United States",
+    CA: "Canada",
+    GB: "United Kingdom",
+    AU: "Australia",
+    AE: "United Arab Emirates",
+    SG: "Singapore",
+    MY: "Malaysia",
+    DE: "Germany",
+    FR: "France",
+    IT: "Italy",
+    ES: "Spain",
+    PT: "Portugal",
+    NL: "Netherlands",
+    BE: "Belgium",
+    CH: "Switzerland",
+    AT: "Austria",
+    NZ: "New Zealand",
+    JP: "Japan",
+    CN: "China",
+    KR: "South Korea",
+    RU: "Russia",
+    BR: "Brazil",
+    MX: "Mexico",
+    ZA: "South Africa",
+    SA: "Saudi Arabia",
+    QA: "Qatar",
+    KW: "Kuwait",
+    OM: "Oman",
+    BH: "Bahrain",
+    LK: "Sri Lanka",
+    BD: "Bangladesh",
+    NP: "Nepal",
+    PK: "Pakistan"
+};
+
+/* ---------------------------------------------------------
+   MASK PHONE NUMBER
+--------------------------------------------------------- */
+
+function maskPhoneNumber(phoneNumber) {
+    const value = String(phoneNumber || "");
+
+    if (value.length <= 4) {
+        return "****";
+    }
+
+    if (value.length <= 7) {
+        return (
+            value.substring(0, 2) +
+            "****" +
+            value.substring(value.length - 2)
+        );
+    }
+
+    return (
+        value.substring(0, 3) +
+        "****" +
+        value.substring(value.length - 3)
+    );
+}
+
+/* ---------------------------------------------------------
+   PHONE SCORE
+--------------------------------------------------------- */
+
+function calculatePhoneScore(
+    valid,
+    possible,
+    warnings
+) {
+    let score = 50;
+
+    if (valid) {
+        score += 35;
+    } else if (possible) {
+        score += 15;
+    } else {
+        score -= 30;
+    }
+
+    score -= warnings.length * 8;
+
+    return Math.max(
+        0,
+        Math.min(
+            100,
+            Math.round(score)
+        )
+    );
+}
+
+/* ---------------------------------------------------------
+   PHONE VERDICT
+--------------------------------------------------------- */
+
+function getPhoneVerdict(
+    valid,
+    possible,
+    score
+) {
+    if (
+        valid &&
+        score >= 80
+    ) {
+        return "Likely Valid";
+    }
+
+    if (
+        possible &&
+        score >= 60
+    ) {
+        return "Needs Review";
+    }
+
+    if (possible) {
+        return "Suspicious Format";
+    }
+
+    return "Invalid Number";
+}
+
+/* ---------------------------------------------------------
+   PHONE RISK LEVEL
+--------------------------------------------------------- */
+
+function getPhoneRiskLevel(
+    valid,
+    score
+) {
+    if (
+        valid &&
+        score >= 80
+    ) {
+        return "LOW RISK";
+    }
+
+    if (score >= 60) {
+        return "MEDIUM RISK";
+    }
+
+    if (score >= 40) {
+        return "ELEVATED RISK";
+    }
+
+    return "HIGH RISK";
+}
+
+/* ---------------------------------------------------------
+   PHONE ANALYSIS
+--------------------------------------------------------- */
+
+function analyzePhone(
+    inputPhone,
+    country = "IN"
+) {
+    const rawPhone =
+        String(inputPhone || "").trim();
+
+    const selectedCountry =
+        String(country || "IN")
+            .trim()
+            .toUpperCase();
+
+    if (!rawPhone) {
+        throw new Error(
+            "Phone number is required."
+        );
+    }
+
+    if (
+        !PHONE_COUNTRIES[
+            selectedCountry
+        ]
+    ) {
+        throw new Error(
+            "Unsupported country code."
+        );
+    }
+
+    let phoneNumber;
+
+    try {
+        phoneNumber =
+            parsePhoneNumberFromString(
+                rawPhone,
+                selectedCountry
+            );
+    } catch {
+        phoneNumber = null;
+    }
+
+    const warnings = [];
+
+    if (!phoneNumber) {
+        warnings.push(
+            "The number could not be parsed using the selected country."
+        );
+    }
+
+    const valid =
+        phoneNumber
+            ? phoneNumber.isValid()
+            : false;
+
+    const possible =
+        phoneNumber
+            ? phoneNumber.isPossible()
+            : false;
+
+    if (
+        phoneNumber &&
+        !valid
+    ) {
+        warnings.push(
+            "The number does not match a valid numbering pattern."
+        );
+    }
+
+    if (
+        phoneNumber &&
+        !possible
+    ) {
+        warnings.push(
+            "The number length or structure is not possible for the selected numbering plan."
+        );
+    }
+
+    const score =
+        calculatePhoneScore(
+            valid,
+            possible,
+            warnings
+        );
+
+    const verdict =
+        getPhoneVerdict(
+            valid,
+            possible,
+            score
+        );
+
+    const riskLevel =
+        getPhoneRiskLevel(
+            valid,
+            score
+        );
+
+    let confidence = "Low";
+
+    if (
+        phoneNumber &&
+        possible
+    ) {
+        confidence = valid
+            ? "High"
+            : "Medium";
+    }
+
+    const countryCode =
+        phoneNumber
+            ? phoneNumber.country || selectedCountry
+            : selectedCountry;
+
+    const callingCode =
+        phoneNumber
+            ? "+" + phoneNumber.countryCallingCode
+            : null;
+
+    const nationalNumber =
+        phoneNumber
+            ? phoneNumber.nationalNumber
+            : null;
+
+    const internationalFormat =
+        phoneNumber
+            ? phoneNumber.formatInternational()
+            : null;
+
+    const nationalFormat =
+        phoneNumber
+            ? phoneNumber.formatNational()
+            : null;
+
+    const e164 =
+        phoneNumber
+            ? phoneNumber.number
+            : null;
+
+    return {
+        ok: true,
+
+        securityScore: score,
+
+        riskScore:
+            100 - score,
+
+        verdict,
+
+        riskLevel,
+
+        confidence,
+
+        phone: {
+            input: rawPhone,
+
+            masked:
+                maskPhoneNumber(
+                    rawPhone
+                ),
+
+            country:
+                PHONE_COUNTRIES[
+                    countryCode
+                ] ||
+                countryCode,
+
+            countryCode,
+
+            callingCode,
+
+            nationalNumber,
+
+            internationalFormat,
+
+            nationalFormat,
+
+            e164
+        },
+
+        validation: {
+            valid,
+
+            possible,
+
+            isValid:
+                valid,
+
+            isPossible:
+                possible
+        },
+
+        indicators: [
+            {
+                type:
+                    valid
+                        ? "safe"
+                        : "warning",
+
+                title:
+                    valid
+                        ? "Valid phone number structure"
+                        : "Phone number structure needs review",
+
+                detail:
+                    valid
+                        ? "The number matches a valid numbering pattern for the selected country."
+                        : "The number could not be confirmed as a valid number for the selected country.",
+
+                points: 0
+            },
+
+            ...(possible
+                ? [
+                    {
+                        type: "safe",
+
+                        title:
+                            "Possible number format",
+
+                        detail:
+                            "The number has a structurally possible length and format.",
+
+                        points: 0
+                    }
+                ]
+                : [])
+        ],
+
+        warnings,
+
+        limitations: [
+            "This analysis checks phone-number structure and numbering-plan validity.",
+            "It does not identify the private owner of the number.",
+            "A valid phone number does not prove that the person, business, message, or caller is trustworthy.",
+            "Carrier, spam, scam, or reputation information requires a separate reputation service."
+        ]
+    };
+}
+
+/* ---------------------------------------------------------
+   POST /api/phone-check
+--------------------------------------------------------- */
+
+app.post(
+    "/api/phone-check",
+    (req, res) => {
+        try {
+            const phone =
+                req.body?.phone ||
+                req.body?.phoneNumber ||
+                req.body?.number;
+
+            const country =
+                req.body?.country ||
+                "IN";
+
+            const result =
+                analyzePhone(
+                    phone,
+                    country
+                );
+
+            return res.json(result);
+
+        } catch (error) {
+            console.error(
+                "PHONE CHECK ERROR:",
+                error.message
+            );
+
+            return res
+                .status(400)
+                .json({
+                    ok: false,
+
+                    error:
+                        error?.message ||
+                        "Phone analysis failed."
+                });
+        }
+    }
+);
+
+/* ---------------------------------------------------------
+   POST /api/phone-validate
+--------------------------------------------------------- */
+
+app.post(
+    "/api/phone-validate",
+    (req, res) => {
+        try {
+            const phone =
+                req.body?.phone ||
+                req.body?.phoneNumber ||
+                req.body?.number;
+
+            const country =
+                req.body?.country ||
+                "IN";
+
+            const rawPhone =
+                String(
+                    phone || ""
+                ).trim();
+
+            if (!rawPhone) {
+                throw new Error(
+                    "Phone number is required."
+                );
+            }
+
+            const parsed =
+                parsePhoneNumberFromString(
+                    rawPhone,
+                    String(country)
+                        .toUpperCase()
+                );
+
+            const valid =
+                parsed
+                    ? parsed.isValid()
+                    : false;
+
+            const possible =
+                parsed
+                    ? parsed.isPossible()
+                    : false;
+
+            return res.json({
+                ok: true,
+
+                valid,
+
+                possible,
+
+                country:
+                    parsed?.country ||
+                    String(country)
+                        .toUpperCase(),
+
+                countryName:
+                    PHONE_COUNTRIES[
+                        parsed?.country ||
+                        String(country)
+                            .toUpperCase()
+                    ] ||
+                    "Unknown",
+
+                callingCode:
+                    parsed
+                        ? "+" +
+                          parsed.countryCallingCode
+                        : null,
+
+                international:
+                    parsed
+                        ? parsed.formatInternational()
+                        : null,
+
+                national:
+                    parsed
+                        ? parsed.formatNational()
+                        : null,
+
+                e164:
+                    parsed
+                        ? parsed.number
+                        : null
+            });
+
+        } catch (error) {
+            console.error(
+                "PHONE VALIDATION ERROR:",
+                error.message
+            );
+
+            return res
+                .status(400)
+                .json({
+                    ok: false,
+
+                    error:
+                        error?.message ||
+                        "Phone validation failed."
+                });
+        }
+    }
+);
+
+/* ---------------------------------------------------------
+   GET /api/phone-check
+   Example:
+   /api/phone-check?phone=9876543210
+--------------------------------------------------------- */
+
+app.get(
+    "/api/phone-check",
+    (req, res) => {
+        try {
+            const phone =
+                req.query?.phone ||
+                req.query?.phoneNumber ||
+                req.query?.number;
+
+            const country =
+                req.query?.country ||
+                "IN";
+
+            const result =
+                analyzePhone(
+                    phone,
+                    country
+                );
+
+            return res.json(result);
+
+        } catch (error) {
+            return res
+                .status(400)
+                .json({
+                    ok: false,
+
+                    error:
+                        error?.message ||
+                        "Phone analysis failed."
+                });
+        }
     }
 );
