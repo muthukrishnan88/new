@@ -3238,6 +3238,7 @@ app.get("/", (req, res) => {
 
 app.listen(
     PORT,
+    "0.0.0.0",
     () => {
         console.log(
             "=============================================="
@@ -3252,22 +3253,19 @@ app.listen(
         );
 
         console.log(
-            `Server: http://localhost:${PORT}`
+            `Server running on port ${PORT}`
         );
 
         console.log(
-            `Health: http://localhost:${PORT}/api/health`
+            `Health: /api/health`
         );
 
         console.log(
-            `Analyze: POST http://localhost:${PORT}/api/analyze`
+            `Analyze: POST /api/analyze`
         );
 
         console.log(
-            `AI configured: ${Boolean(
-                openai &&
-                OPENAI_MODEL
-            )}`
+            `AI configured: ${Boolean(OPENAI_API_KEY)}`
         );
 
         console.log(
