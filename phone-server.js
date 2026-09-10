@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 
-const PORT = Number(process.env.PHONE_PORT || 4000);
+const PORT = Number(process.env.PORT || process.env.PHONE_PORT || 4000);
 
 /* =========================================================
    MIDDLEWARE
@@ -1145,50 +1145,22 @@ app.use(
 /* =========================================================
    START
 ========================================================= */
-
 app.listen(
     PORT,
+    "0.0.0.0",
     () => {
-
         console.log("");
-
-        console.log(
-            "========================================"
-        );
-
-        console.log(
-            "   SAFNEX NOVA PHONE DETECTOR"
-        );
-
-        console.log(
-            "========================================"
-        );
-
+        console.log("========================================");
+        console.log("   SAFNEX NOVA PHONE DETECTOR");
+        console.log("========================================");
         console.log("");
-
-        console.log(
-            `Phone server: http://localhost:${PORT}`
-        );
-
-        console.log(
-            `Health:       http://localhost:${PORT}/api/health`
-        );
-
-        console.log(
-            `Phone API:    http://localhost:${PORT}/api/phone-check`
-        );
-
+        console.log(`Phone server: listening on port ${PORT}`);
+        console.log(`Health:       /api/health`);
+        console.log(`Phone API:    POST /api/phone-check`);
+        console.log(`Validate API: POST /api/phone-validate`);
         console.log("");
-
-        console.log(
-            "Link detector is NOT used by this server."
-        );
-
-        console.log(
-            "========================================"
-        );
-
+        console.log("Link detector is NOT used by this server.");
+        console.log("========================================");
         console.log("");
-
     }
 );
