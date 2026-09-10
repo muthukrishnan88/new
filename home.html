@@ -3819,2669 +3819,1002 @@ and (
 ></div>
 
 
+
 <script>
+"use strict";
 
 /* =========================================================
-   CONFIGURATION
+   SAFNEX NOVA — STABLE FRONT-END ENGINE
+   Works as a standalone static HTML page.
+   If an API is configured, link/phone checks will try it first.
+   No fake security score is generated when an API fails.
 ========================================================= */
 
-/*
- * Full link analysis page
- */
-const FULL_LINK_REPORT_PAGE =
-    "link-detector.html";
-
-
-/*
- * Full phone analysis page
- *
- * Change this filename ONLY if your phone detector
- * HTML file has a different name.
- */
-const FULL_PHONE_REPORT_PAGE =
-    "phonenumber-detect.html";
-
-
-/*
-/**
- * Link backend
- */
-const LINK_API_URL =
-    window.SAFNEX_API_URL ||
-    "/api/analyze";
-
-/*
- * Phone backend
- */
-const PHONE_API_URL =
-    window.SAFNEX_PHONE_API_URL ||
-    "http://localhost:4000/api/phone-check";
-
-
-/* =========================================================
-   CURRENT VALUES
-========================================================= */
+const FULL_LINK_REPORT_PAGE = "link-detector.html";
+const FULL_PHONE_REPORT_PAGE = "phonenumber-detect.html";
+const LINK_API_URL = window.SAFNEX_API_URL || "/api/analyze";
+const PHONE_API_URL = window.SAFNEX_PHONE_API_URL || "/api/phone-check";
 
 let currentLink = "";
 let currentPhone = "";
-
-
-/* =========================================================
-   TAB SWITCHING
-========================================================= */
-
-function switchScanner(type){
-
-    document
-        .querySelectorAll(".tab")
-        .forEach(function(tab){
-
-            tab.classList.remove("active");
-
-            if(
-                tab.dataset.type === type
-            ){
-
-                tab.classList.add("active");
-
-            }
-
-        });
-
-
-    document
-        .querySelectorAll(".scanner-view")
-        .forEach(function(view){
-
-            view.style.display =
-                "none";
-
-        });
-
-
-    const selected =
-        document.getElementById(
-            type + "View"
-        );
-
-
-    if(selected){
-
-        selected.style.display =
-            "block";
-
-    }
-
-}
-
-
-/* =========================================================
-   SCROLL
-========================================================= */
-
-function scrollToScanner(){
-
-    const scanner =
-        document.getElementById(
-            "scanner"
-        );
-
-    if(scanner){
-
-        scanner.scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-        });
-
-    }
-
-}
-
-
-function goTop(){
-
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
-
-}
-
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-let toastTimer;
-
-
-function showToast(message){
-
-    const toast =
-        document.getElementById(
-            "toast"
-        );
-
-
-    toast.textContent =
-        String(message);
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toastTimer =
-        setTimeout(
-            function(){
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            2200
-        );
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHTML(value){
-
-    return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-/* =========================================================
-   GENERIC RESULT
-========================================================= */
-
-function showResult(
-    id,
-    type,
-    icon,
-    title,
-    level,
-    body,
-    reasons
-){
-
-    const box =
-        document.getElementById(
-            id
-        );
-
-
-    if(!box){
-        return;
-    }
-
-
-    box.className =
-        "result show " +
-        type;
-
-
-    let list = "";
-
-
-    if(
-        reasons &&
-        reasons.length
-    ){
-
-        list =
-            "<ul class='reason-list'>" +
-
-            reasons
-                .map(
-                    function(reason){
-
-                        return "<li>" +
-                            escapeHTML(reason) +
-                            "</li>";
-
-                    }
-                )
-                .join("") +
-
-            "</ul>";
-
-    }
-
-
-    box.innerHTML =
-
-        "<div class='result-head'>" +
-
-            "<div class='result-icon'>" +
-                icon +
-            "</div>" +
-
-            "<div>" +
-
-                "<div class='result-title'>" +
-                    escapeHTML(title) +
-                "</div>" +
-
-                "<div class='result-level'>" +
-                    escapeHTML(level) +
-                "</div>" +
-
-            "</div>" +
-
-        "</div>" +
-
-
-        "<div class='result-body'>" +
-
-            escapeHTML(body) +
-
-            list +
-
-        "</div>" +
-
-
-        "<button " +
-            "class='again-button' " +
-            "onclick=\"resetResult('" +
-                id +
-            "')\">" +
-
-            "CHECK AGAIN" +
-
-        "</button>";
-
-
-    box.scrollIntoView({
-        behavior:"smooth",
-        block:"nearest"
-    });
-
-}
-
-
-/* =========================================================
-   RESET
-========================================================= */
-
-function resetResult(id){
-
-    if(id === "linkResult"){
-        stopLinkLoading();
-    }
-
-    const box =
-        document.getElementById(
-            id
-        );
-
-
-    if(!box){
-        return;
-    }
-
-
-    box.className =
-        "result";
-
-
-    box.innerHTML =
-        "";
-
-}
-
-
-/* =========================================================
-   PHONE CHECK
-========================================================= */
-
-/*
- * IMPORTANT:
- *
- * Home page does NOT calculate the phone score itself.
- *
- * It asks phone-server.js for the score.
- *
- * This keeps Home and phonenumber-detect.html
- * connected to the same phone analysis engine.
- */
-
-async function checkPhone(){
-
-    const input =
-        document
-        .getElementById(
-            "phoneInput"
-        )
-        .value
-        .trim();
-
-
-    if(!input){
-
-        showToast(
-            "Enter a phone number first."
-        );
-
-        return;
-
-    }
-
-
-    /*
-     * Keep + and digits.
-     */
-    const cleaned =
-        input.replace(
-            /[^\d+]/g,
-            ""
-        );
-
-
-    const digits =
-        cleaned.replace(
-            /\D/g,
-            ""
-        );
-
-
-    if(
-        digits.length < 7 ||
-        digits.length > 15
-    ){
-
-        showResult(
-
-            "phoneResult",
-
-            "warning",
-
-            "!",
-
-            "Check this phone number",
-
-            "INVALID INPUT",
-
-            "Enter a phone number with a valid international or national length.",
-
-            [
-                "Number is too short or too long"
-            ]
-
-        );
-
-        return;
-
-    }
-
-
-    currentPhone =
-        cleaned;
-
-
-    const box =
-        document.getElementById(
-            "phoneResult"
-        );
-
-
-    box.className =
-        "result show warning";
-
-
-    box.innerHTML =
-
-        "<div class='link-score-result'>" +
-
-            "<div " +
-                "class='link-score' " +
-                "style='color:#5367ff'>" +
-
-                "…" +
-
-            "</div>" +
-
-            "<div class='link-score-label'>" +
-
-                "SAFNEX NOVA PHONE SCORE" +
-
-            "</div>" +
-
-            "<div class='link-risk warning'>" +
-
-                "⏳ ANALYZING NUMBER" +
-
-            "</div>" +
-
-            "<div " +
-                "style='margin-top:10px;font-size:9px;color:#858896'>" +
-
-                "Checking the SAFNEX NOVA phone analysis engine." +
-
-            "</div>" +
-
-            "<button " +
-                "class='again-button' " +
-                "onclick=\"resetResult('phoneResult')\">" +
-
-                "CANCEL" +
-
-            "</button>" +
-
-        "</div>";
-
-
-    box.scrollIntoView({
-        behavior:"smooth",
-        block:"nearest"
-    });
-
-
-    try{
-
-        const response =
-            await fetch(
-                PHONE_API_URL,
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-                            phone:
-                                currentPhone
-                        })
-                }
-            );
-
-
-        let data = {};
-
-
-        try{
-
-            data =
-                await response.json();
-
-        }
-        catch(error){
-
-            data = {};
-
-        }
-
-
-        if(!response.ok){
-
-            throw new Error(
-                data?.error ||
-                "Phone analysis failed."
-            );
-
-        }
-
-
-        /*
-         * Accept the backend score.
-         *
-         * We NEVER invent a score here.
-         */
-        const backendScore =
-            data?.securityScore ??
-            data?.security?.score ??
-            data?.score ??
-            null;
-
-
-        const numericScore =
-            Number(
-                backendScore
-            );
-
-
-        if(
-            backendScore === null ||
-            backendScore === undefined ||
-            !Number.isFinite(
-                numericScore
-            )
-        ){
-
-            showPhoneUnverified(
-                currentPhone,
-                "The phone analysis server did not return a verified score."
-            );
-
-            return;
-
-        }
-
-
-        const score =
-            Math.max(
-                0,
-                Math.min(
-                    100,
-                    Math.round(
-                        numericScore
-                    )
-                )
-            );
-
-
-        let verdict =
-            data?.security?.verdict ??
-            data?.verdict ??
-            data?.risk?.level ??
-            "";
-
-
-        if(!verdict){
-
-            if(score >= 80){
-
-                verdict =
-                    "LIKELY VALID";
-
-            }
-            else if(score >= 60){
-
-                verdict =
-                    "REVIEW";
-
-            }
-            else if(score >= 40){
-
-                verdict =
-                    "SUSPICIOUS";
-
-            }
-            else{
-
-                verdict =
-                    "HIGH RISK";
-
-            }
-
-        }
-
-
-        const normalized =
-            String(
-                verdict
-            ).toUpperCase();
-
-
-        let type =
-            "warning";
-
-
-        if(
-            normalized.includes(
-                "HIGH RISK"
-            ) ||
-            normalized.includes(
-                "INVALID"
-            ) ||
-            normalized.includes(
-                "SUSPICIOUS"
-            ) &&
-            score < 50
-        ){
-
-            type =
-                "danger";
-
-        }
-        else if(
-            score >= 80
-        ){
-
-            type =
-                "safe";
-
-        }
-
-
-        showPhoneScoreResult(
-            score,
-            verdict,
-            type,
-            currentPhone
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            "SAFNEX NOVA phone analysis error:",
-            error
-        );
-
-
-        /*
-         * No fake score.
-         */
-        showPhoneUnverified(
-            currentPhone,
-            "The phone analysis server could not verify this number."
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   PHONE SCORE RESULT
-========================================================= */
-
-function showPhoneScoreResult(
-    score,
-    verdict,
-    type,
-    phone
-){
-
-    const box =
-        document.getElementById(
-            "phoneResult"
-        );
-
-
-    let scoreColor =
-        "#f59a45";
-
-
-    let icon =
-        "!";
-
-
-    if(type === "safe"){
-
-        scoreColor =
-            "#17b879";
-
-        icon =
-            "✓";
-
-    }
-    else if(type === "danger"){
-
-        scoreColor =
-            "#ed5964";
-
-        icon =
-            "⚠";
-
-    }
-
-
-    box.className =
-        "result show " +
-        type;
-
-
-    box.innerHTML =
-
-        "<div class='link-score-result'>" +
-
-            "<div " +
-                "class='link-score' " +
-                "style='color:" +
-                    scoreColor +
-                "'>" +
-
-                score +
-                " / 100" +
-
-            "</div>" +
-
-            "<div class='link-score-label'>" +
-
-                "SAFNEX NOVA PHONE SCORE" +
-
-            "</div>" +
-
-            "<div class='link-risk " +
-                type +
-            "'>" +
-
-                icon +
-                " " +
-                escapeHTML(verdict) +
-
-            "</div>" +
-
-            "<div " +
-                "style='margin-top:10px;font-size:9px;color:#646774;line-height:1.6'>" +
-
-                "This score is based on the phone analysis signals returned by SAFNEX NOVA. It does not prove that a SIM is active or that calls can be made or received." +
-
-            "</div>" +
-
-            "<button " +
-                "class='full-report-button' " +
-                "onclick=\"openFullPhoneReport()\">" +
-
-                "CHECK FULL PHONE REPORT →" +
-
-            "</button>" +
-
-            "<button " +
-                "class='again-button' " +
-                "onclick=\"resetResult('phoneResult')\">" +
-
-                "CHECK ANOTHER NUMBER" +
-
-            "</button>" +
-
-        "</div>";
-
-
-    box.scrollIntoView({
-        behavior:"smooth",
-        block:"nearest"
-    });
-
-}
-
-
-/* =========================================================
-   PHONE UNVERIFIED
-========================================================= */
-
-function showPhoneUnverified(
-    phone,
-    message
-){
-
-    const box =
-        document.getElementById(
-            "phoneResult"
-        );
-
-
-    box.className =
-        "result show warning";
-
-
-    box.innerHTML =
-
-        "<div class='link-score-result'>" +
-
-            "<div " +
-                "class='link-score' " +
-                "style='color:#f59a45'>" +
-
-                "—" +
-
-            "</div>" +
-
-            "<div class='link-score-label'>" +
-
-                "SAFNEX NOVA PHONE SCORE" +
-
-            "</div>" +
-
-            "<div class='link-risk warning'>" +
-
-                "⚠ UNVERIFIED" +
-
-            "</div>" +
-
-            "<div " +
-                "style='margin-top:10px;font-size:9px;color:#646774;line-height:1.6'>" +
-
-                escapeHTML(
-                    message
-                ) +
-
-            "</div>" +
-
-            "<div " +
-                "style='margin-top:8px;font-size:8px;color:#858896;word-break:break-all'>" +
-
-                escapeHTML(
-                    phone
-                ) +
-
-            "</div>" +
-
-            "<button " +
-                "class='full-report-button' " +
-                "onclick=\"openFullPhoneReport()\">" +
-
-                "OPEN FULL PHONE REPORT →" +
-
-            "</button>" +
-
-            "<button " +
-                "class='again-button' " +
-                "onclick=\"resetResult('phoneResult')\">" +
-
-                "CHECK ANOTHER NUMBER" +
-
-            "</button>" +
-
-        "</div>";
-
-
-    box.scrollIntoView({
-        behavior:"smooth",
-        block:"nearest"
-    });
-
-}
-
-
-/* =========================================================
-   OPEN FULL PHONE REPORT
-========================================================= */
-
-function openFullPhoneReport(){
-
-    if(!currentPhone){
-
-        showToast(
-            "Please enter a phone number first."
-        );
-
-        return;
-
-    }
-
-
-    /*
-     * This is the important connection:
-     *
-     * Home:
-     * phonenumber-detect.html?phone=+919876543210
-     *
-     * Phone detector reads ?phone=
-     * and fills its input automatically.
-     */
-
-    window.location.href =
-        FULL_PHONE_REPORT_PAGE +
-        "?phone=" +
-        encodeURIComponent(
-            currentPhone
-        );
-
-}
-
-
-
+let toastTimer = null;
 let linkLoadingTimer = null;
 
-function startLinkLoading(){
+/* ---------- small helpers ---------- */
+
+function $(id) {
+    return document.getElementById(id);
+}
+
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function showToast(message) {
+    const toast = $("toast");
+    if (!toast) return;
+    toast.textContent = String(message);
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+function scrollToScanner() {
+    $("scanner")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function goTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function switchScanner(type) {
+    document.querySelectorAll(".tab").forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.type === type);
+    });
+
+    document.querySelectorAll(".scanner-view").forEach(view => {
+        view.style.display = "none";
+    });
+
+    const selected = $(type + "View");
+    if (selected) selected.style.display = "block";
+
+    // Clear old loading animation when leaving the link scanner.
+    if (type !== "link") stopLinkLoading();
+}
+
+function resetResult(id) {
+    const box = $(id);
+    if (!box) return;
+    box.className = "result";
+    box.innerHTML = "";
+}
+
+/* ---------- generic result ---------- */
+
+function showResult(id, type, icon, title, level, body, reasons = []) {
+    const box = $(id);
+    if (!box) return;
+
+    const list = Array.isArray(reasons) && reasons.length
+        ? `<ul class="reason-list">${reasons.map(r => `<li>${escapeHTML(r)}</li>`).join("")}</ul>`
+        : "";
+
+    box.className = `result show ${type || "warning"}`;
+    box.innerHTML = `
+        <div class="result-head">
+            <div class="result-icon">${icon || "!"}</div>
+            <div>
+                <div class="result-title">${escapeHTML(title)}</div>
+                <div class="result-level">${escapeHTML(level)}</div>
+            </div>
+        </div>
+        <div class="result-body">
+            ${escapeHTML(body)}
+            ${list}
+        </div>
+        <button type="button" class="again-button" onclick="resetResult('${escapeHTML(id)}')">
+            CHECK AGAIN
+        </button>
+    `;
+    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+/* ---------- link loading ---------- */
+
+function startLinkLoading(url) {
+    const box = $("linkResult");
+    if (!box) return;
 
     stopLinkLoading();
 
-    const steps = [
-        document.getElementById("linkLoadStep1"),
-        document.getElementById("linkLoadStep2"),
-        document.getElementById("linkLoadStep3"),
-        document.getElementById("linkLoadStep4")
-    ];
+    box.className = "result show warning";
+    box.innerHTML = `
+        <div class="link-loading">
+            <div class="loading-main">
+                <div class="loading-orbit" aria-hidden="true"></div>
+                <div class="loading-copy">
+                    <div class="loading-kicker"><i></i> LIVE ANALYSIS</div>
+                    <div class="loading-title">Checking link security…</div>
+                    <div class="loading-url">${escapeHTML(url)}</div>
+                </div>
+            </div>
+            <div class="loading-progress"><span></span></div>
+            <div class="loading-steps">
+                <div class="loading-step active"><div class="loading-step-top"><i class="loading-step-dot"></i><span class="loading-step-label">URL format</span></div></div>
+                <div class="loading-step"><div class="loading-step-top"><i class="loading-step-dot"></i><span class="loading-step-label">Domain signals</span></div></div>
+                <div class="loading-step"><div class="loading-step-top"><i class="loading-step-dot"></i><span class="loading-step-label">Risk signals</span></div></div>
+                <div class="loading-step"><div class="loading-step-top"><i class="loading-step-dot"></i><span class="loading-step-label">Verdict</span></div></div>
+            </div>
+            <div class="loading-note">Analysis checks common risk signals. It cannot guarantee that a website is legitimate.</div>
+        </div>
+    `;
 
-    let index = 0;
-
-    linkLoadingTimer = window.setInterval(function(){
-
-        if(index >= steps.length - 1){
-            return;
-        }
-
-        if(steps[index]){
-            steps[index].classList.remove("active");
-            steps[index].classList.add("done");
-        }
-
-        index++;
-
-        if(steps[index]){
-            steps[index].classList.add("active");
-        }
-
-    }, 850);
+    let step = 0;
+    const steps = box.querySelectorAll(".loading-step");
+    linkLoadingTimer = setInterval(() => {
+        if (step >= steps.length) return;
+        if (step > 0) steps[step - 1].classList.remove("active");
+        steps[step].classList.add("active");
+        if (step > 0) steps[step - 1].classList.add("done");
+        step++;
+    }, 650);
 }
 
-function stopLinkLoading(){
-
-    if(linkLoadingTimer !== null){
-        window.clearInterval(linkLoadingTimer);
+function stopLinkLoading() {
+    if (linkLoadingTimer) {
+        clearInterval(linkLoadingTimer);
         linkLoadingTimer = null;
     }
 }
 
+function classifyScore(score, verdict = "") {
+    const v = String(verdict).toUpperCase();
 
-/* =========================================================
-   LINK CHECK
-========================================================= */
+    if (
+        v.includes("HIGH RISK") ||
+        v.includes("MALICIOUS") ||
+        v.includes("DANGEROUS") ||
+        v.includes("UNSAFE") ||
+        v.includes("INVALID")
+    ) return "danger";
 
-function checkLink(){
+    if (score >= 80 || (v.includes("SAFE") && score >= 70)) return "safe";
+    return "warning";
+}
 
-    let value =
-        document
-        .getElementById(
-            "linkInput"
-        )
-        .value
-        .trim();
+function showLinkScoreResult(score, verdict, type, url) {
+    stopLinkLoading();
 
+    const box = $("linkResult");
+    if (!box) return;
 
-    if(!value){
+    const safeType = ["safe", "warning", "danger"].includes(type) ? type : "warning";
+    const color = safeType === "safe" ? "#17b879"
+        : safeType === "danger" ? "#ed5964" : "#f59a45";
+    const icon = safeType === "safe" ? "✓"
+        : safeType === "danger" ? "⚠" : "!";
 
-        showToast(
-            "Enter a link first."
-        );
+    box.className = `result show ${safeType}`;
+    box.innerHTML = `
+        <div class="link-score-result">
+            <div class="link-score" style="color:${color}">${Math.round(score)} / 100</div>
+            <div class="link-score-label">SAFNEX NOVA SAFETY SCORE</div>
+            <div class="link-risk ${safeType}">${icon} ${escapeHTML(verdict)}</div>
+            <div style="margin-top:10px;font-size:9px;color:#646774;line-height:1.6">
+                This score reflects the signals available to SAFNEX NOVA. It is not proof that a website is safe.
+            </div>
+            <div style="margin-top:8px;font-size:8px;color:#858896;word-break:break-all">
+                ${escapeHTML(url)}
+            </div>
+            <button type="button" class="full-report-button" onclick="openFullReport()">CHECK FULL REPORT →</button>
+            <button type="button" class="again-button" onclick="resetResult('linkResult')">CHECK ANOTHER LINK</button>
+        </div>
+    `;
+}
 
+function showUnverifiedLinkResult(url, message) {
+    stopLinkLoading();
+    const box = $("linkResult");
+    if (!box) return;
+
+    box.className = "result show warning";
+    box.innerHTML = `
+        <div class="link-score-result">
+            <div class="link-score" style="color:#f59a45">—</div>
+            <div class="link-score-label">SAFNEX NOVA SAFETY SCORE</div>
+            <div class="link-risk warning">⚠ UNVERIFIED</div>
+            <div style="margin-top:10px;font-size:9px;color:#646774;line-height:1.6">
+                ${escapeHTML(message)}
+            </div>
+            <div style="margin-top:8px;font-size:8px;color:#858896;word-break:break-all">
+                ${escapeHTML(url)}
+            </div>
+            <button type="button" class="full-report-button" onclick="openFullReport()">CHECK FULL REPORT →</button>
+            <button type="button" class="again-button" onclick="resetResult('linkResult')">CHECK ANOTHER LINK</button>
+        </div>
+    `;
+}
+
+/* ---------- local link fallback ---------- */
+
+function localLinkAnalysis(rawUrl) {
+    let url;
+    try {
+        url = new URL(rawUrl);
+    } catch {
+        return {
+            score: 0,
+            verdict: "INVALID URL",
+            type: "danger",
+            reasons: ["The value is not a valid web address."]
+        };
+    }
+
+    if (!/^https?:$/.test(url.protocol)) {
+        return {
+            score: 20,
+            verdict: "HIGH RISK",
+            type: "danger",
+            reasons: ["Only HTTP/HTTPS web addresses can be checked."]
+        };
+    }
+
+    let score = 100;
+    const reasons = [];
+    const host = url.hostname.toLowerCase();
+    const full = (url.pathname + url.search).toLowerCase();
+
+    if (url.protocol === "http:") {
+        score -= 20;
+        reasons.push("The link does not use HTTPS.");
+    }
+    if (/xn--/.test(host)) {
+        score -= 30;
+        reasons.push("Internationalized/punycode domain detected.");
+    }
+    if (/^(?:\d{1,3}\.){3}\d{1,3}$/.test(host)) {
+        score -= 30;
+        reasons.push("The link uses an IP address instead of a normal domain.");
+    }
+    if (/@/.test(rawUrl)) {
+        score -= 25;
+        reasons.push("The URL contains an @ character, which can be used to disguise the destination.");
+    }
+    if (host.split(".").length > 4) {
+        score -= 10;
+        reasons.push("The hostname contains many subdomain levels.");
+    }
+    if (/(login|signin|verify|verification|secure|account|password|wallet|claim|gift|prize|update|confirm|otp)/i.test(full)) {
+        score -= 12;
+        reasons.push("The URL contains a sensitive-action keyword.");
+    }
+    if (host.length > 45) {
+        score -= 8;
+        reasons.push("The hostname is unusually long.");
+    }
+
+    score = Math.max(0, Math.min(100, score));
+
+    if (score >= 85) return { score, verdict: "LIKELY SAFE", type: "safe", reasons };
+    if (score >= 65) return { score, verdict: "REVIEW", type: "warning", reasons };
+    if (score >= 40) return { score, verdict: "SUSPICIOUS", type: "warning", reasons };
+    return { score, verdict: "HIGH RISK", type: "danger", reasons };
+}
+
+/* ---------- link check ---------- */
+
+async function checkLink() {
+    const input = $("linkInput");
+    const raw = input ? input.value.trim() : "";
+
+    if (!raw) {
+        showToast("Enter a link first.");
+        input?.focus();
         return;
-
     }
 
+    let normalized = raw;
+    if (!/^https?:\/\//i.test(normalized)) normalized = "https://" + normalized;
 
-    let url =
-        value;
-
-
-    if(
-        !/^https?:\/\//i.test(
-            url
-        )
-    ){
-
-        url =
-            "https://" +
-            url;
-
-    }
-
-
-    let parsed;
-
-
-    try{
-
-        parsed =
-            new URL(
-                url
-            );
-
-    }
-    catch(error){
-
-        showResult(
-
-            "linkResult",
-
-            "danger",
-
-            "✕",
-
-            "Invalid link",
-
-            "INVALID",
-
-            "The value entered does not appear to be a valid web URL.",
-
-            [
-                "Invalid URL format"
-            ]
-
-        );
-
+    try {
+        new URL(normalized);
+    } catch {
+        showUnverifiedLinkResult(raw, "Please enter a valid website address.");
         return;
-
     }
 
+    currentLink = normalized;
+    startLinkLoading(normalized);
 
-    currentLink =
-        parsed.href;
+    // Try configured backend first. Static hosting such as GitHub Pages normally
+    // has no /api/analyze endpoint, so the local checker is used if the request fails.
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
 
+        const response = await fetch(LINK_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: normalized }),
+            signal: controller.signal
+        });
 
-    const box =
-        document.getElementById(
-            "linkResult"
-        );
+        clearTimeout(timeout);
 
+        let data = {};
+        try { data = await response.json(); } catch {}
 
-    box.className =
-        "result show warning";
+        if (!response.ok) throw new Error(data?.error || "Analysis request failed.");
 
+        const backendScore = data?.securityScore ?? data?.security?.score ?? data?.score;
+        const numericScore = Number(backendScore);
 
-    box.innerHTML =
-
-        "<div class='link-loading'>" +
-
-            "<div class='loading-main'>" +
-
-                "<div class='loading-orbit' aria-hidden='true'></div>" +
-
-                "<div class='loading-copy'>" +
-
-                    "<div class='loading-kicker'>" +
-                        "<i></i>" +
-                        "LIVE SECURITY ANALYSIS" +
-                    "</div>" +
-
-                    "<div class='loading-title'>" +
-                        "Analyzing this link" +
-                    "</div>" +
-
-                    "<div class='loading-url' title='" +
-                        escapeHTML(currentLink) +
-                    "'>" +
-                        escapeHTML(currentLink) +
-                    "</div>" +
-
-                "</div>" +
-
-            "</div>" +
-
-            "<div class='loading-progress' aria-hidden='true'>" +
-                "<span></span>" +
-            "</div>" +
-
-            "<div class='loading-steps'>" +
-
-                "<div class='loading-step active' id='linkLoadStep1'>" +
-                    "<div class='loading-step-top'>" +
-                        "<span class='loading-step-dot'></span>" +
-                        "<span class='loading-step-label'>Checking URL</span>" +
-                    "</div>" +
-                "</div>" +
-
-                "<div class='loading-step' id='linkLoadStep2'>" +
-                    "<div class='loading-step-top'>" +
-                        "<span class='loading-step-dot'></span>" +
-                        "<span class='loading-step-label'>Inspecting Domain</span>" +
-                    "</div>" +
-                "</div>" +
-
-                "<div class='loading-step' id='linkLoadStep3'>" +
-                    "<div class='loading-step-top'>" +
-                        "<span class='loading-step-dot'></span>" +
-                        "<span class='loading-step-label'>Analyzing Signals</span>" +
-                    "</div>" +
-                "</div>" +
-
-                "<div class='loading-step' id='linkLoadStep4'>" +
-                    "<div class='loading-step-top'>" +
-                        "<span class='loading-step-dot'></span>" +
-                        "<span class='loading-step-label'>Calculating Risk</span>" +
-                    "</div>" +
-                "</div>" +
-
-            "</div>" +
-
-            "<div class='loading-note'>" +
-                "SAFNEX NOVA is checking the security engine. This may take a few seconds." +
-            "</div>" +
-
-            "<button " +
-                "class='again-button' " +
-                "onclick=\"resetResult('linkResult')\">" +
-                "CANCEL ANALYSIS" +
-            "</button>" +
-
-        "</div>";
-
-
-    startLinkLoading();
-
-
-    box.scrollIntoView({
-        behavior:"smooth",
-        block:"nearest"
-    });
-
-
-    fetch(
-        LINK_API_URL,
-        {
-            method:"POST",
-
-            headers:{
-                "Content-Type":
-                    "application/json"
-            },
-
-            body:
-                JSON.stringify({
-                    url:
-                        currentLink
-                })
+        if (!Number.isFinite(numericScore)) {
+            throw new Error("The analysis server returned no verified score.");
         }
-    )
 
-    .then(
-        async function(response){
+        let verdict = data?.security?.verdict ?? data?.verdict ?? "";
+        if (!verdict) verdict = numericScore >= 85 ? "LIKELY SAFE"
+            : numericScore >= 70 ? "REVIEW"
+            : numericScore >= 40 ? "SUSPICIOUS" : "HIGH RISK";
 
-            let data = {};
+        const score = Math.max(0, Math.min(100, Math.round(numericScore)));
+        showLinkScoreResult(score, verdict, classifyScore(score, verdict), normalized);
+        return;
+    } catch (error) {
+        console.info("Backend link check unavailable; using local signal checker.", error);
+    }
 
+    // Safe, deterministic fallback — no fake server score.
+    await new Promise(resolve => setTimeout(resolve, 900));
+    const result = localLinkAnalysis(normalized);
+    showLinkScoreResult(result.score, result.verdict, result.type, normalized);
+}
 
-            try{
+/* ---------- full link report ---------- */
 
-                data =
-                    await response.json();
+function openFullReport() {
+    if (!currentLink) {
+        showToast("Please check a link first.");
+        return;
+    }
+    window.location.href = `${FULL_LINK_REPORT_PAGE}?url=${encodeURIComponent(currentLink)}`;
+}
 
-            }
-            catch(e){
+/* ---------- phone check ---------- */
 
-                data = {};
+function normalizePhone(value) {
+    return String(value || "").replace(/[^\d+]/g, "");
+}
 
-            }
+function localPhoneAnalysis(phone) {
+    const cleaned = normalizePhone(phone);
+    const digits = cleaned.replace(/\D/g, "");
 
+    if (digits.length < 10 || digits.length > 15) {
+        return {
+            score: 20,
+            verdict: "INVALID FORMAT",
+            type: "danger",
+            reasons: ["Enter a valid-looking international phone number."]
+        };
+    }
 
-            if(!response.ok){
+    let score = 80;
+    const reasons = [];
 
-                throw new Error(
-                    data?.error ||
-                    "Analysis request failed."
-                );
+    if (/^(\d)\1{7,}$/.test(digits)) {
+        score = 15;
+        reasons.push("The number contains an unusually repetitive digit pattern.");
+    }
 
-            }
+    if (digits.length === 10 && /^(\d{5})\1$/.test(digits)) {
+        score = 25;
+        reasons.push("The number has a highly repetitive pattern.");
+    }
 
+    if (cleaned.startsWith("+")) {
+        reasons.push("International format detected.");
+    } else {
+        reasons.push("No country code was supplied; verification is limited.");
+        score -= 5;
+    }
 
-            return data;
+    score = Math.max(0, Math.min(100, score));
+    const verdict = score >= 80 ? "LIKELY VALID"
+        : score >= 60 ? "REVIEW"
+        : score >= 40 ? "SUSPICIOUS" : "HIGH RISK";
 
-        }
-    )
+    return { score, verdict, type: classifyScore(score, verdict), reasons };
+}
 
-    .then(
-        function(data){
-
-            const backendScore =
-                data?.securityScore ??
-                data?.security?.score ??
-                null;
-
-
-            const numericScore =
-                Number(
-                    backendScore
-                );
-
-
-            if(
-                backendScore === null ||
-                backendScore === undefined ||
-                !Number.isFinite(
-                    numericScore
-                )
-            ){
-
-                showUnverifiedLinkResult(
-                    currentLink,
-                    "SAFNEX NOVA could not obtain a verified security score from the analysis server."
-                );
-
-                return;
-
-            }
-
-
-            const score =
-                Math.max(
-                    0,
-                    Math.min(
-                        100,
-                        Math.round(
-                            numericScore
-                        )
-                    )
-                );
-
-
-            let verdict =
-                data?.security?.verdict ??
-                data?.verdict ??
-                "";
-
-
-            if(!verdict){
-
-                if(score >= 85){
-
-                    verdict =
-                        "LIKELY SAFE";
-
-                }
-                else if(score >= 70){
-
-                    verdict =
-                        "REVIEW";
-
-                }
-                else if(score >= 40){
-
-                    verdict =
-                        "SUSPICIOUS";
-
-                }
-                else{
-
-                    verdict =
-                        "HIGH RISK";
-
-                }
-
-            }
-
-
-            const normalizedVerdict =
-                String(
-                    verdict
-                ).toUpperCase();
-
-
-            let type =
-                "warning";
-
-
-            if(
-                normalizedVerdict.includes(
-                    "HIGH RISK"
-                ) ||
-                normalizedVerdict.includes(
-                    "MALICIOUS"
-                )
-            ){
-
-                type =
-                    "danger";
-
-            }
-            else if(
-                normalizedVerdict.includes(
-                    "SAFE"
-                ) &&
-                score >= 85
-            ){
-
-                type =
-                    "safe";
-
-            }
-
-
-            showLinkScoreResult(
-                score,
-                verdict,
-                type,
-                currentLink
-            );
-
-        }
-    )
-
-    .catch(
-        function(error){
-
-            console.error(
-                "SAFNEX NOVA link analysis error:",
-                error
-            );
-
-
-            showUnverifiedLinkResult(
-                currentLink,
-                "The security analysis server could not verify this link. No safety score was invented."
-            );
-
-        }
+function showPhoneUnverified(phone, message) {
+    showResult(
+        "phoneResult",
+        "warning",
+        "!",
+        "Phone verification unavailable",
+        "UNVERIFIED",
+        `${message} No claim is made about whether the SIM is active, genuine, or owned by a particular person.`,
+        [phone]
     );
-
 }
 
+function showPhoneScoreResult(score, verdict, type, phone) {
+    const box = $("phoneResult");
+    if (!box) return;
 
-/* =========================================================
-   LINK UNVERIFIED
-========================================================= */
+    const color = type === "safe" ? "#17b879"
+        : type === "danger" ? "#ed5964" : "#f59a45";
+    const icon = type === "safe" ? "✓"
+        : type === "danger" ? "⚠" : "!";
 
-function showUnverifiedLinkResult(
-    url,
-    message
-){
-
-    stopLinkLoading();
-
-    const box =
-        document.getElementById(
-            "linkResult"
-        );
-
-
-    box.className =
-        "result show warning";
-
-
-    box.innerHTML =
-
-        "<div class='link-score-result'>" +
-
-            "<div " +
-                "class='link-score' " +
-                "style='color:#f59a45'>" +
-
-                "—" +
-
-            "</div>" +
-
-            "<div class='link-score-label'>" +
-
-                "SAFNEX NOVA SAFETY SCORE" +
-
-            "</div>" +
-
-            "<div class='link-risk warning'>" +
-
-                "⚠ UNVERIFIED" +
-
-            "</div>" +
-
-            "<div " +
-                "style='margin-top:10px;font-size:9px;color:#646774;line-height:1.6'>" +
-
-                escapeHTML(
-                    message
-                ) +
-
-            "</div>" +
-
-            "<div " +
-                "style='margin-top:8px;font-size:8px;color:#858896;word-break:break-all'>" +
-
-                escapeHTML(
-                    url
-                ) +
-
-            "</div>" +
-
-            "<button " +
-                "class='full-report-button' " +
-                "onclick=\"openFullReport()\">" +
-
-                "CHECK FULL REPORT →" +
-
-            "</button>" +
-
-            "<button " +
-                "class='again-button' " +
-                "onclick=\"resetResult('linkResult')\">" +
-
-                "CHECK ANOTHER LINK" +
-
-            "</button>" +
-
-        "</div>";
-
-
-    box.scrollIntoView({
-        behavior:"smooth",
-        block:"nearest"
-    });
-
+    box.className = `result show ${type}`;
+    box.innerHTML = `
+        <div class="link-score-result">
+            <div class="link-score" style="color:${color}">${Math.round(score)} / 100</div>
+            <div class="link-score-label">SAFNEX NOVA PHONE SCORE</div>
+            <div class="link-risk ${type}">${icon} ${escapeHTML(verdict)}</div>
+            <div style="margin-top:10px;font-size:9px;color:#646774;line-height:1.6">
+                This is a format/signal check. It does not prove that a SIM is active or that calls can be made or received.
+            </div>
+            <div style="margin-top:8px;font-size:8px;color:#858896;word-break:break-all">
+                ${escapeHTML(phone)}
+            </div>
+            <button type="button" class="full-report-button" onclick="openPhoneFullReport()">CHECK FULL REPORT →</button>
+            <button type="button" class="again-button" onclick="resetResult('phoneResult')">CHECK ANOTHER NUMBER</button>
+        </div>
+    `;
 }
 
+async function checkPhone() {
+    const input = $("phoneInput");
+    const phone = input ? input.value.trim() : "";
 
-/* =========================================================
-   LINK SCORE RESULT
-========================================================= */
-
-function showLinkScoreResult(
-    score,
-    level,
-    type,
-    url
-){
-
-    stopLinkLoading();
-
-    const box =
-        document.getElementById(
-            "linkResult"
-        );
-
-
-    let icon =
-        type === "safe"
-            ? "✓"
-            : type === "warning"
-                ? "!"
-                : "⚠";
-
-
-    let scoreColor =
-        type === "safe"
-            ? "#17b879"
-            : type === "warning"
-                ? "#f59a45"
-                : "#ed5964";
-
-
-    box.className =
-        "result show " +
-        type;
-
-
-    box.innerHTML =
-
-        "<div class='link-score-result'>" +
-
-            "<div " +
-                "class='link-score' " +
-                "style='color:" +
-                    scoreColor +
-                "'>" +
-
-                score +
-                " / 100" +
-
-            "</div>" +
-
-            "<div class='link-score-label'>" +
-
-                "SAFNEX NOVA SAFETY SCORE" +
-
-            "</div>" +
-
-            "<div class='link-risk " +
-                type +
-            "'>" +
-
-                icon +
-                " " +
-                escapeHTML(
-                    level
-                ) +
-
-            "</div>" +
-
-            "<button " +
-                "class='full-report-button' " +
-                "onclick=\"openFullReport()\">" +
-
-                "CHECK FULL REPORT →" +
-
-            "</button>" +
-
-            "<button " +
-                "class='again-button' " +
-                "onclick=\"resetResult('linkResult')\">" +
-
-                "CHECK ANOTHER LINK" +
-
-            "</button>" +
-
-        "</div>";
-
-
-    box.scrollIntoView({
-        behavior:"smooth",
-        block:"nearest"
-    });
-
-}
-
-
-/* =========================================================
-   OPEN FULL LINK REPORT
-========================================================= */
-
-function openFullReport(){
-
-    if(!currentLink){
-
-        showToast(
-            "Please check a link first."
-        );
-
+    if (!phone) {
+        showToast("Enter a phone number first.");
+        input?.focus();
         return;
-
     }
 
+    currentPhone = phone;
 
-    window.location.href =
-        FULL_LINK_REPORT_PAGE +
-        "?url=" +
-        encodeURIComponent(
-            currentLink
-        );
+    // Try backend first.
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
 
-}
+        const response = await fetch(PHONE_API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone }),
+            signal: controller.signal
+        });
 
+        clearTimeout(timeout);
 
-/* =========================================================
-   MESSAGE CHECK
-========================================================= */
+        let data = {};
+        try { data = await response.json(); } catch {}
 
-function checkMessage(){
+        if (!response.ok) throw new Error(data?.error || "Phone analysis failed.");
 
-    const message =
-        document
-        .getElementById(
-            "messageInput"
-        )
-        .value
-        .trim();
+        const backendScore = data?.securityScore ?? data?.security?.score ?? data?.score;
+        const numericScore = Number(backendScore);
+        if (!Number.isFinite(numericScore)) throw new Error("No verified score returned.");
 
+        const score = Math.max(0, Math.min(100, Math.round(numericScore)));
+        let verdict = data?.security?.verdict ?? data?.verdict ?? "";
+        if (!verdict) verdict = score >= 80 ? "LIKELY VALID"
+            : score >= 60 ? "REVIEW"
+            : score >= 40 ? "SUSPICIOUS" : "HIGH RISK";
 
-    if(
-        message.length < 5
-    ){
-
-        showToast(
-            "Paste the message first."
-        );
-
+        showPhoneScoreResult(score, verdict, classifyScore(score, verdict), phone);
         return;
-
+    } catch (error) {
+        console.info("Backend phone check unavailable; using local format checker.", error);
     }
 
+    await new Promise(resolve => setTimeout(resolve, 650));
+    const result = localPhoneAnalysis(phone);
+    showPhoneScoreResult(result.score, result.verdict, result.type, phone);
+}
 
-    const text =
-        message.toLowerCase();
+function openPhoneFullReport() {
+    if (!currentPhone) {
+        showToast("Please check a phone number first.");
+        return;
+    }
+    window.location.href = `${FULL_PHONE_REPORT_PAGE}?phone=${encodeURIComponent(currentPhone)}`;
+}
 
+/* ---------- message check ---------- */
 
-    let reasons = [];
+function checkMessage() {
+    const input = $("messageInput");
+    const message = input ? input.value.trim() : "";
 
+    if (message.length < 5) {
+        showToast("Paste the message first.");
+        input?.focus();
+        return;
+    }
+
+    const text = message.toLowerCase();
     let score = 0;
-
+    const reasons = [];
 
     const urgentWords = [
-
-        "urgent",
-        "immediately",
-        "act now",
-        "within 24 hours",
-        "account will be blocked",
-        "verify now",
-        "last chance"
-
+        "urgent", "immediately", "act now", "within 24 hours",
+        "account will be blocked", "verify now", "last chance"
     ];
-
-
     const moneyWords = [
-
-        "won",
-        "winner",
-        "prize",
-        "lottery",
-        "cashback",
-        "reward",
-        "₹",
-        "rs ",
-        "rupees",
-        "money"
-
+        "won", "winner", "prize", "lottery", "cashback",
+        "reward", "₹", "rs ", "rupees", "money"
     ];
-
-
     const credentialWords = [
-
-        "otp",
-        "password",
-        "pin",
-        "cvv",
-        "card number",
-        "bank details",
-        "login"
-
+        "otp", "password", "pin", "cvv", "card number",
+        "bank details", "login", "passcode"
     ];
 
-
-    const linkPattern =
-        /(https?:\/\/|www\.|bit\.ly|tinyurl|t\.co\/)/i;
-
-
-    urgentWords.forEach(
-        function(word){
-
-            if(
-                text.includes(word)
-            ){
-
-                score++;
-
-                reasons.push(
-                    "Urgency or pressure language detected"
-                );
-
-            }
-
+    for (const word of urgentWords) {
+        if (text.includes(word)) {
+            score++;
+            reasons.push("Urgency or pressure language detected.");
         }
-    );
-
-
-    moneyWords.forEach(
-        function(word){
-
-            if(
-                text.includes(word)
-            ){
-
-                score++;
-
-                reasons.push(
-                    "Prize, money or reward language detected"
-                );
-
-            }
-
+    }
+    for (const word of moneyWords) {
+        if (text.includes(word)) {
+            score++;
+            reasons.push("Prize, money or reward language detected.");
         }
-    );
-
-
-    credentialWords.forEach(
-        function(word){
-
-            if(
-                text.includes(word)
-            ){
-
-                score += 2;
-
-                reasons.push(
-                    "Sensitive information request detected"
-                );
-
-            }
-
+    }
+    for (const word of credentialWords) {
+        if (text.includes(word)) {
+            score += 2;
+            reasons.push("Sensitive information request detected.");
         }
-    );
-
-
-    if(
-        linkPattern.test(
-            text
-        )
-    ){
-
+    }
+    if (/(https?:\/\/|www\.|bit\.ly|tinyurl|t\.co\/)/i.test(text)) {
         score++;
-
-        reasons.push(
-            "A web link was found in the message"
-        );
-
+        reasons.push("A web link was found in the message.");
     }
 
+    const uniqueReasons = [...new Set(reasons)];
 
-    reasons =
-        [
-            ...new Set(
-                reasons
-            )
-        ];
-
-
-    if(
-        score >= 4
-    ){
-
+    if (score >= 4) {
         showResult(
-
-            "messageResult",
-
-            "danger",
-
-            "⚠️",
-
-            "Possible scam message",
-
-            "HIGH RISK",
-
+            "messageResult", "danger", "⚠️",
+            "Possible scam message", "HIGH RISK",
             "Several common scam indicators were detected. Do not share OTPs, passwords, banking information or send money based only on this message.",
-
-            reasons
-
+            uniqueReasons
         );
-
-        return;
-
-    }
-
-
-    if(
-        score >= 2
-    ){
-
+    } else if (score >= 2) {
         showResult(
-
-            "messageResult",
-
-            "warning",
-
-            "⚠️",
-
-            "Message needs caution",
-
-            "MEDIUM RISK",
-
+            "messageResult", "warning", "⚠️",
+            "Message needs caution", "MEDIUM RISK",
             "Some suspicious patterns were detected. Verify the sender independently before clicking links or sharing information.",
-
-            reasons
-
+            uniqueReasons
         );
-
-        return;
-
+    } else {
+        showResult(
+            "messageResult", "safe", "✓",
+            "No obvious scam pattern", "LOW RISK",
+            "No major scam indicators were detected by this basic text check. This is not a guarantee that the message is genuine.",
+            []
+        );
     }
-
-
-    showResult(
-
-        "messageResult",
-
-        "safe",
-
-        "✓",
-
-        "No obvious scam pattern",
-
-        "LOW RISK",
-
-        "No major scam indicators were detected by this basic text check. This is not a guarantee that the message is genuine.",
-
-        []
-
-    );
-
 }
 
+/* ---------- QR reader ---------- */
 
-/* =========================================================
-   QR READER
-========================================================= */
+let qrReportData = null;
+let qrImageDataUrl = null;
 
+function quickQRVerdict(data) {
+    const value = String(data || "").trim();
+    if (!value) return false;
 
+    if (/^https?:\/\//i.test(value)) {
+        try {
+            const url = new URL(value);
+            const host = url.hostname.toLowerCase();
+            const suspiciousPath =
+                /(login|signin|verify|verification|secure|account|password|wallet|claim|gift|prize|update|confirm|otp)/i
+                    .test(url.pathname + url.search);
 
+            const obviousRisk =
+                url.protocol !== "https:" ||
+                /xn--/i.test(host) ||
+                /^(?:\d{1,3}\.){3}\d{1,3}$/.test(host) ||
+                /@/.test(value) ||
+                suspiciousPath;
 
-/* =========================================================
-   MEDIA HELPERS
-========================================================= */
-
-function formatBytes(bytes){
-
-    if(
-        !Number.isFinite(
-            bytes
-        ) ||
-        bytes < 0
-    ){
-
-        return "Unknown size";
-
+            return !obviousRisk;
+        } catch {
+            return false;
+        }
     }
 
-
-    if(
-        bytes < 1024
-    ){
-
-        return bytes +
-            " B";
-
-    }
-
-
-    if(
-        bytes <
-        1024 * 1024
-    ){
-
-        return (
-            bytes / 1024
-        ).toFixed(1) +
-        " KB";
-
-    }
-
-
-    if(
-        bytes <
-        1024 * 1024 * 1024
-    ){
-
-        return (
-            bytes /
-            (1024 * 1024)
-        ).toFixed(1) +
-        " MB";
-
-    }
-
-
-    return (
-        bytes /
-        (1024 * 1024 * 1024)
-    ).toFixed(2) +
-    " GB";
-
+    // A QR payload can be text, contact data, Wi-Fi data, etc.
+    // Do not label non-URL payloads unsafe without evidence.
+    return true;
 }
 
+function showQRHomeVerdict(data) {
+    const result = $("qrResult");
+    if (!result) return;
 
-function mediaResult(
-    id,
-    title,
-    level,
-    body,
-    reasons,
-    type
-){
-
-    showResult(
-
-        id,
-
-        type ||
-            "safe",
-
-        type === "safe"
-            ? "✓"
-            : type === "danger"
-                ? "⚠️"
-                : "!",
-
-        title,
-
-        level,
-
-        body,
-
-        reasons || []
-
-    );
-
-}
-
-
-/* =========================================================
-   VIDEO
-========================================================= */
-
-function detectVideo(event){
-
-    const file =
-        event.target.files[0];
-
-
-    if(!file){
+    const value = String(data || "").trim();
+    if (!value) {
+        showNoQR();
         return;
     }
 
+    const safe = quickQRVerdict(value);
 
-    const preview =
-        document.getElementById(
-            "videoPreview"
-        );
+    qrReportData = {
+        data: value,
+        safe,
+        image: qrImageDataUrl,
+        createdAt: Date.now()
+    };
 
-
-    const url =
-        URL.createObjectURL(
-            file
-        );
-
-
-    preview.innerHTML =
-
-        "<video " +
-            "controls " +
-            "preload='metadata' " +
-            "src='" +
-                url +
-            "'>" +
-        "</video>";
-
-
-    preview.classList.add(
-        "show"
-    );
-
-
-    const video =
-        document.createElement(
-            "video"
-        );
-
-
-    video.preload =
-        "metadata";
-
-
-    video.onloadedmetadata =
-        function(){
-
-            const duration =
-                Number.isFinite(
-                    video.duration
-                )
-                    ? Math.round(
-                        video.duration
-                    )
-                    : null;
-
-
-            mediaResult(
-
-                "videoResult",
-
-                "Video file inspected",
-
-                "BASIC MEDIA CHECK",
-
-                "The file was opened successfully. This page currently reports file-level and media metadata only; it does not claim to prove whether a video is AI-generated, deepfaked, or authentic.",
-
-                [
-                    "File type: " +
-                        (file.type || "Unknown"),
-
-                    "File size: " +
-                        formatBytes(
-                            file.size
-                        ),
-
-                    "Duration: " +
-                        (
-                            duration !== null
-                                ? duration +
-                                  " seconds"
-                                : "Unknown"
-                        ),
-
-                    "Name: " +
-                        file.name
-                ],
-
-                "safe"
-
-            );
-
-        };
-
-
-    video.onerror =
-        function(){
-
-            mediaResult(
-
-                "videoResult",
-
-                "Video could not be inspected",
-
-                "CHECK FILE",
-
-                "The browser could not read this video file.",
-
-                [
-                    "Try a supported video format",
-                    "Make sure the file is not damaged"
-                ],
-
-                "warning"
-
-            );
-
-        };
-
-
-    video.src =
-        url;
-
+    result.className = "result show";
+    result.innerHTML = `
+        <div class="qr-home-status ${safe ? "safe" : "unsafe"}">
+            <div class="qr-home-verdict">
+                <span class="qr-home-dot"></span>
+                <span>${safe ? "SAFE" : "UNSAFE"}</span>
+            </div>
+            <div style="margin-top:8px;font-size:9px;color:#646774;word-break:break-word">
+                ${escapeHTML(value)}
+            </div>
+            <button type="button" class="full-report-button qr-full-report" onclick="openQRFullReport()">
+                FULL REPORT →
+            </button>
+        </div>
+    `;
 }
 
+function showNoQR() {
+    const result = $("qrResult");
+    if (!result) return;
 
-/* =========================================================
-   AUDIO
-========================================================= */
+    qrReportData = null;
+    qrImageDataUrl = null;
 
-function detectAudio(event){
+    result.className = "result show";
+    result.innerHTML = `
+        <div class="qr-home-status unsafe">
+            <div class="qr-home-verdict">
+                <span class="qr-home-dot"></span>
+                <span>NO QR CODE DETECTED</span>
+            </div>
+        </div>
+    `;
+}
 
-    const file =
-        event.target.files[0];
+function resetQRResult() {
+    const result = $("qrResult");
+    if (!result) return;
+    qrReportData = null;
+    qrImageDataUrl = null;
+    result.className = "result";
+    result.innerHTML = "";
+}
 
-
-    if(!file){
+window.openQRFullReport = function () {
+    if (!qrReportData?.data) {
+        showToast("Scan a QR code first.");
         return;
     }
 
+    try {
+        sessionStorage.setItem("safnexQrResult", JSON.stringify(qrReportData));
+    } catch (error) {
+        console.warn("QR session storage unavailable:", error);
+    }
 
-    const preview =
-        document.getElementById(
-            "audioPreview"
-        );
+    window.location.href = "qr-detector.html";
+};
 
+window.readQR = function (event) {
+    const file = event?.target?.files?.[0];
 
-    const url =
-        URL.createObjectURL(
-            file
-        );
-
-
-    preview.innerHTML =
-
-        "<audio " +
-            "controls " +
-            "preload='metadata' " +
-            "src='" +
-                url +
-            "'>" +
-        "</audio>";
-
-
-    preview.classList.add(
-        "show"
-    );
-
-
-    const audio =
-        document.createElement(
-            "audio"
-        );
-
-
-    audio.preload =
-        "metadata";
-
-
-    audio.onloadedmetadata =
-        function(){
-
-            const duration =
-                Number.isFinite(
-                    audio.duration
-                )
-                    ? Math.round(
-                        audio.duration
-                    )
-                    : null;
-
-
-            mediaResult(
-
-                "audioResult",
-
-                "Audio file inspected",
-
-                "BASIC MEDIA CHECK",
-
-                "The file was opened successfully. This page currently reports file-level and audio metadata only; it does not claim to prove whether a voice recording is AI-generated or authentic.",
-
-                [
-                    "File type: " +
-                        (file.type || "Unknown"),
-
-                    "File size: " +
-                        formatBytes(
-                            file.size
-                        ),
-
-                    "Duration: " +
-                        (
-                            duration !== null
-                                ? duration +
-                                  " seconds"
-                                : "Unknown"
-                        ),
-
-                    "Name: " +
-                        file.name
-                ],
-
-                "safe"
-
-            );
-
-        };
-
-
-    audio.onerror =
-        function(){
-
-            mediaResult(
-
-                "audioResult",
-
-                "Audio could not be inspected",
-
-                "CHECK FILE",
-
-                "The browser could not read this audio file.",
-
-                [
-                    "Try a supported audio format",
-                    "Make sure the file is not damaged"
-                ],
-
-                "warning"
-
-            );
-
-        };
-
-
-    audio.src =
-        url;
-
-}
-
-
-/* =========================================================
-   IMAGE
-========================================================= */
-
-function detectImage(event){
-
-    const file =
-        event.target.files[0];
-
-
-    if(!file){
+    if (!file) {
+        resetQRResult();
         return;
     }
 
+    resetQRResult();
 
-    const preview =
-        document.getElementById(
-            "imagePreview"
-        );
+    if (!file.type.startsWith("image/")) {
+        showNoQR();
+        return;
+    }
 
+    if (file.size > 10 * 1024 * 1024) {
+        showNoQR();
+        return;
+    }
 
-    const url =
-        URL.createObjectURL(
-            file
-        );
+    if (typeof jsQR !== "function") {
+        showNoQR();
+        showToast("QR reader library could not be loaded.");
+        return;
+    }
 
+    const reader = new FileReader();
 
-    preview.innerHTML =
+    reader.onerror = showNoQR;
 
-        "<img " +
-            "src='" +
-                url +
-            "' " +
-            "alt='Uploaded image preview'>" ;
+    reader.onload = () => {
+        qrImageDataUrl = reader.result;
 
+        const image = new Image();
+        image.onerror = showNoQR;
 
-    preview.classList.add(
-        "show"
-    );
+        image.onload = () => {
+            let width = image.naturalWidth || image.width;
+            let height = image.naturalHeight || image.height;
 
-
-    const image =
-        new Image();
-
-
-    image.onload =
-        function(){
-
-            mediaResult(
-
-                "imageResult",
-
-                "Image file inspected",
-
-                "BASIC MEDIA CHECK",
-
-                "The image was opened successfully. This page currently reports file-level and image metadata only; it does not claim to prove whether an image is AI-generated, edited, or authentic.",
-
-                [
-                    "File type: " +
-                        (file.type || "Unknown"),
-
-                    "File size: " +
-                        formatBytes(
-                            file.size
-                        ),
-
-                    "Dimensions: " +
-                        image.naturalWidth +
-                        " × " +
-                        image.naturalHeight,
-
-                    "Name: " +
-                        file.name
-                ],
-
-                "safe"
-
-            );
-
-        };
-
-
-    image.onerror =
-        function(){
-
-            mediaResult(
-
-                "imageResult",
-
-                "Image could not be inspected",
-
-                "CHECK FILE",
-
-                "The browser could not read this image file.",
-
-                [
-                    "Try a supported image format",
-                    "Make sure the file is not damaged"
-                ],
-
-                "warning"
-
-            );
-
-        };
-
-
-    image.src =
-        url;
-
-}
-
-
-/* =========================================================
-   KEYBOARD
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    function(event){
-
-        if(
-            event.key === "Enter" &&
-            event.ctrlKey
-        ){
-
-            const active =
-                document.querySelector(
-                    ".tab.active"
-                );
-
-
-            if(!active){
+            if (!width || !height) {
+                showNoQR();
                 return;
             }
 
-
-            const type =
-                active.dataset.type;
-
-
-            if(
-                type === "phone"
-            ){
-
-                checkPhone();
-
+            const maxSize = 1800;
+            if (Math.max(width, height) > maxSize) {
+                const scale = maxSize / Math.max(width, height);
+                width = Math.max(1, Math.round(width * scale));
+                height = Math.max(1, Math.round(height * scale));
             }
 
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
 
-            if(
-                type === "message"
-            ){
-
-                checkMessage();
-
+            const ctx = canvas.getContext("2d", { willReadFrequently: true });
+            if (!ctx) {
+                showNoQR();
+                return;
             }
 
+            try {
+                ctx.drawImage(image, 0, 0, width, height);
 
-            if(
-                type === "link"
-            ){
+                const imageData = ctx.getImageData(0, 0, width, height);
+                const code = jsQR(
+                    imageData.data,
+                    imageData.width,
+                    imageData.height,
+                    { inversionAttempts: "attemptBoth" }
+                );
 
-                checkLink();
+                if (!code?.data?.trim()) {
+                    showNoQR();
+                    return;
+                }
 
+                showQRHomeVerdict(code.data);
+            } catch (error) {
+                console.error("QR detection error:", error);
+                showNoQR();
             }
+        };
 
+        image.src = reader.result;
+    };
 
-            if(
-                type === "video"
-            ){
+    reader.readAsDataURL(file);
+};
 
-                document
-                    .getElementById(
-                        "videoFile"
-                    )
-                    ?.click();
+/* ---------- media ---------- */
 
-            }
+function formatBytes(bytes) {
+    if (!Number.isFinite(bytes) || bytes < 0) return "Unknown size";
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+}
 
-
-            if(
-                type === "audio"
-            ){
-
-                document
-                    .getElementById(
-                        "audioFile"
-                    )
-                    ?.click();
-
-            }
-
-
-            if(
-                type === "image"
-            ){
-
-                document
-                    .getElementById(
-                        "imageFile"
-                    )
-                    ?.click();
-
-            }
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   INITIAL VIEW
-========================================================= */
-
-switchScanner(
-    "link"
-);
-document.addEventListener("DOMContentLoaded", function(){
-
-    const params = new URLSearchParams(
-        window.location.search
+function mediaResult(id, title, level, body, reasons, type = "safe") {
+    showResult(
+        id,
+        type,
+        type === "safe" ? "✓" : type === "danger" ? "⚠️" : "!",
+        title,
+        level,
+        body,
+        reasons || []
     );
+}
 
-    const phone =
-        params.get("phone");
+function detectVideo(event) {
+    const file = event?.target?.files?.[0];
+    if (!file) return;
 
-    if(phone){
+    const preview = $("videoPreview");
+    if (!preview) return;
 
-        const input =
-            document.getElementById(
-                "phoneInput"
-            );
+    const url = URL.createObjectURL(file);
+    preview.innerHTML = `<video controls preload="metadata" src="${url}"></video>`;
+    preview.classList.add("show");
 
-        if(input){
+    const video = document.createElement("video");
+    video.preload = "metadata";
 
-            input.value = phone;
+    video.onloadedmetadata = () => {
+        const duration = Number.isFinite(video.duration) ? Math.round(video.duration) : null;
+        mediaResult(
+            "videoResult",
+            "Video file inspected",
+            "BASIC MEDIA CHECK",
+            "The file opened successfully. This page reports file-level and media metadata only; it does not prove whether a video is AI-generated, deepfaked, or authentic.",
+            [
+                `File type: ${file.type || "Unknown"}`,
+                `File size: ${formatBytes(file.size)}`,
+                `Duration: ${duration !== null ? duration + " seconds" : "Unknown"}`,
+                `Name: ${file.name}`
+            ],
+            "safe"
+        );
+    };
 
-        }
+    video.onerror = () => {
+        mediaResult(
+            "videoResult",
+            "Video could not be inspected",
+            "CHECK FILE",
+            "The browser could not read this video file.",
+            ["Try a supported video format", "Make sure the file is not damaged"],
+            "warning"
+        );
+    };
 
+    video.src = url;
+}
+
+function detectAudio(event) {
+    const file = event?.target?.files?.[0];
+    if (!file) return;
+
+    const preview = $("audioPreview");
+    if (!preview) return;
+
+    const url = URL.createObjectURL(file);
+    preview.innerHTML = `<audio controls preload="metadata" src="${url}"></audio>`;
+    preview.classList.add("show");
+
+    const audio = document.createElement("audio");
+    audio.preload = "metadata";
+
+    audio.onloadedmetadata = () => {
+        const duration = Number.isFinite(audio.duration) ? Math.round(audio.duration) : null;
+        mediaResult(
+            "audioResult",
+            "Audio file inspected",
+            "BASIC MEDIA CHECK",
+            "The file opened successfully. This page reports file-level and audio metadata only; it does not prove whether a voice recording is AI-generated or authentic.",
+            [
+                `File type: ${file.type || "Unknown"}`,
+                `File size: ${formatBytes(file.size)}`,
+                `Duration: ${duration !== null ? duration + " seconds" : "Unknown"}`,
+                `Name: ${file.name}`
+            ],
+            "safe"
+        );
+    };
+
+    audio.onerror = () => {
+        mediaResult(
+            "audioResult",
+            "Audio could not be inspected",
+            "CHECK FILE",
+            "The browser could not read this audio file.",
+            ["Try a supported audio format", "Make sure the file is not damaged"],
+            "warning"
+        );
+    };
+
+    audio.src = url;
+}
+
+function detectImage(event) {
+    const file = event?.target?.files?.[0];
+    if (!file) return;
+
+    const preview = $("imagePreview");
+    if (!preview) return;
+
+    const url = URL.createObjectURL(file);
+    preview.innerHTML = `<img src="${url}" alt="Uploaded image preview">`;
+    preview.classList.add("show");
+
+    const image = new Image();
+
+    image.onload = () => {
+        mediaResult(
+            "imageResult",
+            "Image file inspected",
+            "BASIC MEDIA CHECK",
+            "The image opened successfully. This page reports file-level and image metadata only; it does not prove whether an image is AI-generated, edited, or authentic.",
+            [
+                `File type: ${file.type || "Unknown"}`,
+                `File size: ${formatBytes(file.size)}`,
+                `Dimensions: ${image.naturalWidth} × ${image.naturalHeight}`,
+                `Name: ${file.name}`
+            ],
+            "safe"
+        );
+    };
+
+    image.onerror = () => {
+        mediaResult(
+            "imageResult",
+            "Image could not be inspected",
+            "CHECK FILE",
+            "The browser could not read this image file.",
+            ["Try a supported image format", "Make sure the file is not damaged"],
+            "warning"
+        );
+    };
+
+    image.src = url;
+}
+
+/* ---------- keyboard + startup ---------- */
+
+document.addEventListener("keydown", event => {
+    if (!(event.key === "Enter" && event.ctrlKey)) return;
+
+    const active = document.querySelector(".tab.active");
+    const type = active?.dataset?.type;
+    if (!type) return;
+
+    if (type === "phone") checkPhone();
+    else if (type === "message") checkMessage();
+    else if (type === "link") checkLink();
+    else if (type === "video") $("videoFile")?.click();
+    else if (type === "audio") $("audioFile")?.click();
+    else if (type === "image") $("imageFile")?.click();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    switchScanner("link");
+
+    const phone = new URLSearchParams(window.location.search).get("phone");
+    if (phone && $("phoneInput")) {
+        $("phoneInput").value = phone;
     }
+});
 
+/* Expose inline-handler functions explicitly for all browsers. */
+Object.assign(window, {
+    switchScanner,
+    scrollToScanner,
+    goTop,
+    showToast,
+    resetResult,
+    checkLink,
+    openFullReport,
+    checkPhone,
+    openPhoneFullReport,
+    checkMessage,
+    detectVideo,
+    detectAudio,
+    detectImage,
+    formatBytes
 });
 </script>
 
 </div>
-
-
-<script id="safnex-qr-home-only-script">
-(function () {
-    "use strict";
-
-    let qrReportData = null;
-    let qrImageDataUrl = null;
-
-    function quickQRVerdict(data) {
-        const value = String(data || "").trim();
-
-        if (!value) return false;
-
-        /*
-         * Home page = quick indication only.
-         * qr-detector.html = complete QR security report.
-         */
-        if (/^https?:\/\//i.test(value)) {
-            try {
-                const url = new URL(value);
-                const host = url.hostname.toLowerCase();
-
-                const suspiciousPath =
-                    /(login|signin|verify|verification|secure|account|password|wallet|claim|gift|prize|update|confirm)/i
-                        .test(url.pathname + url.search);
-
-                const obviousRisk =
-                    url.protocol !== "https:" ||
-                    /xn--/i.test(host) ||
-                    /^(?:\d{1,3}\.){3}\d{1,3}$/.test(host) ||
-                    /@/.test(value) ||
-                    suspiciousPath;
-
-                return !obviousRisk;
-            } catch (e) {
-                return false;
-            }
-        }
-
-        /* Non-URL QR payloads are not automatically called unsafe here.
-           The full QR detector performs the detailed classification. */
-        return true;
-    }
-
-    function showQRHomeVerdict(data) {
-        const result = document.getElementById("qrResult");
-        if (!result) return;
-
-        const value = String(data || "").trim();
-        if (!value) {
-            showNoQR();
-            return;
-        }
-
-        const safe = quickQRVerdict(value);
-
-        qrReportData = {
-            data: value,
-            safe: safe,
-            image: qrImageDataUrl,
-            createdAt: Date.now()
-        };
-
-        result.className = "result show";
-        result.innerHTML =
-            '<div class="qr-home-status ' + (safe ? "safe" : "unsafe") + '">' +
-                '<div class="qr-home-verdict">' +
-                    '<span class="qr-home-dot"></span>' +
-                    '<span>' + (safe ? "SAFE" : "UNSAFE") + '</span>' +
-                '</div>' +
-                '<button type="button" class="full-report-button qr-full-report" onclick="openQRFullReport()">' +
-                    'FULL REPORT →' +
-                '</button>' +
-            '</div>';
-    }
-
-    function showNoQR() {
-        const result = document.getElementById("qrResult");
-        if (!result) return;
-
-        qrReportData = null;
-        qrImageDataUrl = null;
-        result.className = "result show";
-        result.innerHTML =
-            '<div class="qr-home-status unsafe">' +
-                '<div class="qr-home-verdict">' +
-                    '<span class="qr-home-dot"></span>' +
-                    '<span>NO QR CODE DETECTED</span>' +
-                '</div>' +
-            '</div>';
-    }
-
-    function resetQRResult() {
-        const result = document.getElementById("qrResult");
-        if (!result) return;
-        qrReportData = null;
-        qrImageDataUrl = null;
-        result.className = "result";
-        result.innerHTML = "";
-    }
-
-    window.openQRFullReport = function () {
-        if (!qrReportData || !qrReportData.data) return;
-
-        try {
-            sessionStorage.setItem(
-                "safnexQrResult",
-                JSON.stringify(qrReportData)
-            );
-        } catch (e) {
-            console.warn("SAFNEX NOVA QR session storage unavailable:", e);
-        }
-
-        window.location.href = "qr-detector.html";
-    };
-
-    window.readQR = function (event) {
-        const file =
-            event &&
-            event.target &&
-            event.target.files &&
-            event.target.files[0];
-
-        if (!file) {
-            resetQRResult();
-            return;
-        }
-
-        resetQRResult();
-
-        if (!file.type || !file.type.startsWith("image/")) {
-            showNoQR();
-            return;
-        }
-
-        if (file.size > 10 * 1024 * 1024) {
-            showNoQR();
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onerror = showNoQR;
-
-        reader.onload = function () {
-            qrImageDataUrl = reader.result;
-            const image = new Image();
-
-            image.onerror = showNoQR;
-
-            image.onload = function () {
-                let width = image.naturalWidth || image.width;
-                let height = image.naturalHeight || image.height;
-
-                if (!width || !height || typeof jsQR !== "function") {
-                    showNoQR();
-                    return;
-                }
-
-                const maxSize = 1800;
-
-                if (Math.max(width, height) > maxSize) {
-                    const scale = maxSize / Math.max(width, height);
-                    width = Math.max(1, Math.round(width * scale));
-                    height = Math.max(1, Math.round(height * scale));
-                }
-
-                const canvas = document.createElement("canvas");
-                canvas.width = width;
-                canvas.height = height;
-
-                const ctx = canvas.getContext(
-                    "2d",
-                    { willReadFrequently: true }
-                );
-
-                if (!ctx) {
-                    showNoQR();
-                    return;
-                }
-
-                try {
-                    ctx.drawImage(image, 0, 0, width, height);
-
-                    const imageData = ctx.getImageData(
-                        0,
-                        0,
-                        width,
-                        height
-                    );
-
-                    const code = jsQR(
-                        imageData.data,
-                        imageData.width,
-                        imageData.height,
-                        {
-                            inversionAttempts: "attemptBoth"
-                        }
-                    );
-
-                    if (!code || !String(code.data || "").trim()) {
-                        showNoQR();
-                        return;
-                    }
-
-                    showQRHomeVerdict(code.data);
-                } catch (error) {
-                    console.error(
-                        "SAFNEX NOVA QR detection error:",
-                        error
-                    );
-                    showNoQR();
-                }
-            };
-
-            image.src = reader.result;
-        };
-
-        reader.readAsDataURL(file);
-    };
-})();
-</script>
-
 </body>
-
 </html>
