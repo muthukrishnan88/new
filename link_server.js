@@ -1,15 +1,13 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import OpenAI from "openai";
 import dns from "node:dns/promises";
 import net from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
-    parsePhoneNumberFromString,
-    validatePhoneNumberLength
+    parsePhoneNumberFromString
 } from "libphonenumber-js/max";
 
 dotenv.config();
@@ -17,12 +15,6 @@ dotenv.config();
 const app = express();
 
 const PORT = Number(process.env.PORT || 3000);
-const OPENAI_MODEL = process.env.OPENAI_MODEL || "";
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || "";
-
-const openai = OPENAI_API_KEY
-    ? new OpenAI({ apiKey: OPENAI_API_KEY })
-    : null;
 
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
@@ -42,23 +34,21 @@ function normalizeUrl(input) {
         value = "https://" + value;
     }
 
-    let parsed;
-
     try {
-        parsed = new URL(value);
+        const parsed = new URL(value);
+
+        if (!["http:", "https:"].includes(parsed.protocol)) {
+            throw new Error("Only HTTP and HTTPS URLs are supported.");
+        }
+
+        return parsed.toString();
     } catch {
         throw new Error("Invalid URL.");
     }
-
-    if (!["http:", "https:"].includes(parsed.protocol)) {
-        throw new Error("Only HTTP and HTTPS URLs are supported.");
-    }
-
-    return parsed.toString();
 }
 
 /* =========================================================
-   IP / SSRF PROTECTION
+   SSRF / PRIVATE NETWORK PROTECTION
 ========================================================= */
 
 function isPrivateIPv4(ip) {
@@ -135,13 +125,11 @@ async function isBlockedHost(hostname) {
             verbatim: true
         });
 
-        return addresses.some(item => {
-            if (item.family === 4) {
-                return isPrivateIPv4(item.address);
-            }
-
-            return isPrivateIPv6(item.address);
-        });
+        return addresses.some(item =>
+            item.family === 4
+                ? isPrivateIPv4(item.address)
+                : isPrivateIPv6(item.address)
+        );
     } catch {
         return false;
     }
@@ -229,17 +217,11 @@ function parseUrl(urlString) {
 
     return {
         raw: urlString,
-
         protocol: url.protocol.replace(":", ""),
-
         hostname: url.hostname,
-
         domain: url.hostname,
-
         rootDomain: getRootDomain(url.hostname),
-
         subdomain: getSubdomain(url.hostname),
-
         port:
             url.port ||
             (
@@ -247,28 +229,21 @@ function parseUrl(urlString) {
                     ? "443"
                     : "80"
             ),
-
         path: url.pathname || "/",
-
         pathSegments:
             url.pathname
                 .split("/")
                 .filter(Boolean),
-
         query:
             url.search
                 ? url.search.substring(1)
                 : "",
-
         queryParams,
-
         fragment:
             url.hash
                 ? url.hash.substring(1)
                 : "",
-
         length: urlString.length,
-
         encodedContent:
             /%[0-9a-f]{2}/i.test(urlString)
     };
@@ -287,22 +262,10 @@ function cleanText(value) {
 
 function stripHtml(html) {
     return String(html || "")
-        .replace(
-            /<script[\s\S]*?<\/script>/gi,
-            " "
-        )
-        .replace(
-            /<style[\s\S]*?<\/style>/gi,
-            " "
-        )
-        .replace(
-            /<noscript[\s\S]*?<\/noscript>/gi,
-            " "
-        )
-        .replace(
-            /<svg[\s\S]*?<\/svg>/gi,
-            " "
-        )
+        .replace(/<script[\s\S]*?<\/script>/gi, " ")
+        .replace(/<style[\s\S]*?<\/style>/gi, " ")
+        .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
+        .replace(/<svg[\s\S]*?<\/svg>/gi, " ")
         .replace(/<[^>]+>/g, " ")
         .replace(/&nbsp;/gi, " ")
         .replace(/&amp;/gi, "&")
@@ -413,7 +376,7 @@ function extractLinks(html, baseUrl) {
                 )
             });
         } catch {
-            // Ignore invalid URLs.
+            // Ignore invalid links.
         }
     }
 
@@ -456,11 +419,11 @@ function extractImages(html, baseUrl) {
 
 function detectKnownService(url) {
     const host = url.hostname.toLowerCase();
-    const path = url.pathname.toLowerCase();
+    const pathname = url.pathname.toLowerCase();
 
     if (
         host === "docs.google.com" &&
-        path.startsWith("/spreadsheets/")
+        pathname.startsWith("/spreadsheets/")
     ) {
         return {
             provider: "Google",
@@ -474,14 +437,14 @@ function detectKnownService(url) {
             confidence: "High",
             service: "Google Sheets",
             contentDescription:
-                "A spreadsheet containing rows, columns, tables, formulas, or shared data. Actual contents depend on sharing permissions.",
+                "A spreadsheet containing rows, columns, tables, formulas, or shared data.",
             official: true
         };
     }
 
     if (
         host === "docs.google.com" &&
-        path.startsWith("/document/")
+        pathname.startsWith("/document/")
     ) {
         return {
             provider: "Google",
@@ -495,14 +458,14 @@ function detectKnownService(url) {
             confidence: "High",
             service: "Google Docs",
             contentDescription:
-                "A shared Google document. Actual contents depend on access permissions.",
+                "A shared Google document.",
             official: true
         };
     }
 
     if (
         host === "docs.google.com" &&
-        path.startsWith("/forms/")
+        pathname.startsWith("/forms/")
     ) {
         return {
             provider: "Google",
@@ -534,7 +497,7 @@ function detectKnownService(url) {
             confidence: "High",
             service: "Google Forms",
             contentDescription:
-                "A Google Forms destination. Actual contents depend on the final destination and permissions.",
+                "A Google Forms destination.",
             official: true
         };
     }
@@ -558,29 +521,7 @@ function detectKnownService(url) {
     }
 
     if (
-        host === "docs.google.com" &&
-        path.startsWith("/presentation/")
-    ) {
-        return {
-            provider: "Google",
-            name: "Google Slides",
-            type: "Presentation / Collaboration",
-            category: "Google Workspace",
-            purpose:
-                "A presentation hosted by Google Slides.",
-            summary:
-                "This link points to Google Slides.",
-            confidence: "High",
-            service: "Google Slides",
-            contentDescription:
-                "A presentation containing slides and visual content.",
-            official: true
-        };
-    }
-
-    if (
         host === "youtube.com" ||
-        host === "www.youtube.com" ||
         host === "youtu.be" ||
         isDomainUnder(host, "youtube.com")
     ) {
@@ -713,11 +654,13 @@ function detectKnownService(url) {
 }
 
 /* =========================================================
-   TEST / DEV / STAGING DETECTION
+   NON-PRODUCTION DETECTION
 ========================================================= */
 
 function detectNonProductionDomain(url) {
-    const host = url.hostname.toLowerCase();
+    const labels = url.hostname
+        .toLowerCase()
+        .split(".");
 
     const suspiciousLabels = [
         "test",
@@ -737,19 +680,18 @@ function detectNonProductionDomain(url) {
         "mock"
     ];
 
-    const labels = host.split(".");
-
     return [
         ...new Set(
-            labels.filter(label =>
-                suspiciousLabels.includes(label)
+            labels.filter(
+                label =>
+                    suspiciousLabels.includes(label)
             )
         )
     ];
 }
 
 /* =========================================================
-   PAYMENT / ACCOUNT DETECTION
+   PAYMENT / ACCOUNT SIGNALS
 ========================================================= */
 
 function detectPaymentSignals(url) {
@@ -791,25 +733,24 @@ function detectPaymentSignals(url) {
         "login"
     ];
 
-    const paymentHits = [
-        ...new Set(
-            paymentWords.filter(word =>
-                text.includes(word)
-            )
-        )
-    ];
-
-    const accountHits = [
-        ...new Set(
-            accountWords.filter(word =>
-                text.includes(word)
-            )
-        )
-    ];
-
     return {
-        paymentHits,
-        accountHits
+        paymentHits: [
+            ...new Set(
+                paymentWords.filter(
+                    word =>
+                        text.includes(word)
+                )
+            )
+        ],
+
+        accountHits: [
+            ...new Set(
+                accountWords.filter(
+                    word =>
+                        text.includes(word)
+                )
+            )
+        ]
     };
 }
 
@@ -909,9 +850,10 @@ function detectBrandImpersonation(hostname) {
 
     for (const brand of Object.keys(BRANDS)) {
         const mentioned =
-            labels.some(label =>
-                label === brand ||
-                label.includes(brand)
+            labels.some(
+                label =>
+                    label === brand ||
+                    label.includes(brand)
             );
 
         if (!mentioned) {
@@ -940,7 +882,7 @@ function detectBrandImpersonation(hostname) {
 }
 
 /* =========================================================
-   KNOWN PHISHING DETECTION
+   KNOWN PHISHING PATTERNS
 ========================================================= */
 
 function detectKnownPhishingCampaign(url) {
@@ -963,13 +905,9 @@ function detectKnownPhishingCampaign(url) {
     ) {
         matches.push({
             type: "critical",
-
-            title:
-                "Known phishing domain",
-
+            title: "Known phishing domain",
             detail:
                 "This hostname matches a known fake Google Forms phishing pattern.",
-
             points: 45
         });
     }
@@ -981,13 +919,9 @@ function detectKnownPhishingCampaign(url) {
     ) {
         matches.push({
             type: "critical",
-
-            title:
-                "Google brand impersonation",
-
+            title: "Google brand impersonation",
             detail:
                 `The hostname contains "google", but the registered root domain is ${getRootDomain(hostname)}.`,
-
             points: 28
         });
     }
@@ -1000,13 +934,9 @@ function detectKnownPhishingCampaign(url) {
     ) {
         matches.push({
             type: "critical",
-
-            title:
-                "Known phishing endpoint",
-
+            title: "Known phishing endpoint",
             detail:
                 "The URL matches a known phishing endpoint pattern.",
-
             points: 22
         });
     }
@@ -1019,13 +949,9 @@ function detectKnownPhishingCampaign(url) {
     ) {
         matches.push({
             type: "critical",
-
-            title:
-                "Known phishing campaign parameter",
-
+            title: "Known phishing campaign parameter",
             detail:
-                "The URL contains a parameter associated with the known phishing pattern.",
-
+                "The URL contains a parameter associated with a known phishing pattern.",
             points: 20
         });
     }
@@ -1037,13 +963,9 @@ function detectKnownPhishingCampaign(url) {
     ) {
         matches.push({
             type: "critical",
-
-            title:
-                "Fake Google Forms hostname",
-
+            title: "Fake Google Forms hostname",
             detail:
                 "The hostname resembles Google's Forms service while using a different root domain.",
-
             points: 25
         });
     }
@@ -1108,13 +1030,9 @@ function analyzeSecurity(
     } else {
         indicators.push({
             type: "safe",
-
-            title:
-                "HTTPS is enabled",
-
+            title: "HTTPS is enabled",
             detail:
                 "HTTPS encrypts the connection, but HTTPS alone does not prove that a website is legitimate.",
-
             points: 0
         });
     }
@@ -1122,18 +1040,13 @@ function analyzeSecurity(
     const nonProductionLabels =
         detectNonProductionDomain(url);
 
-    if (
-        nonProductionLabels.length
-    ) {
+    if (nonProductionLabels.length) {
         add(
             "warning",
-
             "Test or non-production domain",
-
             "The hostname contains a test/development environment label: " +
                 nonProductionLabels.join(", ") +
-                ". This may indicate a testing, staging, demo, sandbox, or temporary website.",
-
+                ".",
             18
         );
     }
@@ -1141,34 +1054,24 @@ function analyzeSecurity(
     const paymentSignals =
         detectPaymentSignals(url);
 
-    if (
-        paymentSignals.paymentHits.length
-    ) {
+    if (paymentSignals.paymentHits.length) {
         add(
             "warning",
-
             "Payment-related URL detected",
-
             "The URL contains payment-related wording: " +
                 paymentSignals.paymentHits.join(", ") +
                 ".",
-
             12
         );
     }
 
-    if (
-        paymentSignals.accountHits.length
-    ) {
+    if (paymentSignals.accountHits.length) {
         add(
             "danger",
-
             "Account/payment verification wording",
-
             "The URL contains verification or account-related wording: " +
                 paymentSignals.accountHits.join(", ") +
                 ".",
-
             15
         );
     }
@@ -1176,11 +1079,8 @@ function analyzeSecurity(
     if (net.isIP(hostname)) {
         add(
             "danger",
-
             "IP address host",
-
             "The destination uses a raw IP address instead of a normal domain name.",
-
             20
         );
     }
@@ -1188,11 +1088,8 @@ function analyzeSecurity(
     if (hostname.includes("xn--")) {
         add(
             "danger",
-
             "Punycode domain",
-
             "The hostname contains an encoded internationalized domain label.",
-
             18
         );
     }
@@ -1205,11 +1102,8 @@ function analyzeSecurity(
     if (labels.length >= 5) {
         add(
             "warning",
-
             "Deep subdomain structure",
-
             "The hostname contains an unusually deep subdomain structure.",
-
             8
         );
     }
@@ -1217,11 +1111,8 @@ function analyzeSecurity(
     if (rawUrl.includes("@")) {
         add(
             "danger",
-
             "@ character detected",
-
             "The URL contains @ syntax that can be used to disguise the actual destination.",
-
             18
         );
     }
@@ -1248,11 +1139,8 @@ function analyzeSecurity(
     ) {
         add(
             "warning",
-
             "URL shortener detected",
-
             "A shortened URL can hide the final destination.",
-
             8
         );
     }
@@ -1297,14 +1185,11 @@ function analyzeSecurity(
     if (wordHits.length) {
         add(
             "warning",
-
             "Security-sensitive wording detected",
-
             "Detected: " +
                 wordHits
                     .slice(0, 10)
                     .join(", "),
-
             Math.min(
                 18,
                 5 + wordHits.length * 2
@@ -1338,26 +1223,18 @@ function analyzeSecurity(
     if (redirectHits.length) {
         add(
             "warning",
-
             "Redirect parameter detected",
-
             "The URL contains redirect-style parameter(s): " +
                 redirectHits.join(", "),
-
             10
         );
     }
 
-    if (
-        /%[0-9a-f]{2}/i.test(rawUrl)
-    ) {
+    if (/%[0-9a-f]{2}/i.test(rawUrl)) {
         add(
             "warning",
-
             "Encoded URL content",
-
             "The URL contains percent-encoded content.",
-
             3
         );
     }
@@ -1365,11 +1242,8 @@ function analyzeSecurity(
     if (rawUrl.length > 180) {
         add(
             "warning",
-
             "Long URL",
-
             "The URL is unusually long.",
-
             5
         );
     }
@@ -1377,11 +1251,8 @@ function analyzeSecurity(
     if (rawUrl.length > 300) {
         add(
             "warning",
-
             "Extremely long URL",
-
             "The URL is substantially longer than a typical web address.",
-
             8
         );
     }
@@ -1392,11 +1263,8 @@ function analyzeSecurity(
     ) {
         add(
             "warning",
-
             "Non-standard port",
-
             "The URL uses a non-standard web port.",
-
             6
         );
     }
@@ -1408,11 +1276,8 @@ function analyzeSecurity(
     ) {
         add(
             "danger",
-
             "Executable or archive download path",
-
             "The URL points to a potentially dangerous executable or archive file type.",
-
             22
         );
     }
@@ -1448,12 +1313,9 @@ function analyzeSecurity(
     ) {
         add(
             "warning",
-
             "Suspicious hostname wording",
-
             "Detected: " +
                 hostWordHits.join(", "),
-
             Math.min(
                 12,
                 hostWordHits.length * 3
@@ -1462,17 +1324,13 @@ function analyzeSecurity(
     }
 
     const hyphenCount =
-        (hostname.match(/-/g) || [])
-            .length;
+        (hostname.match(/-/g) || []).length;
 
     if (hyphenCount >= 3) {
         add(
             "warning",
-
             "Hyphen-heavy hostname",
-
             "The hostname contains several hyphen-separated labels.",
-
             5
         );
     }
@@ -1485,11 +1343,8 @@ function analyzeSecurity(
     for (const item of brands) {
         add(
             "danger",
-
             `${item.brand} brand impersonation`,
-
             `The hostname contains ${item.brand}, but the actual registered root domain is ${item.rootDomain}.`,
-
             22
         );
     }
@@ -1501,13 +1356,10 @@ function analyzeSecurity(
     ) {
         add(
             "warning",
-
             "Redirect chain detected",
-
             "The destination redirected " +
                 fetchResult.redirects.length +
                 " time(s).",
-
             Math.min(
                 12,
                 fetchResult.redirects.length * 4
@@ -1521,13 +1373,10 @@ function analyzeSecurity(
     ) {
         add(
             "warning",
-
             "Destination returned an error",
-
             "The website responded with HTTP " +
                 fetchResult.status +
                 ".",
-
             6
         );
     }
@@ -1535,11 +1384,8 @@ function analyzeSecurity(
     if (fetchError) {
         add(
             "warning",
-
             "Website could not be verified",
-
             "SAFNEX NOVA could not retrieve the destination page. The result therefore cannot be treated as fully verified.",
-
             15
         );
     }
@@ -1550,11 +1396,8 @@ function analyzeSecurity(
     ) {
         add(
             "warning",
-
             "Website identity is unverified",
-
             "The destination was not successfully retrieved and is not recognized as a known service.",
-
             10
         );
     }
@@ -1625,9 +1468,7 @@ function analyzeSecurity(
             0,
             Math.min(
                 100,
-                Math.round(
-                    securityScore
-                )
+                Math.round(securityScore)
             )
         );
 
@@ -1641,9 +1482,7 @@ function analyzeSecurity(
         knownService
     ) {
         confidence = "High";
-    } else if (
-        fetchResult
-    ) {
+    } else if (fetchResult) {
         confidence = "Medium";
     } else {
         confidence = "Low";
@@ -1660,13 +1499,9 @@ function analyzeSecurity(
         confidence === "High"
     ) {
         verdict = "Likely Safe";
-    } else if (
-        securityScore >= 65
-    ) {
+    } else if (securityScore >= 65) {
         verdict = "Review";
-    } else if (
-        securityScore >= 40
-    ) {
+    } else if (securityScore >= 40) {
         verdict = "Suspicious";
     } else {
         verdict = "High Risk";
@@ -1679,13 +1514,9 @@ function analyzeSecurity(
         confidence === "High"
     ) {
         riskLevel = "LOW RISK";
-    } else if (
-        securityScore >= 65
-    ) {
+    } else if (securityScore >= 65) {
         riskLevel = "MEDIUM RISK";
-    } else if (
-        securityScore >= 40
-    ) {
+    } else if (securityScore >= 40) {
         riskLevel = "ELEVATED RISK";
     } else {
         riskLevel = "HIGH RISK";
@@ -1717,7 +1548,7 @@ function analyzeSecurity(
             available: false,
 
             message:
-                "No live malware reputation database is connected. This result uses URL heuristics, known indicators, website verification, and service recognition."
+                "No live malware reputation database is connected. This result uses free rule-based URL heuristics, website verification, known indicators, and service recognition."
         }
     };
 }
@@ -1776,7 +1607,7 @@ async function fetchWebsite(startUrl) {
 
                     headers: {
                         "User-Agent":
-                            "SAFNEX-NOVA-Link-Analyzer/3.0",
+                            "SAFNEX-NOVA-Link-Analyzer/4.0",
 
                         "Accept":
                             "text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.8"
@@ -1971,7 +1802,7 @@ function extractWebsiteData(fetchResult) {
 }
 
 /* =========================================================
-   FALLBACK INTELLIGENCE
+   FREE RULE-BASED WEBSITE UNDERSTANDING
 ========================================================= */
 
 function fallbackWebsiteUnderstanding(
@@ -2008,7 +1839,6 @@ function fallbackWebsiteUnderstanding(
 
             evidence: [
                 "Recognized official service domain.",
-
                 knownService.contentDescription
             ]
         };
@@ -2018,8 +1848,13 @@ function fallbackWebsiteUnderstanding(
         [
             website?.title,
             website?.description,
+
             ...(website?.headings || [])
-                .map(item => item.text),
+                .map(
+                    item =>
+                        item.text
+                ),
+
             website?.text
         ]
             .join(" ")
@@ -2057,7 +1892,7 @@ function fallbackWebsiteUnderstanding(
     }
 
     if (
-        /artificial intelligence|chatbot|machine learning|ai assistant/
+        /artificial intelligence|machine learning|ai assistant|chatbot/
             .test(combined)
     ) {
         type =
@@ -2076,7 +1911,7 @@ function fallbackWebsiteUnderstanding(
     }
 
     if (
-        /shop|cart|product|buy now|add to cart|price/
+        /shop|cart|product|buy now|add to cart|price|checkout/
             .test(combined)
     ) {
         type =
@@ -2131,6 +1966,44 @@ function fallbackWebsiteUnderstanding(
         );
     }
 
+    if (
+        /education|course|learning|college|university|student/
+            .test(combined)
+    ) {
+        type =
+            "Education Website";
+
+        category =
+            "Education";
+
+        purpose =
+            "Provides educational information, courses, learning resources, or academic services.";
+
+        services.push(
+            "Educational content",
+            "Learning resources"
+        );
+    }
+
+    if (
+        /job|career|employment|vacancy|recruitment/
+            .test(combined)
+    ) {
+        type =
+            "Jobs / Careers Website";
+
+        category =
+            "Employment";
+
+        purpose =
+            "Provides job listings, career information, or recruitment services.";
+
+        services.push(
+            "Job listings",
+            "Career information"
+        );
+    }
+
     return {
         name:
             website?.title ||
@@ -2148,14 +2021,18 @@ function fallbackWebsiteUnderstanding(
 
         services:
             [
-                ...new Set(services)
+                ...new Set(
+                    services
+                )
             ],
 
         language:
             "Unknown",
 
         confidence:
-            "Medium",
+            website
+                ? "Medium"
+                : "Low",
 
         evidence:
             [
@@ -2171,156 +2048,6 @@ function fallbackWebsiteUnderstanding(
                     )
             ].filter(Boolean)
     };
-}
-
-/* =========================================================
-   OPENAI INTELLIGENCE
-========================================================= */
-
-async function understandWebsiteWithAI(
-    urlInfo,
-    website
-) {
-    if (
-        !openai ||
-        !OPENAI_MODEL
-    ) {
-        return null;
-    }
-
-    const prompt = `
-You are the website intelligence engine for SAFNEX NOVA.
-
-Analyze ONLY the publicly visible information supplied below.
-
-Do not claim:
-- malware detection
-- virus detection
-- absolute safety
-- trustworthiness that is not supported by evidence
-
-Identify:
-1. What type of website is this?
-2. What does it contain?
-3. What is it used for?
-
-URL:
-${urlInfo.raw}
-
-Hostname:
-${urlInfo.hostname}
-
-Title:
-${website.title}
-
-Meta description:
-${website.description}
-
-Headings:
-${JSON.stringify(website.headings)}
-
-Visible text:
-${website.text.substring(0, 12000)}
-
-Return ONLY valid JSON:
-
-{
-  "name": "website or brand name",
-  "type": "website type",
-  "category": "main category",
-  "purpose": "what the website is used for",
-  "summary": "short explanation",
-  "services": ["service 1", "service 2"],
-  "language": "detected language",
-  "confidence": "High | Medium | Low",
-  "evidence": ["evidence 1", "evidence 2"]
-}
-`;
-
-    try {
-        const response =
-            await openai.responses.create({
-                model:
-                    OPENAI_MODEL,
-
-                input:
-                    prompt
-            });
-
-        const output =
-            response.output_text ||
-            "";
-
-        const cleaned =
-            output
-                .replace(
-                    /^```json\s*/i,
-                    ""
-                )
-                .replace(
-                    /^```\s*/i,
-                    ""
-                )
-                .replace(
-                    /\s*```$/i,
-                    ""
-                )
-                .trim();
-
-        const parsed =
-            JSON.parse(cleaned);
-
-        return {
-            name:
-                parsed.name ||
-                urlInfo.hostname,
-
-            type:
-                parsed.type ||
-                "Website",
-
-            category:
-                parsed.category ||
-                "General website",
-
-            purpose:
-                parsed.purpose ||
-                "Public website information.",
-
-            summary:
-                parsed.summary ||
-                "Website content analyzed.",
-
-            services:
-                Array.isArray(
-                    parsed.services
-                )
-                    ? parsed.services
-                    : [],
-
-            language:
-                parsed.language ||
-                "Unknown",
-
-            confidence:
-                parsed.confidence ||
-                "Medium",
-
-            evidence:
-                Array.isArray(
-                    parsed.evidence
-                )
-                    ? parsed.evidence
-                    : []
-        };
-    } catch (error) {
-        console.error(
-            "AI analysis failed:",
-            error.message
-        );
-
-        return null;
-    }
 }
 
 /* =========================================================
@@ -2346,9 +2073,7 @@ function buildScoreExplanation(
             url
         );
 
-    if (
-        nonProduction.length
-    ) {
+    if (nonProduction.length) {
         reasons.push(
             "The hostname contains a test or non-production environment label: " +
                 nonProduction.join(", ") +
@@ -2356,17 +2081,13 @@ function buildScoreExplanation(
         );
     }
 
-    if (
-        payment.paymentHits.length
-    ) {
+    if (payment.paymentHits.length) {
         reasons.push(
             "Payment-related wording was detected in the URL."
         );
     }
 
-    if (
-        payment.accountHits.length
-    ) {
+    if (payment.accountHits.length) {
         reasons.push(
             "Account or verification wording was detected in the URL."
         );
@@ -2447,16 +2168,19 @@ app.get(
                 "SAFNEX NOVA Link Analyzer",
 
             version:
-                "3.0",
+                "4.0",
 
             analyzer:
                 "POST /api/analyze",
 
             aiConfigured:
-                Boolean(
-                    openai &&
-                    OPENAI_MODEL
-                ),
+                false,
+
+            analyzerEngine:
+                "rule-based",
+
+            cost:
+                "FREE",
 
             phoneAnalyzer:
                 "POST /api/phone-check"
@@ -2475,19 +2199,25 @@ app.get(
             ok: true,
 
             message:
-                "SAFNEX NOVA analyzer endpoint is online.",
+                "SAFNEX NOVA free rule-based analyzer endpoint is online.",
 
             method:
                 "POST",
 
             endpoint:
-                "/api/analyze"
+                "/api/analyze",
+
+            engine:
+                "rule-based",
+
+            cost:
+                "FREE"
         });
     }
 );
 
 /* =========================================================
-   MAIN ANALYZE API
+   MAIN LINK ANALYZER
 ========================================================= */
 
 app.post(
@@ -2537,20 +2267,20 @@ app.post(
                         fetchResult
                     );
 
+                /*
+                 * FREE RULE-BASED WEBSITE INTELLIGENCE
+                 *
+                 * No OpenAI.
+                 * No API key.
+                 * No paid AI service.
+                 */
                 intelligence =
-                    await understandWebsiteWithAI(
+                    fallbackWebsiteUnderstanding(
                         urlInfo,
-                        website
+                        website,
+                        knownService
                     );
 
-                if (!intelligence) {
-                    intelligence =
-                        fallbackWebsiteUnderstanding(
-                            urlInfo,
-                            website,
-                            knownService
-                        );
-                }
             } catch (error) {
                 fetchError =
                     error.message;
@@ -2837,14 +2567,17 @@ app.post(
 
                 analysis: {
                     aiEnabled:
-                        Boolean(
-                            openai &&
-                            OPENAI_MODEL
-                        ),
+                        false,
+
+                    engine:
+                        "rule-based",
+
+                    cost:
+                        "FREE",
 
                     websiteUnderstanding:
                         fetchResult
-                            ? "Website intelligence is based on publicly accessible page content when reachable."
+                            ? "Website intelligence is based on publicly accessible page content using SAFNEX NOVA free rule-based analysis."
                             : knownService
                                 ? "The service was identified from its domain, but the actual page contents were not fetched."
                                 : "The website could not be verified.",
@@ -2853,6 +2586,7 @@ app.post(
                         "The security score is a risk-signal score, not a guarantee of safety. HTTPS, a known service, or normal-looking content alone do not prove that a specific URL is safe."
                 }
             });
+
         } catch (error) {
             console.error(
                 "ANALYSIS ERROR:",
@@ -2874,8 +2608,6 @@ app.post(
 
 /* =========================================================
    PHONE NUMBER ANALYZER
-   IMPORTANT:
-   ALL PHONE ROUTES ARE REGISTERED BEFORE app.listen()
 ========================================================= */
 
 const PHONE_COUNTRIES = {
@@ -2915,9 +2647,9 @@ const PHONE_COUNTRIES = {
     PK: "Pakistan"
 };
 
-/* ---------------------------------------------------------
-   MASK PHONE NUMBER
---------------------------------------------------------- */
+/* =========================================================
+   PHONE MASK
+========================================================= */
 
 function maskPhoneNumber(phoneNumber) {
     const value =
@@ -2942,9 +2674,9 @@ function maskPhoneNumber(phoneNumber) {
     );
 }
 
-/* ---------------------------------------------------------
+/* =========================================================
    PHONE SCORE
---------------------------------------------------------- */
+========================================================= */
 
 function calculatePhoneScore(
     valid,
@@ -2972,9 +2704,9 @@ function calculatePhoneScore(
     );
 }
 
-/* ---------------------------------------------------------
+/* =========================================================
    PHONE VERDICT
---------------------------------------------------------- */
+========================================================= */
 
 function getPhoneVerdict(
     valid,
@@ -3002,9 +2734,9 @@ function getPhoneVerdict(
     return "Invalid Number";
 }
 
-/* ---------------------------------------------------------
-   PHONE RISK LEVEL
---------------------------------------------------------- */
+/* =========================================================
+   PHONE RISK
+========================================================= */
 
 function getPhoneRiskLevel(
     valid,
@@ -3028,9 +2760,9 @@ function getPhoneRiskLevel(
     return "HIGH RISK";
 }
 
-/* ---------------------------------------------------------
+/* =========================================================
    PHONE ANALYSIS
---------------------------------------------------------- */
+========================================================= */
 
 function analyzePhone(
     inputPhone,
@@ -3134,9 +2866,10 @@ function analyzePhone(
         phoneNumber &&
         possible
     ) {
-        confidence = valid
-            ? "High"
-            : "Medium";
+        confidence =
+            valid
+                ? "High"
+                : "Medium";
     }
 
     const countryCode =
@@ -3249,7 +2982,8 @@ function analyzePhone(
             ...(possible
                 ? [
                     {
-                        type: "safe",
+                        type:
+                            "safe",
 
                         title:
                             "Possible number format",
@@ -3257,7 +2991,8 @@ function analyzePhone(
                         detail:
                             "The number has a structurally possible length and format.",
 
-                        points: 0
+                        points:
+                            0
                     }
                 ]
                 : [])
@@ -3274,9 +3009,9 @@ function analyzePhone(
     };
 }
 
-/* ---------------------------------------------------------
+/* =========================================================
    POST /api/phone-check
---------------------------------------------------------- */
+========================================================= */
 
 app.post(
     "/api/phone-check",
@@ -3318,9 +3053,9 @@ app.post(
     }
 );
 
-/* ---------------------------------------------------------
+/* =========================================================
    POST /api/phone-validate
---------------------------------------------------------- */
+========================================================= */
 
 app.post(
     "/api/phone-validate",
@@ -3435,12 +3170,9 @@ app.post(
     }
 );
 
-/* ---------------------------------------------------------
+/* =========================================================
    GET /api/phone-check
-
-   Example:
-   /api/phone-check?phone=9876543210&country=IN
---------------------------------------------------------- */
+========================================================= */
 
 app.get(
     "/api/phone-check",
@@ -3479,8 +3211,6 @@ app.get(
 
 /* =========================================================
    API 404
-   IMPORTANT:
-   This comes AFTER all API routes.
 ========================================================= */
 
 app.use(
@@ -3547,8 +3277,6 @@ app.get(
 
 /* =========================================================
    START SERVER
-   IMPORTANT:
-   app.listen() MUST BE LAST
 ========================================================= */
 
 app.listen(
@@ -3572,27 +3300,35 @@ app.listen(
         );
 
         console.log(
-            `Health: /api/health`
+            "Engine: FREE RULE-BASED"
         );
 
         console.log(
-            `Analyze: POST /api/analyze`
+            "AI: DISABLED"
         );
 
         console.log(
-            `Phone Check: POST /api/phone-check`
+            "Cost: FREE"
         );
 
         console.log(
-            `Phone Validate: POST /api/phone-validate`
+            "Health: /api/health"
         );
 
         console.log(
-            `Phone Check GET: /api/phone-check?phone=...`
+            "Analyze: POST /api/analyze"
         );
 
         console.log(
-            `AI configured: ${Boolean(OPENAI_API_KEY)}`
+            "Phone Check: POST /api/phone-check"
+        );
+
+        console.log(
+            "Phone Validate: POST /api/phone-validate"
+        );
+
+        console.log(
+            "Phone Check GET: /api/phone-check?phone=..."
         );
 
         console.log(
